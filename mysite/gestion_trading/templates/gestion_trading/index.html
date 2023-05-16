@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gestión de Riesgo</title>
+    {% load static %}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'css/style.css' %}"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <!--<h1>Estrategia y Gestión de Trading</h1>  -->
+      <h1>{{titulo}}</h1>
+      <nav>
+        <ul>
+          <li>
+            <label>Cuenta</label>
+            <select id="cuenta" name="cuenta">
+              <option value="10000">10.000</option>
+              <option value="25000">25.000</option>
+              <option value="50000">50.000</option>
+              <option value="100000">100.000</option>
+              <option value="200000">200.000</option>
+            </select>
+          </li>
+
+          <li>
+            <label>N° Operaciones</label>
+            <input
+              id="nOperaciones"
+              type="text"
+              readonly
+              name="nOperaciones"
+              value="20"
+            />
+          </li>
+
+          <li>
+            <label>Operaciones Restantes</label>
+            <input type="text" name="operacionesRestantes" />
+          </li>
+          <li>
+            <label>Capital Riesgo</label>
+            <input
+              id="capitalRiesgo"
+              type="text"
+              readonly
+              name="capitalRiesgo"
+            />
+          </li>
+          <li>
+            <label>Riesgo por Operación</label>
+            <select id="riesgoPorOperacion" name="riesgoPorOperacion">
+              <option value="2">2%</option>
+              <option value="1">1%</option>
+              <option value="0.5">0.5%</option>
+              <option value="0.4">0.4%</option>
+              <option value="0.3">0.3%</option>
+              <option value="0.2">0.2%</option>
+              <option value="0.1">0.1%</option>
+            </select>
+          </li>
+          <li>
+            <label>Nivel De Riesgo</label>
+            <select name="nivelDeRiesgo">
+              <option value="muy_riesgoso">Muy Riesgoso</option>
+              <option value="riesgoso">Riesgoso</option>
+              <option value="optimo">Optimo</option>
+              <option value="moderado">Moderado</option>
+              <option value="mamon">Mamón</option>
+              <option value="muy_mamon">Muy Mamón</option>
+              <option value="ultra_mamon">Ultra Mamón</option>
+            </select>
+          </li>
+
+          <li>
+            <label>Capital Actual</label>
+            <input type="text" value="10000" name="capitalActual" />
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="start-new-order-button">
+      <button class="add-order-button" id="myBtn">Nueva Orden</button>    
+      <div>
+        {% if mensaje %}
+        <p>{{ mensaje }}</p>
+        {% endif %}       
+      <form
+      id="myModal" class="modal" method="POST" hidden>
+      {% csrf_token %} 
+    <div class="modal-content">
+      <span class="close">&times;</span>      
+         <div class="container" id="grid-container">    
+          <div>
+            <label>Activo</label>
+            <select id="activo" name="activo">
+              <option value="AUDCAD">AUDCAD</option>
+              <option value="AUDCHF">AUDCHF</option>
+              <option value="AUDJPY">AUDJPY</option>
+              <option value="AUDNZD">AUDNZD</option>
+              <option value="AUDUSD">AUDUSD</option>
+              <option value="CADCHF">CADCHF</option>
+              <option value="CADJPY">CADJPY</option>
+              <option value="CHFJPY">CHFJPY</option>
+              <option value="EURAUD">EURAUD</option>
+              <option value="EURCAD">EURCAD</option>
+              <option value="EURCHF">EURCHF</option>
+              <option value="EURDKK">EURDKK</option>
+              <option value="EURGBP">EURGBP</option>
+              <option value="EURHKD">EURHKD</option>
+              <option value="EURJPY">EURJPY</option>
+              <option value="EURNOK">EURNOK</option>
+              <option value="EURNZD">EURNZD</option>
+              <option value="EURPLN">EURPLN</option>
+              <option value="EURSEK">EURSEK</option>
+              <option value="EURTRY">EURTRY</option>
+              <option value="EURUSD">EURUSD</option>
+              <option value="GBPAUD">GBPAUD</option>
+              <option value="GBPCAD">GBPCAD</option>
+              <option value="GBPCHF">GBPCHF</option>
+              <option value="GBPDKK">GBPDKK</option>
+              <option value="GBPJPY">GBPJPY</option>
+              <option value="GBPNZD">GBPNZD</option>
+              <option value="GBPPLN">GBPPLN</option>
+              <option value="GBPSEK">GBPSEK</option>
+              <option value="GBPUSD">GBPUSD</option>
+              <option value="NZDCAD">NZDCAD</option>
+              <option value="NZDCHF">NZDCHF</option>
+              <option value="NZDJPY">NZDJPY</option>
+              <option value="NZDUSD">NZDUSD</option>
+              <option value="USDCAD">USDCAD</option>
+              <option value="USDCHF">USDCHF</option>
+              <option value="USDCZK">USDCZK</option>
+              <option value="USDDKK">USDDKK</option>
+              <option value="USDHKD">USDHKD</option>
+              <option value="USDHUF">USDHUF</option>
+              <option value="USDJPY">USDJPY</option>
+              <option value="USDMXN">USDMXN</option>
+              <option value="USDNOK">USDNOK</option>
+              <option value="USDPLN">USDPLN</option>
+              <option value="USDSEK">USDSEK</option>
+              <option value="USDSGD">USDSGD</option>
+              <option value="USDTRY">USDTRY</option>
+              <option value="USDZAR">USDZAR</option>
+              <option value="XAGUSD">XAGUSD</option>
+              <option value="XAGUSD">XAUUSD</option>
+              <option value="XAGUSD">BTCUSD</option>
+              <option value="XAGUSD">USDCLP</option>
+              <option value="XAGUSD">US30USD</option>
+            </select>          
+          </div>
+                     
+          <div>
+            <label>Orden</label>
+            <select id="orden" name="orden" >
+              <option id="orden" value="compra">Compra</option>
+              <option value="venta">Venta</option>
+            </select>
+          </div>
+         
+          <div contenteditable="false">
+            <label>Lotes</label>
+            <input id="lotaje" type="text" readonly name="lotaje" />
+          </div>
+          
+          <div contenteditable="false">
+            <label>Ratio</label>
+            <input id="ratio" type="text" readonly name="ratio" />
+          </div>
+
+          <div>
+            <label>Stop Loss</label>
+            <input id="stoploss" type="text" name="stoploss" value="" />
+            <span class="error" id="stoploss-error">{{ error }}</span>
+          </div>
+
+          <div>
+            <label>Take Profit</label>
+            <input id="takeprofit" type="text" name="takeprofit"  value="" />
+            <span class="error" id="takeprofit-error">{{ error }}</span>
+          </div>
+       
+          <div contenteditable="false">
+            <label>Beneficio esperado</label>
+            <input id="beneficioEsperado" type="text"  name="beneficioEsperado" />
+          </div>
+          
+          <div contenteditable="false">
+            <label>Utilidad proyectada</label>
+            <input id="utilidadProyectada" type="text" readonly  name="utilidadProyectada" />            
+          </div>   
+        </div> 
+        <div class="end-add-order-button">
+              <button type="submit" class="add-order-button" >Agregar Orden</button>
+        </div> 
+      </div>   
+      </form> 
+      {% for trade in trades %}
+      <p>Activo: {{ trade.activo }}</p>
+      <p>Orden: {{ trade.orden }}</p>
+      <p>Stoploss: {{ trade.stoploss }}</p>
+      <p>Takeprofit: {{ trade.takeprofit }}</p>
+      <p>Lotaje: {{ trade.lotaje }}</p>
+      <p>Ratio: {{ trade.ratio }}</p>
+      <p>Beneficio Esperado: {{ trade.beneficio_esperado }}</p>
+      <p>Utilidad Proyectada: {{ trade.utilidad_proyectada }}</p>
+  {% endfor %}
+       </main>  
+
+    <footer>      
+      <p>Derechos Reservados &copy; 2023</p>
+    </footer>
+    <script src="{% static 'js/scriptpopup.js' %}"></script>
+  </body>
+</html>

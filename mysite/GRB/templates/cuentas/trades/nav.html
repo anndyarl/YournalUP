@@ -1,0 +1,41 @@
+{% block contenido %} 
+ {% for cuenta in cuentas %}
+    {% if cuenta.id_cuenta == request.session.id_cuenta %}
+     <nav class="nav-container">
+      <div>      
+          <label>Login</label>         
+          <input id="n_login"type="text" readonly  name="n_login" value="{{ cuenta.n_login }}"/>       
+      </div>
+      <div>                
+          <label>Cuenta</label>      
+          <input id="cuenta"type="text" readonly  name="cuenta" value="{{ cuenta.cuenta }}"/>
+      </div>   
+      <div>      
+          <label>N° Operaciones</label>          
+          <input id="n_operaciones"type="text" readonly name="n_operaciones" value="{{ cuenta.n_operaciones }}"/> 
+      </div>
+      <div>      
+          <label>Operaciones Restantes</label>
+          <input id="operaciones_restantes"type="text" readonly name="operaciones_restantes" value="{{ cuenta.operaciones_restantes }}"/>      
+      </div>   
+      <div>      
+          <label>Capital Riesgo</label>
+          <input id="capital_riesgo"type="text" readonly  name="capital_riesgo" value="{{ cuenta.capital_riesgo }}"/>      
+      </div>
+      <div>      
+          <label>Riesgo por Operación</label>
+          <input id="riesgo_operacion"type="text" readonly  name="riesgo_operacion" value="{{ cuenta.riesgo_operacion }} %"/>         
+      </div>
+      <div>      
+          <label>Nivel De Riesgo</label>
+          <input id="nivel_riesgo"type="text" readonly name="nivel_riesgo" value="{{ cuenta.nivel_riesgo }}"/>       
+      </div>
+      <div>      
+          <label>Balance</label>
+          <input id="capital_actual"type="text" readonly name="capital_actual" value="{{ cuenta.capital_actual }}"/>            
+      </div>
+    </nav> 
+      
+    {% endif %}
+  {% endfor %}
+  {% endblock %}

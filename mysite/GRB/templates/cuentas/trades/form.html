@@ -1,0 +1,171 @@
+{% load static %}
+<form enctype="multipart/form-data" method="post" id="myModal">
+	{% csrf_token %} {% if error_message %}
+	<div class="alert alert-danger" role="alert">
+		{{ error_message }} {% endif %}
+	</div>
+	{% comment %} <div class="container" id="grid-container-master"> {% endcomment %}
+	<div class="grid-container">
+		<div class="mb-3">
+			<label for="activo" class="form-label">Activo</label>
+			<select id="activo" class="form-control" name="activo">
+				{% for choice in formulario.activo.field.choices %}
+					{% if choice.0 == formulario.activo.value %}
+						<option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+					{% else %}
+						<option value="{{ choice.0 }}">{{ choice.1 }}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+			<label for="activo_seleccionado" id="activo_seleccionado" class="form-label"></label>
+		</div>
+		<div class="mb-3">
+			<label for="orden" class="form-label">Orden</label>
+			<select id="orden" class="form-control" name="orden">
+				{% for choice in formulario.orden.field.choices %}
+					{% if choice.0 == formulario.orden.value %}
+						<option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+					{% else %}
+						<option value="{{ choice.0 }}">{{ choice.1 }}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+		</div>		
+		
+		<div class="mb-3">
+			<label for="fecha" class="form-label">Fecha</label>
+			<input type="text" id="fecha" name="fecha" value="{{ formulario.fecha.value | default:'' }}">
+		</div>
+		<div class="mb-3">
+			<label for="resultado" class="form-label">Resultado:</label>
+			<select id="resultado" class="form-control" name="resultado">
+				{% for choice in formulario.resultado.field.choices %}
+					{% if choice.0 == formulario.resultado.value %}
+						<option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+					{% else %}
+						<option value="{{ choice.0 }}">{{ choice.1 }}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+		</div>
+		
+		  
+	
+	</div>
+		<div class="grid-container-2">
+			<div class="mb-3">
+				<label for="stoploss" class="form-label">Stop Loss</label>
+				<input type="text" id="stoploss" class="form-control" name="stoploss" value="{{ formulario.stoploss.value | default:'' }}">
+			</div>
+			<div class="mb-3">
+				<label for="takeprofit" class="form-label">Take Profit</label>
+				<input type="text" id="takeprofit" class="form-control" name="takeprofit" value="{{ formulario.takeprofit.value | default:'' }}">
+			</div>	
+			<div class="mb-3">
+				<label for="lotaje" class="form-label">Lotaje</label>
+				<input type="text" readonly id="lotaje" name="lotaje" value="{{ formulario.lotaje.value | default:'' }}">
+			</div>
+			<div class="mb-3">
+				<label for="ratio" class="form-label">Ratio</label>
+				<input type="text" readonly id="ratio" name="ratio" value="{{ formulario.ratio.value | default:'' }}">
+			</div>	
+			<div class="mb-3">
+				<label for="beneficio_esperado" class="form-label">Beneficio Esperado</label>
+				<input type="text" readonly id="beneficio_esperado" name="beneficio_esperado" value="{{ formulario.beneficio_esperado.value | default:'' }}">
+			</div>		
+		<div class="mb-3">
+			<label for="utilidad_proyectada" class="form-label">Utilidad Proyectada</label>
+			<input type="text" readonly id="utilidad_proyectada" name="utilidad_proyectada" value="{{ formulario.utilidad_proyectada.value | default:'' }} ">
+		</div>	
+		<div class="mb-3">
+			<label for="beneficio_real" class="form-label">Beneficio real</label>
+			<input type="text"  id="beneficio_real" class="form-control" name="beneficio_real" value="{{ formulario.beneficio_real.value | default:'' }}">
+		</div>
+		<div class="mb-3">
+			<label for="porcentaje_beneficio_real" class="form-label">Utilidad real</label>
+			<input type="text"  id="porcentaje_beneficio_real" name="porcentaje_beneficio_real" value="{{ formulario.porcentaje_beneficio_real.value | default:'' }}">
+		</div>		
+	</div>
+	{% if request.resolver_match.view_name == 'editar' %}
+		<div class="mb-2">
+			{% if recorre_clase_image %}
+			<a id="open-modal-button"><i class="fas fa-fw fa-plus"></i> Agregar Imágenes</a>
+			{% else %}
+			<a id="open-modal-button"><i class="fas fa-fw fa-plus pulse"></i> Agregar Imágenes</a>
+			{% endif %}
+		</div>
+		{% endif %}
+{% comment %} </div> {% endcomment %}
+	<div class="center-button">
+		<button name="" id="" class="add-order-button" type="submit">Aceptar</button>
+		<a name="" id="" class="cancel-order-button" href="{% url 'lista_trades_de_cuentas' request.session.id_cuenta %}" role="button">Cancelar</a>
+	</div>
+	<!-- Modal -->
+	<div id="nuevocontainer" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+
+			<div class="modal-content">
+			
+				<div class="modal-header">
+					{% comment %}
+					<h5 class="modal-title">Completa los detalles de tu trade</h5> {% endcomment %}
+					<a type="button" class="btn btn-sm btn-outline-secondary ml-auto" id="expand-modal-button">
+						<i class="fas fa-expand"></i>
+					</a>
+					<a type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<i class="fas fa-times"></i>
+					</a>
+				</div>
+				<div class="modal-body">
+					{% comment %} <button id="back-to-top-button" class="btn btn-outline-primary position-fixed" style="bottom: 10px; right: 10px;">
+						<i class="fas fa-arrow-up"></i> Volver arriba
+					</button> {% endcomment %}
+
+						{% for image, trade_image in recorre_clase_image %}						
+							<div class="image-container">
+								<div class="delete-button">
+									<a href="{% url 'eliminar_imagen' image.id %}" class="btn btn-custom"><i class="fas fa-trash-alt"></i></a>
+								</div>
+								<div class="mb-3">
+									<div class="form-group">
+										<input type="text" class="form-control" id="id_titulo_{{trade_image.id}}" name="titulo_{{trade_image.id}}" value="{{image.titulo}}">
+										<img src="{{ image.image.url }}" width="1000" class="img-fluid rounded-top expandable-image" alt="" onclick="expandImage(this)">
+										<div class="file-upload">
+											<input type="file" id="fileInput" placeholder="adjunta una imagen" name="image_{{trade_image.id}}">
+											<label for="fileInput">Actualizar imagen</label>
+										</div>
+										<textarea class="form-control" id="id_descripcion_{{trade_image.id}}" name="descripcion_{{trade_image.id}}">{{image.descripcion}}</textarea>
+
+									</div>
+								</div>
+								<button type="submit" class="update-button hidden update-button-{{trade_image.id}}"></i>Guardar cambios</button>
+							</div>
+						
+						{% endfor %}
+				<!-- El botón que mostrará/ocultará el modal-body-add -->					
+				
+				<div id="modalBodyAdd">
+					<div class="image-container">
+						<div class="mb-3">
+							<div class="form-group">
+								<input type="text" id="titulo" class="form-control" name="titulo" placeholder="Ingresa un título" value="{{ image.titulo.value | default:'' }}">
+								<div class="file-upload">
+									<input type="file" id="fileInput" placeholder="adjunta una imagen" name="image">
+									<label for="fileInput">Seleccionar imagen</label>
+								</div>
+								<textarea class="form-control" rows="3" type="text" id="content" placeholder="Ingresa una descripcion" name="descripcion">{{ image.descripcion.value|default:'' }}</textarea>
+							</div>
+						</div>
+						<button type="submit" class="add-button"></i>Guardar</button>
+					</div>					
+				</div>				
+			
+			</div>
+			<a id="toggleButton" class="btn btn-primary btn-add"><i class="fas fa-plus"></i></a>
+		</div>
+	</div>
+	
+	 
+	<script src="{% static 'js/scriptTrades.js' %}"></script>
+
+</form>

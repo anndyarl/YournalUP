@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block titulo %} Seleccionar tipo de Cuenta {% endblock %}
+
+{% block contenido %} 
+<div class="card">
+    <div class="card-body d-flex justify-content-center align-items-center">      
+        <div class="cuenta-box-body">
+            <div class="cuenta-box-heading">Fondeo </div>   
+            <p>Gestiona una cuenta de fondeo</p>
+            {% if user.is_authenticated %} 
+            <div class="account-type">                               
+                <a href="{% url 'crear_cuentas' 1 %}">
+                    <h4 class="account-type-text">Crear una cuenta</h4>
+                </a>
+            </div>
+            {% else %}
+            <div class="account-type">                               
+                <a href="{% url 'login' %}">
+                    <h4 class="account-type-text">Iniciar sesión para crear una cuenta</h4>
+                </a>
+            </div>
+            {% endif %}
+        </div>  
+        <div class="cuenta-box-body">            
+            <div class="cuenta-box-heading">Personal </div>   
+            <p>Gestiona una cuenta personal </p>
+            {% if user.is_authenticated %}
+            <div class="account-type">
+                <a href="{% url 'crear_cuentas' 2 %}">
+                    <h4 class="account-type-text">Crear una cuenta</h4>
+                </a>
+            </div>
+            {% else %}
+            <div class="account-type">
+                <a href="{% url 'login' %}">
+                    <h4 class="account-type-text">Iniciar sesión para crear una cuenta</h4>
+                </a>
+            </div>
+            {% endif %}
+        </div>     
+    </div>
+</div>
+
+{% endblock %}

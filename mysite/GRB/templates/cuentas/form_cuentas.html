@@ -1,0 +1,91 @@
+{% load static %}
+
+<form enctype="multipart/form-data" method="post" id="myModal">
+   {% csrf_token %}
+   {% if error_message %}
+   <div class="alert alert-danger" role="alert">
+     {{ error_message }}
+     {% endif %}
+   </div>
+   <div class="container" id="grid-container-cuentas">  
+     <div class="mb-3">     
+       {% if id_tipo_cuenta == 1 %}
+       <label for="cuenta" class="form-label">Seleccione una cuenta:</label>
+       <select id="cuenta" class="form-control" name="cuenta">
+         {% for choice in formulario.cuenta.field.choices %}
+         {% if choice.0 == formulario.cuenta.value %}
+         <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+         {% else %}
+         <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+         {% endif %}
+         {% endfor %}
+       </select>     
+       {% elif id_tipo_cuenta == 2 %}
+       <label for="cuenta" class="form-label">Ingresa una cuenta:</label>
+       {% if formulario.cuenta_ingresada.errors %}
+       <input type="text" id="cuenta" class="form-control is-invalid" name="cuenta" value="{{ formulario.cuenta.value | default:'' }}">
+       <div class="invalid-feedback">
+         {% for error in formulario.cuenta_ingresada.errors %}
+         {{ error }}
+         {% endfor %}
+       </div>
+       {% else %}
+              <input type="text" id="cuenta" class="form-control" name="cuenta" value="{{ formulario.cuenta.value | default:'' }}">
+          {% endif %}
+      {% endif %}
+  </div>
+       <div class="mb-3">
+         <label for="riesgo_operacion" class="form-label">Seleccione riesgo:</label>
+         <select id="riesgo_operacion" class="form-control" name="riesgo_operacion">
+            {% for choice in formulario.riesgo_operacion.field.choices %}
+              {% if choice.0 == formulario.riesgo_operacion.value %}
+                <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+              {% else %}
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>        
+        </div> 
+        <div class="mb-3">
+         <label for="capital_riesgo" class="form-label">Capital riesgo:</label>
+         <input type="text" id="capital_riesgo" readonly class="form-control" name="capital_riesgo" value="{{ formulario.capital_riesgo.value | default:'' }}">
+       </div>  
+       <div class="mb-3">
+         <label for="n_operaciones" class="form-label">Número de Operaciones:</label>
+         <input type="text" id="n_operaciones" readonly class="form-control" name="n_operaciones" value="{{ formulario.n_operaciones.value | default:'' }}">
+       </div>
+       <div class="mb-3">
+        <label for="n_login" class="form-label">Número de Login:</label>
+        <input type="text" id="n_login" class="form-control" name="n_login" value="{{ formulario.n_login.value | default:'' }}">
+      </div>  
+       <div class="mb-3">
+         <label for="operaciones_restantes" class="form-label visually-hidden">Operaciones Restantes:</label>
+         <input type="text" id="operaciones_restantes" readonly class="form-control visually-hidden" name="operaciones_restantes"  value="{{ formulario.operaciones_restantes.value | default:'' }}">
+       </div>    
+       <div class="mb-3">
+         <label for="nivel_riesgo"  class="form-label visually-hidden" >Nivel de Riesgo:</label>
+         <input type="text" id="nivel_riesgo" readonly class="form-control visually-hidden" name="nivel_riesgo" value="{{ formulario.nivel_riesgo.value | default:'' }}">
+       </div>
+       <div class="mb-3">
+         <label for="capital_actual"  class="form-label visually-hidden" >Capital Actual:</label>
+         <input type="text" id="capital_actual" readonly class="form-control visually-hidden" name="capital_actual"  value="{{ formulario.capital_actual.value | default:'' }}">
+       </div>
+       <div class="mb-3">
+         <label for="id_tipo_cuenta" class="form-label visually-hidden">Tipo de Cuenta:</label>
+       <select id="id_tipo_cuenta" readonly class="form-control visually-hidden" name="id_tipo_cuenta" >
+            {% for choice in formulario.id_tipo_cuenta.field.choices %}
+                {% if choice.0 == request.session.id_tipo_cuenta %}
+                    <option value="{{ choice.0 }}" selected>{{ choice.0 }}</option>
+                {% endif %}
+            {% endfor %}
+          </select>
+       </div>
+
+</div>
+<div class="center-button">
+  <input name="submit_button" id="" class="add-order-button" type="submit" value="Aceptar">
+  <a name="" id="" class="cancel-order-button"  href="{% url 'lista_cuentas' request.session.id_tipo_cuenta  %}" role="button">Cancelar</a>   
+</div>
+
+  <script src="{% static 'js/scriptCuentas.js' %}"></script>
+</form>

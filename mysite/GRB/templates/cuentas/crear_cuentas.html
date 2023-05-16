@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block titulo %} Agregar Cuenta {% endblock %}
+{% block contenido %} 
+<div class="container-cuentas">
+    <div class="card">       
+        <div class="card-body text-center">            
+            <h4 class="card-title">Completa los detalles de tu cuenta</h4>
+            <div class="mt-1">
+                {% include 'cuentas/form_cuentas.html' %} 
+            </div>
+        </div>
+        <div class="card">
+            <div class="row no-gutters">
+                <div class="col-md-6">
+                    <div class="card-body">
+                        <h4 class="card-title">¿Cansado de perder cuenta tras cuenta?</h4>
+                        <p class="card-text">Con nuestra gestión de riesgos, nunca más perderás una cuenta de fondeo o personal.</p>
+                        <p class="card-text">Selecciona la cuenta que mejor se adapte a tus necesidades y comienza a operar sin preocupaciones!</p>
+                        <p class="card-text">Ten en cuenta que una vez que hayas creado una cuenta, no podrás actualizar sus características. Asegúrate de elegir la cuenta adecuada desde el principio.</p>
+         
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <img src="https://via.placeholder.com/300x600" class="card-img" alt="Imagen de banner">
+                </div>
+            </div>
+        </div>
+</div>
+
+
+{% endblock %}

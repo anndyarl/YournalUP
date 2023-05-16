@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block titulo %} Editar Trade {% endblock %}
+{% block contenido %} 
+<div class="card">
+    <div class="card-header">
+        editar un trade
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Datos del trade</h4>
+       {% include 'cuentas/form_cuentas.html' %}
+    </div>
+    <div class="card-footer text-muted">        
+    </div>
+</div>
+
+{% endblock %}
