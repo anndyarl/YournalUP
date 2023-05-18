@@ -298,17 +298,19 @@ $(document).ready(function () {
     });
   });
 
-  // Agrega la clase 'edited' al elemento padre del input o textarea que se haya editado
-  $('input, textarea').on('input', function () {
-    $(this).closest('.image-container').addClass('edited');
-    $(this).closest('.image-container').find('.update-button').show();
-  });
+// Agrega la clase 'edited' al elemento padre del input, imagen o textarea que se haya editado
+$('input, textarea').on('input', function () {
+  const imageContainer = $(this).closest('.image-container');
+  imageContainer.addClass('edited');
+  imageContainer.find('.update-button').show();
+});
 
-  // Mostrar solo el botón de actualización correspondiente al hacer clic en el elemento correspondiente
-  $('.update-button').click(function () {
-    $(this).closest('.image-container').removeClass('edited');
-    $(this).hide();
-  });
+// Mostrar solo el botón de actualización correspondiente al hacer clic en el elemento correspondiente
+$('.update-button').click(function () {
+  const imageContainer = $(this).closest('.image-container');
+  imageContainer.removeClass('edited');
+  $(this).hide();
+});
 
   // Agregar desplazamiento hacia el final del modal al presionar el botón "guardar"
   $('.add-button').click(function() {

@@ -1,5 +1,5 @@
 {% load static %}
-<form enctype="multipart/form-data" method="post" id="myModal">
+<form enctype="multipart/form-data" method="post" id="myModalForm">
 	{% csrf_token %} {% if error_message %}
 	<div class="alert alert-danger" role="alert">
 		{{ error_message }} {% endif %}
@@ -101,7 +101,7 @@
 		<a name="" id="" class="cancel-order-button" href="{% url 'lista_trades_de_cuentas' request.session.id_cuenta %}" role="button">Cancelar</a>
 	</div>
 	<!-- Modal -->
-	<div id="nuevocontainer" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div id="nuevocontainer" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">
 		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 
 			<div class="modal-content">
@@ -138,7 +138,7 @@
 
 									</div>
 								</div>
-								<button type="submit" class="update-button hidden update-button-{{trade_image.id}}"></i>Guardar cambios</button>
+								<button type="submit" class="update-button hidden update-button-{{trade_image.id}} "></i>Guardar cambios</button>
 							</div>
 						
 						{% endfor %}

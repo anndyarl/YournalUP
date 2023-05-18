@@ -67,6 +67,8 @@ main {
   padding: 10px;
 } */
 
+
+
 nav {
   /* display: flex; */
   place-content: center;
@@ -167,11 +169,6 @@ select:focus {
   box-shadow: 0px 0px 5px #2574ce;
   background-color: white;
 } */
-
-
-.hidden {
-  display: none;
-}
 
 
 /* Estilos para el grid */
@@ -905,4 +902,8 @@ background-color:#e69946;
 
 #loading-overlay img {
   width: 50px; /* Ajusta el tamaño del logo de carga según tus necesidades */
+}
+
+.hidden {
+  display: none;
 }
