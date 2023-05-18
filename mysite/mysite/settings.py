@@ -84,14 +84,24 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
 
+#   'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'GRB',
+#          'USER': 'root',
+#           'PASSWORD': '',
+#            'HOST': 'localhost',
+#             'PORT': '3306',
+#     }
+
   'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'GRB',
-         'USER': 'root',
-          'PASSWORD': '',
-           'HOST': 'localhost',
+        'NAME': 'anndyarl$GRB',
+         'USER': 'anndyarl',
+          'PASSWORD': 'Kiaora.23',
+           'HOST': 'anndyarl.mysql.pythonanywhere-services.com',
             'PORT': '3306',
     }
+
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
