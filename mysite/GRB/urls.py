@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.contrib.staticfiles.urls import static
-
+from .views import register_view
 
 
 urlpatterns = [
@@ -10,8 +10,9 @@ urlpatterns = [
   
     # path('', views.inicio, name='inicio'),
     # path('cuentas/', views.login, name='login'), 
-    path('', views.custom_login, name='login'),
-    path('cuentas/logout/', views.logout_view, name='logout'),  
+    path('', views.custom_login, name='login'),   
+    path('cuentas/logout/', views.logout_view, name='logout'),
+    path('register/', register_view, name='register'),
     path('cuentas/seleccionar_cuenta', views.seleccionar_cuenta, name='seleccionar_cuenta'),
 
     path('cuentas/<int:id_tipo_cuenta>/', views.lista_cuentas, name='lista_cuentas'),

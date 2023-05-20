@@ -28,7 +28,7 @@ from django.db.models import Sum
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_protect
-
+from django.contrib.auth.forms import UserCreationForm
 
 
 
@@ -77,7 +77,15 @@ def logout_view(request):
     if not request.user.is_authenticated:
         return redirect("login")
 
-
+def register_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # Redirige al usuario al formulario de inicio de sesión después del registro exitoso
+    else:
+        form = UserCreationForm()
+    return render(request, 'paginas/register.html', {'form': form})
 # def inicio(request):
 #     return render(request, "paginas/inicio.html")
 
