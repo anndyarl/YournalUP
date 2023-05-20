@@ -8,7 +8,7 @@ from .forms import TradeForm, CuentaForm
 # from .forms import ImagenForm
 # from django.http import Http404
 # from django.http import JsonResponse
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, HttpResponseForbidden
 
 # import os
 from django.contrib.auth import authenticate, login, logout
@@ -27,6 +27,8 @@ from django.db.models import Sum
 # from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_protect
+
 
 
 
@@ -34,24 +36,32 @@ from django.contrib.auth.models import User
 
 
 # Create your views here.
+@csrf_protect
 def custom_login(request):
     """
     Vista para la página "custom_login".
     """
     if request.user.is_authenticated:
         return redirect("seleccionar_cuenta")
+    
     if request.method == "POST":
         form = CustomAuthForm(request, request.POST)
+        
+        # Verificar el token CSRF manualmente
+        csrf_token = request.POST.get('csrfmiddlewaretoken')
+        if csrf_token != request.META['CSRF_COOKIE']:
+            return HttpResponseForbidden('CSRF verification failed. Invalid token.')
+        
         if form.is_valid():
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             user = authenticate(request, username=username, password=password)
+            
             if user is not None:
                 login(request, user)
                 request.session["user_id"] = user.id
-            url = reverse(
-                "seleccionar_cuenta"
-            )  # obtén la URL de la vista lista_de_trades
+            
+            url = reverse("seleccionar_cuenta")
             return redirect(url)
     else:
         form = CustomAuthForm(request)
@@ -192,53 +202,69 @@ def crear_cuentas(request, id_tipo_cuenta):
     """
     if not request.user.is_authenticated:
         return redirect("login")
+    
     error_message = ""
     cuentas = CUENTAS.objects.all()
     user = request.user  # Obtiene el objeto de usuario autenticado
 
-    request.session["id_tipo_cuenta"] = id_tipo_cuenta
-    if id_tipo_cuenta == 1:
-        formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta)
-        if request.method == "POST":
-            if formulario.is_valid():
-                cuenta = formulario.save(commit=False)
-                cuenta.id_tipo_cuenta_id = request.session["id_tipo_cuenta"]
-                cuenta.cuenta_seleccionada = formulario.cleaned_data.get("cuenta_seleccionada")
-                cuenta.user = user  # Asigna el objeto de usuario autenticado a la cuenta
-                cuenta.save()
+    try:
+        request.session["id_tipo_cuenta"] = id_tipo_cuenta
+        if id_tipo_cuenta == 1:
+            formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta)
+            if request.method == "POST":
+                if formulario.is_valid():
+                    cuenta = formulario.save(commit=False)
+                    cuenta.id_tipo_cuenta_id = request.session["id_tipo_cuenta"]
+                    cuenta.cuenta_seleccionada = formulario.cleaned_data.get("cuenta_seleccionada")
+                    if isinstance(user, User):  # Check if user is your custom User model
+                        cuenta.user = user
+                    cuenta.save()
 
-                url = reverse("lista_cuentas", args=[id_tipo_cuenta])
-                return redirect(url)
-            else:
-                error_message = "Los datos ingresados no son válidos."
-                if formulario.errors:
-                    print(formulario.errors)
-    elif id_tipo_cuenta == 2:
-        formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta)
-        if request.method == "POST":
-            if formulario.is_valid():
-                cuenta = formulario.save(commit=False)
-                cuenta.id_tipo_cuenta_id = request.session["id_tipo_cuenta"]
-                cuenta.cuenta_ingresada = formulario.cleaned_data.get("cuenta_ingresada")
-                cuenta.user = user  # Asigna el objeto de usuario autenticado a la cuenta
-                cuenta.save()
+                    url = reverse("lista_cuentas", args=[id_tipo_cuenta])
+                    return redirect(url)
+                else:
+                    error_message = "Los datos ingresados no son válidos."
+                    if formulario.errors:
+                        print(formulario.errors)
+        elif id_tipo_cuenta == 2:
+            formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta)
+            if request.method == "POST":
+                if formulario.is_valid():
+                    cuenta = formulario.save(commit=False)
+                    cuenta.id_tipo_cuenta_id = request.session["id_tipo_cuenta"]
+                    cuenta.cuenta_ingresada = formulario.cleaned_data.get("cuenta_ingresada")
+                    if isinstance(user, User):
+                        cuenta.user = user
+                    cuenta.save()
 
-                url = reverse("lista_cuentas", args=[id_tipo_cuenta])
-                return redirect(url)
-            else:
-                error_message = "Los datos ingresados no son válidos."
-                if formulario.errors:
-                    print(formulario.errors)
-    else:
-        return HttpResponseBadRequest("Invalid id_tipo_cuenta")
+                    url = reverse("lista_cuentas", args=[id_tipo_cuenta])
+                    return redirect(url)
+                else:
+                    error_message = "Los datos ingresados no son válidos."
+                    if formulario.errors:
+                        print(formulario.errors)
+        else:
+            return HttpResponseBadRequest("Invalid id_tipo_cuenta")
 
-    context = {
-        "cuentas": cuentas,
-        "formulario": formulario,
-        "id_tipo_cuenta": id_tipo_cuenta,
-        "error_message": error_message,
-    }
-    return render(request, "cuentas/crear_cuentas.html", context)
+        context = {
+            "cuentas": cuentas,
+            "formulario": formulario,
+            "id_tipo_cuenta": id_tipo_cuenta,
+            "error_message": error_message,
+            "user_value": str(user),  # Agrega el valor de user como una cadena
+        }
+        return render(request, "cuentas/crear_cuentas.html", context)
+    except Exception as e:
+        error_message = "Se produjo un error al crear la cuenta: {}".format(str(e))
+        context = {
+            "cuentas": cuentas,
+            "formulario": None,
+            "id_tipo_cuenta": id_tipo_cuenta,
+            "error_message": error_message,
+            "user_value": str(user),  # Agrega el valor de user como una cadena
+        }
+        return render(request, "cuentas/crear_cuentas.html", context)
+
 
 # def editar_cuentas(request, id_cuenta):
 #     """

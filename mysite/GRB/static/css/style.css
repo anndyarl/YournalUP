@@ -907,3 +907,14 @@ background-color:#e69946;
 .hidden {
   display: none;
 }
+
+.dropdown-item {
+  background-color: #F8F9FA; /* Color de fondo */
+  color: #333; /* Color del texto */
+  transition: background-color 0.3s ease; /* Transición suave del color de fondo */
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: #E9ECEF; /* Color de fondo al pasar el cursor o al enfocar */
+}

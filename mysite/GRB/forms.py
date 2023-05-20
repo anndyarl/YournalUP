@@ -91,11 +91,11 @@ class CuentaForm(forms.ModelForm):
         else:
             self.fields['cuenta'] = forms.CharField(max_length=50, required=True)
         self.fields['riesgo_operacion'] = forms.ChoiceField(choices=self.RIESGO_CHOICES, widget=Select())
+        self.fields['user'].required = False 
 
     comision = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
     swap = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
-    user = forms.IntegerField(widget=forms.TextInput(attrs={"class": "form-control"})
-)
+ 
 
     class Meta:
         """
