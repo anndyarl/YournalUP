@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block titulo %} Mis trades {% endblock %}
 {% block contenido %}
-
+<div class="content">
 <div class="nav-list">
 {% include 'cuentas/trades/nav_list.html' %}
 </div>
@@ -120,6 +120,7 @@
 <div id="loading-icon" style="display: none;">
   <i class="fas fa-spinner fa-spin"></i> Cargando...
 </div>
+</div>  
 <script src="{% static 'js/scriptListaTrades.js' %}"></script>
 {% endblock %}
 

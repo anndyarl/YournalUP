@@ -32,10 +32,6 @@ from django.contrib.auth.forms import UserCreationForm
 
 
 
-
-
-
-# Create your views here.
 @csrf_protect
 def custom_login(request):
     """
@@ -43,24 +39,19 @@ def custom_login(request):
     """
     if request.user.is_authenticated:
         return redirect("seleccionar_cuenta")
-    
+
     if request.method == "POST":
         form = CustomAuthForm(request, request.POST)
-        
-        # Verificar el token CSRF manualmente
-        csrf_token = request.POST.get('csrfmiddlewaretoken')
-        if csrf_token != request.META['CSRF_COOKIE']:
-            return HttpResponseForbidden('CSRF verification failed. Invalid token.')
-        
+
         if form.is_valid():
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             user = authenticate(request, username=username, password=password)
-            
+
             if user is not None:
                 login(request, user)
                 request.session["user_id"] = user.id
-            
+
             url = reverse("seleccionar_cuenta")
             return redirect(url)
     else:
@@ -68,7 +59,7 @@ def custom_login(request):
 
     return render(request, "paginas/login.html", {"form": form})
 
-
+@csrf_protect
 def logout_view(request):
     """
     Vista para la página "logout_view".
@@ -76,7 +67,7 @@ def logout_view(request):
     logout(request)
     if not request.user.is_authenticated:
         return redirect("login")
-
+@csrf_protect
 def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -89,14 +80,14 @@ def register_view(request):
 # def inicio(request):
 #     return render(request, "paginas/inicio.html")
 
-
+@csrf_protect
 def nosotros(request):
     """
     Vista para la página "Nosotros".
     """
     return render(request, "paginas/nosotros.html")
 
-
+@csrf_protect
 def seleccionar_cuenta(request):
     """
     Vista para la página "seleccionar_cuenta".
@@ -105,7 +96,7 @@ def seleccionar_cuenta(request):
         return redirect("login")
     return render(request, "cuentas/seleccionar_cuenta.html")
 
-
+@csrf_protect
 def lista_cuentas(request, id_tipo_cuenta):
     """
     Vista para la página "lista_cuentas".
@@ -118,7 +109,7 @@ def lista_cuentas(request, id_tipo_cuenta):
     )
     return render(request, "cuentas/cuentas.html", {"cuentas": cuentas})
 
-
+@csrf_protect
 def lista_trades_de_cuentas(request, id_cuenta):
     """
     Vista para la página "lista_cuentas_id".
@@ -203,7 +194,7 @@ def lista_trades_de_cuentas(request, id_cuenta):
 
     return render(request, "cuentas/trades/index.html", context)
 
-
+@csrf_protect
 def crear_cuentas(request, id_tipo_cuenta):
     """
     Vista para la página "crear_cuentas".
@@ -283,7 +274,7 @@ def crear_cuentas(request, id_tipo_cuenta):
 #     cuentas = CUENTAS.objects.get(id_cuenta=id_cuenta)
 #     formulario = CuentaForm(request.POST or None, instance=cuentas)
 #     return render(request, "cuentas/editar_cuentas.html", {"formulario": formulario})
-
+@csrf_protect
 def eliminar_cuenta(request, id_cuenta, id_tipo_cuenta):
     """
     Vista para la página "eliminar_cuenta".
@@ -297,7 +288,7 @@ def eliminar_cuenta(request, id_cuenta, id_tipo_cuenta):
     return redirect(url)
 
 
-
+@csrf_protect
 def crear(request):
     """
     Vista para la página "crear".
@@ -355,7 +346,7 @@ def crear(request):
     return render(request, "cuentas/trades/crear.html", context)
 
 
-
+@csrf_protect
 def editar(request, id):
     """
     Vista para la página "editar".
@@ -426,7 +417,7 @@ def editar(request, id):
 
 
 
-
+@csrf_protect
 def eliminar(request, id):
     """
     Elimina Trade completo
@@ -460,8 +451,9 @@ def eliminar_imagen(request, image_id):
         default_storage.delete(image.image.path)
         # Eliminar la imagen de la base de datos
         image.delete()
-    except IMAGE.DoesNotExist:
+    except ObjectDoesNotExist:
         pass
     # Redirigir al usuario a la página anterior
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
 
