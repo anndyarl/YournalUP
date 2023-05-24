@@ -20,66 +20,66 @@
 
   <div class="card-body">
     {% comment %} <div class="card-table"> {% endcomment %}
-    <h4 class="card-title">Mis trades</h4>  
-      <div class="table-responsive">
+    <h4 class="card-title">Mis trades</h4>     
         <div class="tabla-scroll">
-          <table class="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th scope="col">Trade</th>
-                <th scope="col">Fecha</th>
-                <th scope="col">Activo</th>
-                <th scope="col">Orden</th>
-                <th scope="col">Stoploss</th>
-                <th scope="col">TakeProfit</th>           
-                <th scope="col">Volumen</th>
-                <th scope="col">Ratio</th>
-                <th scope="col">Resultado</th>
-                <th scope="col">Beneficio Real</th>    
-                <th scope="col">Utilidad</th>
-                <th scope="col"></th>   
-              </tr>
-            </thead>
-            <tbody>
-              {% for trades in lista_trades_de_cuentas %}
-              <tr>
-                <td>{{ trades.id }}</td>
-                <td>{{ trades.fecha|date:"d/m/Y" }}</td>
-                <td class="editable">{{ trades.activo }}</td>
-                <td class="editable
-                {% if trades.orden == 'Venta' %}text-danger{% endif %}
-                {% if trades.orden == 'Compra' %}text-success{% endif %}">{{ trades.orden }}</td>
-                <td class="editable">{{ trades.stoploss }}</td>
-                <td class="editable">{{ trades.takeprofit }}</td>
-                <td class="editable">{{ trades.lotaje }}</td>
-                <td class="editable">{{ trades.ratio }}</td>
-                <td class="resultado       
-                {% if trades.resultado == 'Programada' %}text-warning{% endif %}  
-                {% if trades.resultado == 'Ejecución por Mercado' %}text-warning{% endif %}      
-                {% if trades.resultado == 'Take Profit' %}text-success{% endif %}
-                {% if trades.resultado == 'Stop Loss' %}text-danger{% endif %} 
-                {% if trades.resultado == 'Break Even' %}text-info{% endif %}              
-                {% if trades.resultado == 'Cierre Manual en Positivo' %}text-success{% endif %}
-                {% if trades.resultado == 'Cierre Manual en Negativo' %}text-danger{% endif %}"> {{ trades.resultado }}</td>
-                {% if trades.beneficio_real %}
-                <td class="editable">$ {{ trades.beneficio_real }}</td>                  
-                <td class="editable"> {{ trades.porcentaje_beneficio_real }} %</td>   
-                {% else %}
-                <td class="editable">-</td>                  
-                <td class="editable">-</td>                
-                {% endif %}
-                <td>
-                  <div class="btn-group" role="group">
-                    <a class="btn btn-custom"  href="{% url 'editar' trades.id %}" role="button"><i class="fas fa-edit"></i></a>
-                    <a class="btn btn-custom"  href="{% url 'eliminar' trades.id %}" role="button"><i class="fas fa-trash-alt"></i></a>
-                  </div>
-                </td>                
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>    
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Trade</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Activo</th>
+                  <th scope="col">Orden</th>
+                  <th scope="col">Stoploss</th>
+                  <th scope="col">TakeProfit</th>           
+                  <th scope="col">Volumen</th>
+                  <th scope="col">Ratio</th>
+                  <th scope="col">Resultado</th>
+                  <th scope="col">Beneficio Real</th>    
+                  <th scope="col">Utilidad</th>
+                  <th scope="col"></th>   
+                </tr>
+              </thead>
+              <tbody>
+                {% for trades in lista_trades_de_cuentas %}
+                <tr>
+                  <td>{{ trades.id }}</td>
+                  <td>{{ trades.fecha|date:"d/m/Y" }}</td>
+                  <td class="editable">{{ trades.activo }}</td>
+                  <td class="editable
+                  {% if trades.orden == 'Venta' %}text-danger{% endif %}
+                  {% if trades.orden == 'Compra' %}text-success{% endif %}">{{ trades.orden }}</td>
+                  <td class="editable">{{ trades.stoploss }}</td>
+                  <td class="editable">{{ trades.takeprofit }}</td>
+                  <td class="editable">{{ trades.lotaje }}</td>
+                  <td class="editable">{{ trades.ratio }}</td>
+                  <td class="resultado       
+                  {% if trades.resultado == 'Programada' %}text-warning{% endif %}  
+                  {% if trades.resultado == 'Ejecución por Mercado' %}text-warning{% endif %}      
+                  {% if trades.resultado == 'Take Profit' %}text-success{% endif %}
+                  {% if trades.resultado == 'Stop Loss' %}text-danger{% endif %} 
+                  {% if trades.resultado == 'Break Even' %}text-info{% endif %}              
+                  {% if trades.resultado == 'Cierre Manual en Positivo' %}text-success{% endif %}
+                  {% if trades.resultado == 'Cierre Manual en Negativo' %}text-danger{% endif %}"> {{ trades.resultado }}</td>
+                  {% if trades.beneficio_real %}
+                  <td class="editable">$ {{ trades.beneficio_real }}</td>                  
+                  <td class="editable"> {{ trades.porcentaje_beneficio_real }} %</td>   
+                  {% else %}
+                  <td class="editable">-</td>                  
+                  <td class="editable">-</td>                
+                  {% endif %}
+                  <td>
+                    <div class="btn-group" role="group">
+                      <a class="btn btn-custom"  href="{% url 'editar' trades.id %}" role="button"><i class="fas fa-edit"></i></a>
+                      <a class="btn btn-custom"  href="{% url 'eliminar' trades.id %}" role="button"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                  </td>                
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>     
     </div>
   </div>
   {% else %}

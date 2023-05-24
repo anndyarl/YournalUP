@@ -1,42 +1,39 @@
 {% load static %}
-</div>
+
 <form enctype="multipart/form-data" method="post" id="myModal">
    {% csrf_token %}
    {% if error_message %}
    <div class="alert alert-danger" role="alert">
      {{ error_message }}
-
-     {% endif %}  
-     <p>Valor del usuario: {{ user_value }}</p>
- 
    </div>
-   <div class="container" id="grid-container-cuentas">  
+   {% endif %}   
+   <div class="container" id="grid-container-cuentas">      
      <div class="mb-3">     
-       {% if id_tipo_cuenta == 1 %}
-       <label for="cuenta" class="form-label">Seleccione una cuenta:</label>
-       <select id="cuenta" class="form-control" name="cuenta">
-         {% for choice in formulario.cuenta.field.choices %}
-         {% if choice.0 == formulario.cuenta.value %}
-         <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
-         {% else %}
-         <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-         {% endif %}
-         {% endfor %}
-       </select>     
-       {% elif id_tipo_cuenta == 2 %}
-       <label for="cuenta" class="form-label">Ingresa una cuenta:</label>
-       {% if formulario.cuenta_ingresada.errors %}
-       <input type="text" id="cuenta" class="form-control is-invalid" name="cuenta" value="{{ formulario.cuenta.value | default:'' }}">
-       <div class="invalid-feedback">
-         {% for error in formulario.cuenta_ingresada.errors %}
-         {{ error }}
-         {% endfor %}
-       </div>
-       {% else %}
-              <input type="text" id="cuenta" class="form-control" name="cuenta" value="{{ formulario.cuenta.value | default:'' }}">
-          {% endif %}
+        {% if id_tipo_cuenta == 1 %}
+          <label for="cuenta" class="form-label">Seleccione una cuenta:</label>
+            <select id="cuenta" class="form-control" name="cuenta">
+                {% for choice in formulario.cuenta.field.choices %}
+                  {% if choice.0 == formulario.cuenta.value %}
+                    <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+                  {% else %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                  {% endif %}
+                {% endfor %}
+           </select>     
+        {% elif id_tipo_cuenta == 2 %}
+          <label for="cuenta" class="form-label">Ingresa una cuenta:</label>
+            {% if formulario.cuenta_ingresada.errors %}
+            <input type="text" id="cuenta" class="form-control is-invalid" name="cuenta" value="{{ formulario.cuenta.value | default:'' }}">
+            <div class="invalid-feedback">
+                {% for error in formulario.cuenta_ingresada.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+        {% else %}
+            <input type="text" id="cuenta" class="form-control" name="cuenta" value="{{ formulario.cuenta.value | default:'' }}">
+        {% endif %}
       {% endif %}
-  </div>
+    </div>
        <div class="mb-3">
          <label for="riesgo_operacion" class="form-label">Seleccione riesgo:</label>
          <select id="riesgo_operacion" class="form-control" name="riesgo_operacion">

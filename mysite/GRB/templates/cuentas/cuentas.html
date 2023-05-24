@@ -54,12 +54,14 @@
             <td style="color:orange;"> En proceso </td>
             <td>$ {{ cuenta.capital_actual }}</td>
             <td>
+              <div class="btn-group" role="group">
               <a name="" id="" class="btn btn-custom" href="{% url 'lista_trades_de_cuentas' cuenta.id_cuenta %}" role="button">
                 <i class="fas fa-eye"></i> 
               </a>
               <a name="" id="" class="btn btn-custom" href="{% url 'eliminar_cuenta' request.session.id_tipo_cuenta cuenta.id_cuenta  %}" role="button">
                 <i class="fas fa-trash-alt"></i> 
               </a>
+            </div>
             </td>            
           </tr>       
           {% endfor %}
