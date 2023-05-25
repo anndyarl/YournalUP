@@ -9,7 +9,7 @@
         </li>
         <li>
           <label>Cuenta</label>
-          <input id="cuenta"type="text" readonly  name="cuenta" value="$ {{ cuenta.cuenta }}"/>   
+          <input id="cuenta"type="text" readonly  name="cuenta" value="{{ cuenta.cuenta }}"/>   
         </li>
         <li>
           <label>N° Operaciones</label>
@@ -26,11 +26,11 @@
       <ul> {% endcomment %}
         <li>
           <label>Capital Riesgo</label>
-          <input id="capital_riesgo"type="text" readonly  name="capital_riesgo" value="$ {{ cuenta.capital_riesgo }}"/>   
+          <input id="capital_riesgo"type="text" readonly  name="capital_riesgo" value="{{ cuenta.capital_riesgo }}"/>   
         </li>
         <li>
           <label>Riesgo por Operación</label>
-          <input id="riesgo_operacion"type="text" readonly  name="riesgo_operacion" value="{{ cuenta.riesgo_operacion }} %"/>   
+          <input id="riesgo_operacion"type="text" readonly  name="riesgo_operacion" value="{{ cuenta.riesgo_operacion }}"/>   
         </li>
         <li>
           <label>Nivel De Riesgo</label>
@@ -39,7 +39,7 @@
 
         <li>
           <label>Balance</label>
-          <input id="capital_actual"type="text" readonly name="capital_actual" value="$ {{ cuenta.capital_actual }}"/>   
+          <input id="capital_actual"type="text" readonly name="capital_actual" value="{{ cuenta.capital_actual }}"/>   
         </li>      
       </ul>
     </nav> 

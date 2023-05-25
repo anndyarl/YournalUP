@@ -10,7 +10,18 @@ body {
   font-weight: 500;
   display: block;
   transition: background-color 0.3s ease;
+  position: relative;
+  min-height: 100vh; /* Establece una altura mínima para que el contenido se extienda hasta la parte inferior de la ventana del navegador */
+
 }
+.content-container {
+  padding-bottom: 100px; /* Ajusta este valor según el tamaño del footer */
+}
+
+.card {
+  min-height: calc(100vh - 100px); /* Ajusta este valor según el tamaño del footer */
+}
+
 /* .light-mode {
   background-color: #ffffff;
   color: #000000;
@@ -152,8 +163,7 @@ select {
   box-sizing: bozrder-box;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 16px;
-  background-color: #eaeaea;
+  font-size: 16px;  
   border-radius: 0.375rem;
   text-align: center;
 }
@@ -187,7 +197,7 @@ input[type="date"] {
 /* input:focus,
 select:focus {
   outline: none;
-  box-shadow: 0px 0px 5px #2574ce;
+  box-shadow: 0px 0px 5px #e69946;  
   background-color: white;
 } */
 
@@ -320,9 +330,21 @@ div.tabla-scroll {
 div.tabla-scroll table {
   max-width: 100%; /* Ancho máximo de la tabla */
 }
+.table-hover tbody tr:hover {
+  background-color: #e69946; /* Cambia el color a tu preferencia */
+  
+}
+th, td {
+  white-space: nowrap;
+}
 
+.boton-editar {
+  margin-right: 10px; /* Ajusta el valor según el espaciado deseado */
+}
 
-
+.boton-eliminar {
+  margin-left: 10px; /* Ajusta el valor según el espaciado deseado */
+}
 .expanded-image {
   position: fixed;
   top: 0;
@@ -397,7 +419,8 @@ div.tabla-scroll table {
   @media (max-width: 860px) {
     .card-body {
         flex-direction: column; /* Cambia la dirección del flujo de los elementos a vertical */
-      
+        overflow-y: auto;
+        position: relative;
     }
     .account-type {
         margin-bottom: 10px; /* Agrega un margen inferior a los contenedores de los botones */
@@ -432,7 +455,19 @@ input[type="file"]:not(:valid) + img {
   padding: 20px;
   justify-items: stretch;
   max-width: fit-content;
+}
 
+#grid-container-cuentas #capital_riesgo,
+#grid-container-cuentas #n_operaciones {
+  outline: none;
+  box-shadow: 0px 0px 0px #fff;
+  background-color: #eaeaea;
+  border: 1px solid #d8d8d8;
+  font-weight: 500 !important;
+  cursor: default;
+  }  
+#grid-container-cuentas #n_login {
+  border: none;
 }
 
 .grid-container {
@@ -472,24 +507,24 @@ input[type="file"]:not(:valid) + img {
 .grid-container input {
   background-color:  #fff;
 }
-.benefits-container {  
-    display: flex;
-    gap: 10px;
-    align-items: end;
-    justify-content: center;
-    width: 100%;
-    background: #32373f;
-    color: white;
-    border-radius: 0px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
-    padding: 20px; 
+.benefits-container {
+  display: flex;
+  gap: 10px;
+  align-items: end;
+  justify-content: center;
+  width: 100%;
+  background: #32373f;
+  color: white;
+  border-radius: 0px;
+  position: fixed; /* Cambiado a 'fixed' para mantener el footer en la parte inferior */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 23px;
 }
 .benefits-container input {
-  border: none;  
+  border: none;
   width: 98px;
   margin-bottom: 3px;
   
@@ -504,20 +539,8 @@ input[type="file"]:not(:valid) + img {
   .benefits-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    justify-items: center;
-    align-items: end;
-    justify-content: center;
-    width: 100%;
-    position: absolute;
-    background: #32373f;
-    color: white;
-    border-radius: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
-    padding: 4px;
+    gap: 10px;    
+    padding: 7px;
   }
   
 }
@@ -547,20 +570,16 @@ input[type="file"]:not(:valid) + img {
 
 
 .btn-custom {
-  background-color: transparent;
-  
+  background-color: transparent;  
   color: #35363557;
-  padding: 3px;
-  margin: 6px;
-  border-radius: 6px;
-  font-size: 23px;
-  display: inline;
+  border-radius: 6px; 
 }
-@media screen and (max-width: 768px) {
-  .btn-custom {
-  font-size: 18px;
-  }
+.btn-custom:hover {
+  background-color: transparent;  
+  color: #888;
 }
+
+
 .btn-custom-red:hover {
   background-color: white;
   border-color: white;
@@ -602,6 +621,7 @@ input[type="file"]:not(:valid) + img {
 .modal-dialog {
   position: relative;
   width: auto;
+  margin-left: 0;
   margin-right: 0;
   pointer-events: none;
 
@@ -628,8 +648,23 @@ input[type="file"]:not(:valid) + img {
   overflow-y: auto;   
    z-index: 100; /* Valor más bajo para el menú */
 }
+.modal-content-help {
+  background-color: #fefefe;
+  margin: 0;
+  padding: 5px;
+  border: 1px solid #888;
+  width: 100%;
+  animation-name: modalopen;
+  /* animation-duration: 0.6ms;
+  transition: left 0.3s ease-out; Añade transición al movimiento hacia la izquierda/derecha */
+  overflow-y: auto;   
+   z-index: 100; /* Valor más bajo para el menú */
+}
 
-
+.modal-image-help {
+  width: 100%;
+  height: auto;
+}
 
 #open-modal-button {
   display: inline-block;
@@ -862,6 +897,20 @@ input[type="file"]:not(:valid) + img {
   margin: 36px;
 }
 
+@media screen and (max-width: 768px) {
+  .image-container {   
+    padding: 0;
+    margin: 9px;
+  }
+  #expand-modal-button {
+    display: none;
+  }
+}
+
+#toggleButton {
+  width: 100%;
+}
+
 .delete-button {
   position: absolute;
   top: 50%;
@@ -1033,6 +1082,8 @@ textarea {
 .content {
   margin-left: 75px;
   padding: 20px;
+  top: 11px;
+  position: relative;
 }
 
 /* Media query para pantallas más pequeñas */
@@ -1040,6 +1091,8 @@ textarea {
   .content {
     margin: 0px;
     padding: 0px;
+    display: revert;
+    top: 21px;
   }
 }
 
@@ -1110,13 +1163,17 @@ background-color:#e69946;
   background-color: #E9ECEF; /* Color de fondo al pasar el cursor o al enfocar */
 }
 
-.menu  {
+.menu {
   background: #e69946;
   display: flex;
   justify-content: center;
-  padding: 15px;
-  border-radius: 6px; 
+  position: fixed;
+  top: 74px;
+  width: 100%;
+  left: 0;
+  z-index: 100;
 }
+
 .menu ul:hover { 
   background: #e3b98e;
  
@@ -1137,3 +1194,30 @@ background-color:#e69946;
   background: #e3b98e;
 }
 
+
+/* boton de modal ayuda */
+
+.input-group  {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0;
+}
+
+.input-group .input-group-append .help-button {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin: 10px;
+ 
+}
+
+.input-group .input-group-append .help-button i {
+  color: #aaa;
+  font-size: 18px;
+  transition: color 0.3s;
+
+}
+
+.input-group .input-group-append .help-button:hover i {
+  color: #555;
+}

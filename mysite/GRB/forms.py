@@ -66,13 +66,43 @@ class CuentaForm(forms.ModelForm):
     RIESGO_CHOICES = (
         ('', '-----------'),
         ('0.1', '0.1%'),
-        ('0.2', '0.2%'),
-        ('0.3', '0.3%'),
+        ('0.2', '0.2%'),       
         ('0.4', '0.4%'),
         ('0.5', '0.5%'),
         ('1', '1%'),
         ('2', '2%'),
     )
+
+    BROKER_CHOICES = (
+    ('', '-----------'),
+    ('FTMO', 'FTMO'),
+    ('LITEFINANCE', 'LITEFINANCE'),
+    ('ICMARKETS', 'ICMARKETS'),
+    ('eToro', 'eToro'),
+    ('Plus500', 'Plus500'),
+    ('AvaTrade', 'AvaTrade'),
+    ('XM', 'XM'),
+    ('Interactive Brokers', 'Interactive Brokers'),
+    ('TD Ameritrade', 'TD Ameritrade'),
+    ('OANDA', 'OANDA'),
+    ('FXCM', 'FXCM'),
+    ('Pepperstone', 'Pepperstone'),
+    ('Alpari', 'Alpari'),
+    ('FBS', 'FBS'),
+    ('HotForex', 'HotForex'),
+    ('OctaFX', 'OctaFX'),
+    ('RoboForex', 'RoboForex'),
+    ('Binance', 'Binance'),
+    ('BitMEX', 'BitMEX'),
+    ('Bitfinex', 'Bitfinex'),
+    ('Kraken', 'Kraken'),
+    ('Coinbase', 'Coinbase'),
+    ('XM', 'XM'),
+    ('Libertex', 'Libertex'),
+    ('Otro', 'Otro'),
+
+    )   
+
 
     def __init__(self, *args, **kwargs):
         """
@@ -83,19 +113,34 @@ class CuentaForm(forms.ModelForm):
         **kwargs (dict): Keyworded variable-length argument list.
         """
         id_tipo_cuenta = kwargs.pop('id_tipo_cuenta')
+      
         # user_id = kwargs.pop('user_id')
 
         super().__init__(*args, **kwargs)
         if id_tipo_cuenta == 1:
             self.fields['cuenta'] = forms.ChoiceField(choices=self.CUENTA_CHOICES, widget=Select())
         else:
-            self.fields['cuenta'] = forms.CharField(max_length=50, required=True)
-        self.fields['riesgo_operacion'] = forms.ChoiceField(choices=self.RIESGO_CHOICES, widget=Select())
-        self.fields['user'].required = False 
+            self.fields['cuenta'] = forms.CharField(max_length=50, required=True)     
 
+        self.fields['riesgo_operacion'] = forms.ChoiceField(choices=self.RIESGO_CHOICES, widget=Select())
+        self.fields['user'].required = False
+         
+    broker = forms.ChoiceField(choices=BROKER_CHOICES, widget=forms.Select(), required=False)
+    otro_broker = forms.CharField(max_length=100, required=False)  # Agrega este campo
+    
     comision = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
     swap = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
- 
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        selected_broker = cleaned_data.get('broker')
+        if selected_broker == 'Otro':
+            otro_broker = cleaned_data.get('otro_broker')
+            if not otro_broker:
+                self.add_error('otro_broker', 'Por favor, ingresa el nombre del otro broker.')
+            else:
+                cleaned_data['broker'] = otro_broker
+        return cleaned_data
 
     class Meta:
         """

@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block titulo %} Mis cuentas {% endblock %} 
 {% block contenido %}
 {% load static %}
-<div class="content">
+
 <div class="card">
   <div class="card-header">
     <a name="" id="myBtn" class="add-order-button" href="{% url 'crear_cuentas' request.session.id_tipo_cuenta %}" role="button">
@@ -18,13 +18,13 @@
     <div class="mt-4"></div>  
     <div class="table-responsive">
       <div class="tabla-scroll">
-      <table class="table">
+        <table class="table table-hover">
         <thead>
           <tr>
             <th scope="col">Login</th>  
             <th scope="col">Fecha</th>     
             <th scope="col">Cuenta</th>
-            <th scope="col">Tipo de Cuenta</th>
+            <th scope="col">Empresa</th>
             {% comment %} <th scope="col">N° Operaciones</th>
             <th scope="col">Operaciones Restantes</th> {% endcomment %}
             <th scope="col">Capital Riesgo</th>           
@@ -32,7 +32,8 @@
             <th scope="col">Nivel de Riesgo</th>
             <th scope="col">Resultado</th>
             <th scope="col">Balance</th>  
-            <th scope="col"></th>          
+            <th scope="col"></th>    
+            <th scope="col"></th>            
           </tr>
         </thead>
         <tbody>
@@ -40,12 +41,8 @@
           <tr class="">
             <td>{{ cuenta.n_login }}</td>
             <td>{{ cuenta.fecha_cuenta|date:"d/m/Y" }}</td>
-            <td> $ {{ cuenta.cuenta }}</td>
-            {% if cuenta.id_tipo_cuenta_id == 1 %}
-            <td> Cuenta de Fondeo</td>            
-            {% else %}
-            <td> Cuenta Personal</td>
-            {% endif %}
+            <td> $ {{ cuenta.cuenta }}</td>           
+            <td>{{ cuenta.broker }}</td> 
             {% comment %} <td>{{ cuenta.n_operaciones }}</td>
             <td>{{ cuenta.operaciones_restantes }}</td> {% endcomment %}
             <td>$ {{ cuenta.capital_riesgo }}</td>
@@ -53,16 +50,16 @@
             <td>{{ cuenta.nivel_riesgo }}</td>
             <td style="color:orange;"> En proceso </td>
             <td>$ {{ cuenta.capital_actual }}</td>
-            <td>
-              <div class="btn-group" role="group">
-              <a name="" id="" class="btn btn-custom" href="{% url 'lista_trades_de_cuentas' cuenta.id_cuenta %}" role="button">
+            <td> 
+              <a class="btn-custom" href="{% url 'lista_trades_de_cuentas' cuenta.id_cuenta %}" role="button">
                 <i class="fas fa-eye"></i> 
-              </a>
-              <a name="" id="" class="btn btn-custom" href="{% url 'eliminar_cuenta' request.session.id_tipo_cuenta cuenta.id_cuenta  %}" role="button">
+              </a> 
+            </td> 
+            <td>
+              <a class="btn-custom" href="{% url 'eliminar_cuenta' request.session.id_tipo_cuenta cuenta.id_cuenta  %}" role="button">
                 <i class="fas fa-trash-alt"></i> 
-              </a>
-            </div>
-            </td>            
+              </a>    
+            </td>              
           </tr>       
           {% endfor %}
         </tbody>
@@ -72,7 +69,7 @@
   </div>
   <div class="card-footer text-muted"></div>
 </div>
-</div>
+
 
 <script src="{% static 'js/scriptListaCuentas.js' %}"></script>
 {% endblock %}

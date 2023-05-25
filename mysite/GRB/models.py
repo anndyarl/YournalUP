@@ -90,7 +90,7 @@ class CUENTAS(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name="Id Usuario",
-        null=True,
+        null=False,
         related_name="cuentas",
     )
     fecha_cuenta = models.DateTimeField(
@@ -105,6 +105,9 @@ class CUENTAS(models.Model):
     # beneficio_total = models.CharField(
     #     max_length=100, verbose_name="Beneficio Total", null=True
     # )
+    broker = models.CharField(
+        max_length=100, verbose_name="Broker", null=True
+    )
     
 
     objects = models.Manager()
@@ -121,16 +124,18 @@ class CUENTAS(models.Model):
             + str(self.capital_riesgo)
             + "Riesgo por operación: "
             + str(self.riesgo_operacion)
-            + ", Nivel de Riesgo: "
+            + "Nivel de Riesgo: "
             + self.nivel_riesgo
             + "Capital Actual: "
             + str(self.capital_actual)
             + "Usuario: "
-            + str(self.user)          
+            + str(self.user)
             + "Comisión: "
             + str(self.comision)
             + "Swap "
             + str(self.swap)
+            + "Broker: "
+            + self.broker
         )
         return fila
 

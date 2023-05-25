@@ -7,13 +7,16 @@ let capitalRiesgoInput = document.getElementById('capital_riesgo');
 let operacionesRestantesInput = document.getElementById('operaciones_restantes');
 let capitalActualInput = document.getElementById('capital_actual');
 let nivelRiesgoInput = document.getElementById('nivel_riesgo');
-
+let nloginInput = document.getElementById('n_login');
 //Calcular Riesgo
 // Agregamos un eventListener al evento input en ambos input para que se calcule el resultado en tiempo real
 cuentaInput.addEventListener('input', calculateResultRiesgo);
 nOperacionesInput.addEventListener('input', calculateResultRiesgo);
+nloginInput.addEventListener('input', calculateResultRiesgo);
 
 function calculateResultRiesgo() {
+  cuentaInput.value = cuentaInput.value.replace(/[^\d.-]/g, '');
+  nloginInput.value = nloginInput.value.replace(/[^\d.-]/g, '');
   let cuenta = parseFloat(cuentaInput.value);
   let nOperaciones = parseFloat(nOperacionesInput.value);
 
@@ -151,3 +154,36 @@ function seleccionarNivelDeRiesgo() {
   nivelRiesgoInput.value = nivelRiesgo;
 }
 
+
+$(document).ready(function() {
+  // Abrir el modal al hacer clic en el botón de ayuda
+  $("#open-modal-help").click(function() {
+    $('#modalayuda').modal('show');
+  });
+
+  // Cerrar el modal al hacer clic en el botón de cierre
+  $("#modalayuda .close").click(function() {
+    $('#modalayuda').modal('hide');
+  });
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  var selectBroker = document.getElementById('broker');
+  var otroBrokerField = document.getElementById('otroBrokerField');
+
+  selectBroker.addEventListener('change', function() {
+    if (selectBroker.value === 'Otro') {
+      otroBrokerField.style.display = 'block';
+    } else {
+      otroBrokerField.style.display = 'none';
+    }
+  });
+
+  // Mostrar u ocultar el campo "otro_broker" al cargar la página
+  if (selectBroker.value === 'otro') {
+    otroBrokerField.style.display = 'block';
+  } else {
+    otroBrokerField.style.display = 'none';
+  }
+});

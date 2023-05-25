@@ -7,7 +7,54 @@
      {{ error_message }}
    </div>
    {% endif %}   
-   <div class="container" id="grid-container-cuentas">      
+   <div class="container" id="grid-container-cuentas"> 
+    <div class="mb-3">
+      <label for="broker" class="form-label">Selecciona una empresa:</label>
+      <select id="broker" class="form-control" name="broker">
+        {% for choice in formulario.broker.field.choices %}
+          {% if choice.0 == formulario.broker.value %}
+            <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+          {% else %}
+            <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    
+    <div class="mb-3" id="otroBrokerField" {% if formulario.broker.value != 'Otro' %}style="display: none;"{% endif %}>
+      <label for="otro_broker" class="form-label">Otro:</label>
+      <input type="text" id="otro_broker" class="form-control" name="otro_broker" value="{{ formulario.otro_broker.value | default:'' }}">
+    </div>
+    
+   
+<div class="mb-3">
+  <label for="n_login" class="form-label">Número de Login:</label>
+  <div class="input-group">
+    <input type="text" id="n_login" class="form-control" name="n_login" value="{{ formulario.n_login.value | default:'' }}">
+    <div class="input-group-append">
+      <button id="open-modal-help" type="button" class="help-button" data-toggle="modal" data-target="#helpModal">
+        <i class="fas fa-question-circle"></i> <!-- Reemplaza con el ícono que desees usar, por ejemplo, Font Awesome -->
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<!-- Modal -->
+<div id="modalayuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content-help">			
+      {% comment %} <div class="modal-header">        
+        <a type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </a>
+      </div> {% endcomment %}
+      <div class="modal-body">
+        <img class="modal-image-help" src="{% static 'img/authorization.png' %}" alt="Imagen de ayuda">
+      </div>
+      
+    </div>
+  </div>
+</div>
      <div class="mb-3">     
         {% if id_tipo_cuenta == 1 %}
           <label for="cuenta" class="form-label">Seleccione una cuenta:</label>
@@ -30,7 +77,7 @@
                 {% endfor %}
             </div>
         {% else %}
-            <input type="text" id="cuenta" class="form-control" name="cuenta" value="{{ formulario.cuenta.value | default:'' }}">
+            <input type="text" id="cuenta" class="form-control" placeholder="Ejemplo: 200"  name="cuenta" value="{{ formulario.cuenta.value | default:'' }}">
         {% endif %}
       {% endif %}
     </div>
@@ -53,11 +100,7 @@
        <div class="mb-3">
          <label for="n_operaciones" class="form-label">Número de Operaciones:</label>
          <input type="text" id="n_operaciones" readonly class="form-control" name="n_operaciones" value="{{ formulario.n_operaciones.value | default:'' }}">
-       </div>
-       <div class="mb-3">
-        <label for="n_login" class="form-label">Número de Login:</label>
-        <input type="text" id="n_login" class="form-control" name="n_login" value="{{ formulario.n_login.value | default:'' }}">
-      </div>  
+       </div>    
        <div class="mb-3">
          <label for="operaciones_restantes" class="form-label visually-hidden">Operaciones Restantes:</label>
          <input type="text" id="operaciones_restantes" readonly class="form-control visually-hidden" name="operaciones_restantes"  value="{{ formulario.operaciones_restantes.value | default:'' }}">

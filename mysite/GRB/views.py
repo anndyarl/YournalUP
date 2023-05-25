@@ -120,7 +120,8 @@ def lista_trades_de_cuentas(request, id_cuenta):
     cuenta = CUENTAS.objects.get(id_cuenta=id_cuenta)
     cuentas = CUENTAS.objects.all()
     trades = TRADES.objects.filter(id_cuenta_id=id_cuenta)
-   
+    user = request.user  # Obtiene el objeto de usuario autenticado
+
     id_tipo_cuenta = request.session["id_tipo_cuenta"]
     formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta, instance=cuenta)
     if formulario.is_valid():
@@ -156,7 +157,9 @@ def lista_trades_de_cuentas(request, id_cuenta):
     if swap is not None:
         capital_actual += swap
 
-    cuenta.capital_actual = cuenta_inicial + capital_actual
+    if isinstance(user, User):  # Check if user is your custom User model
+        cuenta.user = user
+    cuenta.capital_actual = cuenta_inicial + capital_actual    
     cuenta.save()
     
     n_registros = trades.filter(
@@ -209,12 +212,12 @@ def crear_cuentas(request, id_tipo_cuenta):
     try:
         request.session["id_tipo_cuenta"] = id_tipo_cuenta
         if id_tipo_cuenta == 1:
-            formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta)
+            formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta, initial={'user': user})
             if request.method == "POST":
                 if formulario.is_valid():
                     cuenta = formulario.save(commit=False)
                     cuenta.id_tipo_cuenta_id = request.session["id_tipo_cuenta"]
-                    cuenta.cuenta_seleccionada = formulario.cleaned_data.get("cuenta_seleccionada")
+                    cuenta.cuenta_seleccionada = formulario.cleaned_data.get("cuenta_seleccionada")                  
                     if isinstance(user, User):  # Check if user is your custom User model
                         cuenta.user = user
                     cuenta.save()
@@ -231,7 +234,7 @@ def crear_cuentas(request, id_tipo_cuenta):
                 if formulario.is_valid():
                     cuenta = formulario.save(commit=False)
                     cuenta.id_tipo_cuenta_id = request.session["id_tipo_cuenta"]
-                    cuenta.cuenta_ingresada = formulario.cleaned_data.get("cuenta_ingresada")
+                    cuenta.cuenta_ingresada = formulario.cleaned_data.get("cuenta_ingresada")               
                     if isinstance(user, User):
                         cuenta.user = user
                     cuenta.save()
