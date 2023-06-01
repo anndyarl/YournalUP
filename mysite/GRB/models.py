@@ -95,18 +95,18 @@ class CUENTAS(models.Model):
     )
     fecha_cuenta = models.DateTimeField(
         auto_now_add=True, verbose_name="Fecha Cuenta", null=True
+    )    
+    # beneficio_total = models.CharField(
+    #     max_length=100, verbose_name="Beneficio Total", null=True
+    # )
+    broker = models.CharField(
+        max_length=100, verbose_name="Broker", null=True
     )
     comision = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Comisión", null=True
     )
     swap =  models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Swap", null=True
-    )
-    # beneficio_total = models.CharField(
-    #     max_length=100, verbose_name="Beneficio Total", null=True
-    # )
-    broker = models.CharField(
-        max_length=100, verbose_name="Broker", null=True
     )
     
 
@@ -129,13 +129,13 @@ class CUENTAS(models.Model):
             + "Capital Actual: "
             + str(self.capital_actual)
             + "Usuario: "
-            + str(self.user)
+            + str(self.user) 
+            + "Broker: "
+            + self.broker
             + "Comisión: "
             + str(self.comision)
             + "Swap "
             + str(self.swap)
-            + "Broker: "
-            + self.broker
         )
         return fila
 
@@ -257,3 +257,30 @@ class TRADEIMAGE(models.Model):
     #     for image in self.imagenes.all():
     #         image.delete()
     #     super().delete(using=using, keep_parents=keep_parents)
+
+class DESCUENTOS(models.Model):
+    """
+    clase Modelo "DESCUENTOS".
+    """
+    id_descuento = models.AutoField(primary_key=True)
+    id_cuenta = models.ForeignKey(
+        CUENTAS, on_delete=models.CASCADE, verbose_name="Id Cuenta", null=True
+    ) 
+    comision = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name="Comisión", null=True
+    )
+    swap =  models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name="Swap", null=True
+    )
+
+
+    objects = models.Manager()
+
+    def __str__(self):
+        fila = (
+            "Comisión: "
+            + str(self.comision)
+            + "Swap "
+            + str(self.swap)
+            )
+        return fila

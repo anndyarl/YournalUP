@@ -4,6 +4,7 @@
 	<div class="alert alert-danger" role="alert">
 		{{ error_message }} {% endif %}
 	</div>
+
 	{% comment %} <div class="container" id="grid-container-master"> {% endcomment %}
 	<div class="grid-container">
 		<div class="mb-3">
@@ -17,7 +18,7 @@
 					{% endif %}
 				{% endfor %}
 			</select>
-			{% comment %} <label for="activo_seleccionado" id="activo_seleccionado" class="form-label"></label> {% endcomment %}
+			<label for="activo_seleccionado" id="activo_seleccionado" class="form-label"></label>
 		</div>
 		<div class="mb-3">
 			<label for="orden" class="form-label">Orden</label>
@@ -79,27 +80,30 @@
 		</div>	
 		<div class="mb-3">
 			<label for="beneficio_real" class="form-label">Beneficio real</label>
-			<input type="text"  id="beneficio_real" class="form-control" name="beneficio_real" value="{{ formulario.beneficio_real.value | default:'' }}">
+			<input type="text"   id="beneficio_real" class="form-control" name="beneficio_real" value="{{ formulario.beneficio_real.value | default:'' }}">
 		</div>
 		<div class="mb-3">
 			<label for="porcentaje_beneficio_real" class="form-label">Utilidad real</label>
-			<input type="text"  id="porcentaje_beneficio_real" name="porcentaje_beneficio_real" value="{{ formulario.porcentaje_beneficio_real.value | default:'' }}">
+			<input type="text" readonly id="porcentaje_beneficio_real" name="porcentaje_beneficio_real" value="{{ formulario.porcentaje_beneficio_real.value | default:'' }}">
 		</div>		
 	</div>
 	{% if request.resolver_match.view_name == 'editar' %}
 		<div class="mb-2">
 			{% if recorre_clase_image %}
-			<a id="open-modal-button"><i class="fas fa-fw fa-plus"></i> Agregar Imágenes</a>
+			<a id="open-modal-button" class="add-order-button-trade"><i class="fas fa-fw fa-plus"></i></a>
 			{% else %}
-			<a id="open-modal-button"><i class="fas fa-fw fa-plus pulse"></i> Agregar Imágenes</a>
+			<a id="open-modal-button" class="add-order-button-trade" ><i class="fas fa-fw fa-plus pulse"></i></a>
 			{% endif %}
 		</div>
 		{% endif %}
 {% comment %} </div> {% endcomment %}
-	<div class="center-button">
-		<button name="" id="" class="add-order-button" type="submit">Aceptar</button>
-		<a name="" id="" class="cancel-order-button" href="{% url 'lista_trades_de_cuentas' request.session.id_cuenta %}" role="button">Cancelar</a>
-	</div>
+
+
+<div class="center-button">
+	<button name="" id="accept-button" class="add-order-button" type="submit">Aceptar</button>
+	<a name="" id="cancel-link" class="cancel-order-button" href="{% url 'lista_trades_de_cuentas' request.session.id_cuenta %}" role="button">Cancelar</a>    
+  </div>
+
 	<!-- Modal -->
 	<div id="nuevocontainer" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">
 		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">

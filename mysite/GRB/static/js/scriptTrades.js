@@ -34,34 +34,73 @@ let porcentajeBeneficioRealInput = document.getElementById('porcentaje_beneficio
 // });
 //Fin Aun no se que hace
 
+// ID de la hoja de cálculo y rango de la celda que deseas obtener
+const SHEET_ID = '1zAxSH9QkkzrcQKKm57YyE1sN16Gq93HA764_EiOfe00';
+const SHEET_TITLE = 'Factores';
+const SHEET_RANGE = 'Factores!A2:C53';
 
-//Calcular Lotaje
-// Agregamos un eventListener al evento input en ambos input para que se calcule el resultado en tiempo real
-capitalRiesgoInput.addEventListener('input', calculateResult);
-stoplossInput.addEventListener('input', calculateResult);
+const FULL_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${SHEET_TITLE}&range=${SHEET_RANGE}`;
+let factor = 1;
+
+// Calcular Lotaje
+// Agregamos un eventListener al evento input en ambos inputs para que se calcule el resultado en tiempo real
+capitalRiesgoInput.addEventListener('input', calcularLotaje);
+stoplossInput.addEventListener('input', calcularLotaje);
 const activoSelect = document.getElementById('activo');
 const activoSeleccionadoLabel = document.getElementById('activo_seleccionado');
 
 activoSelect.addEventListener('change', () => {
-  const activoSeleccionado = activoSelect.value;
-  activoSeleccionadoLabel.textContent = activoSeleccionado;
+  const activoSeleccionado = activoSelect.value;  
+  lotajeInput.value = ""; // Reiniciamos el valor del input de lotaje al seleccionar un nuevo activo
+  stoplossInput.value = "";
+  takeprofitInput.value = "";
+  ratioInput.value = "";
+  BeneficioEsperadoInput.value = "";
+  utilidadProyectadaInput.value = "";
 });
 
-
-function calculateResult() {
-  let capitalRiesgo = parseFloat(capitalRiesgoInput.value);
-  let stoploss = parseFloat(stoplossInput.value);
+function calcularLotaje() {
+  const capitalRiesgo = parseFloat(capitalRiesgoInput.value);
+  const stoploss = parseFloat(stoplossInput.value);
 
   // Validamos si existen datos dentro del input
-  if (stoploss == 0 || isNaN(stoploss) ) {
+  if (stoploss === 0 || isNaN(stoploss)) {
     lotajeInput.value = "";
+    takeprofitInput.value = "";
     return;
   }
 
-  const lotaje = capitalRiesgo / stoploss / 10.66;
-  lotajeInput.value = lotaje.toFixed(2); // Redondeamos el resultado a dos decimales y lo mostramos en el tercer input
+  const activoSeleccionado = activoSelect.value;
+
+  fetch(FULL_URL)
+    .then(res => res.text())
+    .then(rep => {
+      const data = JSON.parse(rep.substring(47).slice(0, -2));
+      const rows = data.table.rows; // Acceder a la propiedad 'rows' dentro de 'table'
+      
+
+      if (data && data.table && rows) {
+        // Recorrer los datos de la columna "INSTRUMENTO" en el JSON y realizar la comparación
+        for (let i = 0; i < rows.length; i++) {
+          const instrumento = rows[i].c[0].v;
+          if (instrumento === activoSeleccionado) {
+            factor = rows[i].c[2].v;
+            break; // Si se encuentra la coincidencia, se sale del bucle
+          }
+        }
+      }
+
+      const lotaje = capitalRiesgo / stoploss / factor;
+      lotajeInput.value = lotaje.toFixed(2); // Redondeamos el resultado a dos decimales y lo mostramos en el tercer input
+    })
+    .catch(error => {
+      console.error('Error al obtener los datos del JSON:', error);
+    });
 }
-//Fin Calcular Lotaje
+// Fin Calcular Lotaje
+
+
+
 
 
 //Calcular Riesgo
@@ -140,15 +179,15 @@ takeprofitInput.addEventListener('input', calculateRatio);
 function calculateRatio() {
   stoplossInput.value = stoplossInput.value.replace(/[^\d.-]/g, '');
   takeprofitInput.value = takeprofitInput.value.replace(/[^\d.-]/g, '');
-  let stoplost = parseFloat(stoplossInput.value);
+  let stoploss = parseFloat(stoplossInput.value);
   let takeprofit = parseFloat(takeprofitInput.value);
 
   // Validamos si existen datos dentro del input
-  if (stoplost == 0 || isNaN(stoplost) || takeprofit == 0 || isNaN(takeprofit)) {
-    ratioInput.value = "";
+  if (stoploss == 0 || isNaN(stoploss) || takeprofit == 0 || isNaN(takeprofit)) {
+    ratioInput.value = "";  
     return;
   }
-  let ratio = takeprofit / stoplost;
+  let ratio = takeprofit / stoploss;
   ratioInput.value = "1 / " + ratio.toFixed(2); // Redondeamos el resultado a dos decimales y lo mostramos en el tercer input
 }
 //Fin Calcular ratio reisgo/beneficio
@@ -157,18 +196,20 @@ function calculateRatio() {
 // Agregamos un eventListener al evento input en ambos input para que se calcule el resultado en tiempo real
 lotajeInput.addEventListener('input', calculateBeneficioEsperado);
 takeprofitInput.addEventListener('input', calculateBeneficioEsperado);
+stoplossInput.addEventListener('input', calculateBeneficioEsperado);
 BeneficioEsperadoInput.addEventListener('input', calculateBeneficioEsperado);
 
 function calculateBeneficioEsperado() {
   let lotaje = parseFloat(lotajeInput.value);
   let takeprofit = parseFloat(takeprofitInput.value);
+  let stoploss = parseFloat(stoplossInput.value);
 
   // Validamos si existen datos dentro del input
-  if (takeprofit == 0 || isNaN(takeprofit)) {
-    BeneficioEsperadoInput.value = "";
+  if (stoploss == 0 || isNaN(stoploss) || takeprofit == 0 || isNaN(takeprofit)) {
+    BeneficioEsperadoInput.value = "";    
     return;
   }
-  let beneficio = lotaje *  10.66 * takeprofit;
+  let beneficio = lotaje *  factor * takeprofit;
   BeneficioEsperadoInput.value = "$ " + beneficio.toFixed(2); // Redondeamos el resultado a dos decimales y lo mostramos en el tercer input
   calculateUtilidadProyectada();
 }
@@ -215,6 +256,11 @@ function calculateUtilidadBeneficioReal() {
   let BeneficioReal = parseFloat(BeneficioRealInput.value);
   let cuenta = parseFloat(cuentaInput.value);
   // Validamos si existen datos dentro del input
+
+  if (BeneficioReal == 0 || isNaN(BeneficioReal)) {
+    porcentajeBeneficioRealInput.value = "";
+    return;
+  }
 
   let porcentaje_beneficio_real = BeneficioReal * 100 / cuenta;
   porcentajeBeneficioRealInput.value = porcentaje_beneficio_real.toFixed(2); // Redondeamos el resultado a dos decimales y lo mostramos en el tercer input
@@ -336,20 +382,49 @@ window.onscroll = function() {
   }
 }
 
-// Cuando el usuario hace clic en el botón, volver arriba de manera suave
-mybutton.addEventListener("click", function() {
-  event.preventDefault(); 
-  // Obtenemos el elemento con clase "modal-content"
-  var modalContent = document.querySelector(".modal-body");
+// // Cuando el usuario hace clic en el botón, volver arriba de manera suave
+// mybutton.addEventListener("click", function() {
+//   event.preventDefault(); 
+//   // Obtenemos el elemento con clase "modal-content"
+//   var modalContent = document.querySelector(".modal-body");
   
-  // Obtenemos la posición del elemento
-  var modalContentPosition = modalContent.getBoundingClientRect().top;
+//   // Obtenemos la posición del elemento
+//   var modalContentPosition = modalContent.getBoundingClientRect().top;
   
-  // Animamos el scroll hacia la posición del elemento
-  window.scrollBy({
-    top: modalContentPosition,
-    left: 0,
-    behavior: 'smooth'
-  });
-});
+//   // Animamos el scroll hacia la posición del elemento
+//   window.scrollBy({
+//     top: modalContentPosition,
+//     left: 0,
+//     behavior: 'smooth'
+//   });
+// });
+
+// var lastScrollTop = 0;
+// var openModalButton = document.getElementById("open-modal-button");
+
+// function handleScroll() {
+//   var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+//   if (scrollTop > lastScrollTop) {
+//     // Deslizar hacia abajo
+//     openModalButton.classList.remove("hide");
+//   } else {
+//     // Deslizar hacia arriba
+//     openModalButton.classList.add("hide");
+//   }
+
+//   lastScrollTop = scrollTop;
+// }
+
+// window.addEventListener("scroll", handleScroll);
+// window.addEventListener("touchmove", handleScroll);
+
+
+// document.getElementById("accept-button").addEventListener("click", function() {
+//   var confirmation = confirm("¿Deseas permanecer en esta página?");
+//   if (!confirmation) {
+//     document.getElementById("cancel-link").removeAttribute("href");
+//   }
+// });
+
 

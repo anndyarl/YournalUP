@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.widgets import Select
-from .models import TRADES, CUENTAS, IMAGE
+from .models import TRADES, CUENTAS, IMAGE, DESCUENTOS
 from django.contrib.auth.forms import AuthenticationForm
 
 class CustomAuthForm(AuthenticationForm):
@@ -15,11 +15,62 @@ class CustomAuthForm(AuthenticationForm):
 class TradeForm(forms.ModelForm):
 
     ACTIVO_CHOICES = (
-        ('', '-----------'),
-        ('EURUSD', 'EURUSD'),
-        ('NZDUSD', 'NZDUSD'),
-        ('AUDUSD', 'AUDUSD'),
+    ('', '-----------'),
+    ('EURUSD', 'EURUSD'),
+    ('NZDUSD', 'NZDUSD'),
+    ('AUDUSD', 'AUDUSD'),
+    ('AUDCAD', 'AUDCAD'),
+    ('AUDCHF', 'AUDCHF'),
+    ('AUDJPY', 'AUDJPY'),
+    ('AUDNZD', 'AUDNZD'),
+    ('AUDUSD', 'AUDUSD'),
+    ('CADCHF', 'CADCHF'),
+    ('CADJPY', 'CADJPY'),
+    ('CHFJPY', 'CHFJPY'),
+    ('EURAUD', 'EURAUD'),
+    ('EURCAD', 'EURCAD'),
+    ('EURCHF', 'EURCHF'),
+    ('EURDKK', 'EURDKK'),
+    ('EURGBP', 'EURGBP'),
+    ('EURHKD', 'EURHKD'),
+    ('EURJPY', 'EURJPY'),
+    ('EURNOK', 'EURNOK'),
+    ('EURNZD', 'EURNZD'),
+    ('EURPLN', 'EURPLN'),
+    ('EURSEK', 'EURSEK'),
+    ('EURTRY', 'EURTRY'),
+    ('EURUSD', 'EURUSD'),
+    ('GBPAUD', 'GBPAUD'),
+    ('GBPCAD', 'GBPCAD'),
+    ('GBPCHF', 'GBPCHF'),
+    ('GBPDKK', 'GBPDKK'),
+    ('GBPJPY', 'GBPJPY'),
+    ('GBPNZD', 'GBPNZD'),
+    ('GBPPLN', 'GBPPLN'),
+    ('GBPSEK', 'GBPSEK'),
+    ('GBPUSD', 'GBPUSD'),
+    ('NZDCAD', 'NZDCAD'),
+    ('NZDCHF', 'NZDCHF'),
+    ('NZDJPY', 'NZDJPY'),
+    ('NZDUSD', 'NZDUSD'),
+    ('USDCAD', 'USDCAD'),
+    ('USDCHF', 'USDCHF'),
+    ('USDCZK', 'USDCZK'),
+    ('USDDKK', 'USDDKK'),
+    ('USDHKD', 'USDHKD'),
+    ('USDHUF', 'USDHUF'),
+    ('USDJPY', 'USDJPY'),
+    ('USDMXN', 'USDMXN'),
+    ('USDNOK', 'USDNOK'),
+    ('USDPLN', 'USDPLN'),
+    ('USDSEK', 'USDSEK'),
+    ('USDSGD', 'USDSGD'),
+    ('USDTRY', 'USDTRY'),
+    ('USDZAR', 'USDZAR'),
+    ('XAGUSD', 'XAGUSD'),
+    ('XAUUSD', 'XAUUSD'),
     )
+    
     ORDEN_CHOICES = (
         ('', '-----------'),
         ('Compra', 'Compra'),
@@ -99,6 +150,7 @@ class CuentaForm(forms.ModelForm):
     ('Coinbase', 'Coinbase'),
     ('XM', 'XM'),
     ('Libertex', 'Libertex'),
+    ('EXXNESS', 'EXXNESS'),
     ('Otro', 'Otro'),
 
     )   
@@ -118,29 +170,36 @@ class CuentaForm(forms.ModelForm):
 
         super().__init__(*args, **kwargs)
         if id_tipo_cuenta == 1:
-            self.fields['cuenta'] = forms.ChoiceField(choices=self.CUENTA_CHOICES, widget=Select())
+            self.fields['cuenta'] = forms.ChoiceField(choices=self.CUENTA_CHOICES, widget=Select(), required=True)
+            self.fields['riesgo_operacion'] = forms.ChoiceField(choices=self.RIESGO_CHOICES, widget=Select(), required=True)
         else:
-            self.fields['cuenta'] = forms.CharField(max_length=50, required=True)     
+            self.fields['cuenta'] = forms.CharField(max_length=50, required=True)    
+            self.fields['riesgo_operacion'] = forms.DecimalField(max_digits=10, decimal_places=2, required=True)   
 
-        self.fields['riesgo_operacion'] = forms.ChoiceField(choices=self.RIESGO_CHOICES, widget=Select())
+       
         self.fields['user'].required = False
+        self.fields['id_tipo_cuenta'].required = False
          
-    broker = forms.ChoiceField(choices=BROKER_CHOICES, widget=forms.Select(), required=False)
-    otro_broker = forms.CharField(max_length=100, required=False)  # Agrega este campo
-    
+    broker = forms.ChoiceField(choices=BROKER_CHOICES, widget=forms.Select(), required=True)
+    otro_broker = forms.CharField(max_length=100, required=False)  # Agrega este campo   
+    operaciones_restantes = forms.CharField(max_length=100, required=False)  # Agrega este campo    
+    nivel_riesgo = forms.CharField(max_length=100, required=False)  # Agrega este campo  
+    capital_actual = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
     comision = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
     swap = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
-    
+
     def clean(self):
         cleaned_data = super().clean()
         selected_broker = cleaned_data.get('broker')
-        if selected_broker == 'Otro':
-            otro_broker = cleaned_data.get('otro_broker')
-            if not otro_broker:
-                self.add_error('otro_broker', 'Por favor, ingresa el nombre del otro broker.')
-            else:
-                cleaned_data['broker'] = otro_broker
+        otro_broker = cleaned_data.get('otro_broker')
+
+        if selected_broker == 'Otro' and not otro_broker:
+            self.add_error('otro_broker', 'Por favor, ingresa el nombre del otro broker.')
+        elif otro_broker:
+            cleaned_data['broker'] = otro_broker
+
         return cleaned_data
+
 
     class Meta:
         """
@@ -158,7 +217,7 @@ class ImageForm(forms.ModelForm):
 
     class Meta:
         """
-        Meta class for CuentaForm.
+        Meta class for ImageForm.
         """
         model = IMAGE
         fields = '__all__'
@@ -168,9 +227,19 @@ class TradeImageForm(forms.ModelForm):
 
     class Meta:
         """
-        Meta class for CuentaForm.
+        Meta class for TradeImageForm.
         """
         model = IMAGE
         fields = '__all__'
 
+class Descuentosform(forms.ModelForm):
 
+    class Meta:
+        """
+        Meta class for DescuentosForm.
+        """
+        comision = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
+        swap = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
+
+        model = DESCUENTOS
+        fields = '__all__'

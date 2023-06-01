@@ -18,10 +18,6 @@ body {
   padding-bottom: 100px; /* Ajusta este valor según el tamaño del footer */
 }
 
-.card {
-  min-height: calc(100vh - 100px); /* Ajusta este valor según el tamaño del footer */
-}
-
 /* .light-mode {
   background-color: #ffffff;
   color: #000000;
@@ -46,7 +42,12 @@ header {
   width: 100%;
   z-index: 200; /* Agregar esta línea */
 }
+@media screen and (max-width: 768px) {
+  header {
+  height: 43px;
+  }
 
+}
 main {
   margin-top: 50px; /* Margen superior igual a la altura del encabezado */
   padding: 20px;
@@ -233,6 +234,7 @@ select:focus {
 /* Estilos para el botón que abre el popup */
 
 .add-order-button,
+.add-order-button-trade,
 .cancel-order-button {
   margin-top: 20px;
   /* opcional */
@@ -246,13 +248,18 @@ select:focus {
   cursor: pointer;
   margin: 10px; 
   border-radius: 0.375rem; 
-  /* width: 110px;  */
+  /* width: 70%;  */
   text-align: center;
 }
 @media screen and (max-width: 768px) {
-
   .add-order-button,
-.cancel-order-button {
+  .cancel-order-button { 
+    width: 100%;
+
+  }
+.add-order-button-trade{ 
+  margin-top: 20px;
+  /* opcional */
   background-color: #32373f;
   border: none;
   color: white;
@@ -261,18 +268,41 @@ select:focus {
   display: inline-block;
   font-size: 16px;
   cursor: pointer;
-  border-radius: 0.375rem;
-  width: 100%;
+  margin: 13px; 
+  border-radius: 0.375rem; 
+  /* width: 110px;  */
   text-align: center;
-  margin: 0;
-  
-}
+   width: 46px; 
+  position: fixed;
+  bottom: 150px;
+  right: 0;
+  border-radius: 22px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.52);
+  transition: box-shadow 0.3s ease-in-out; 
+  z-index: 200; 
+ 
 }
 
+.add-order-button-trade:hover,
+.add-order-button-trade:focus{
+  background-color: rgb(117, 111, 111);
+  text-decoration: none;
+  cursor: pointer;
+  color: white;
+}
+#open-modal-button::after {
+  content: "" !important;
+}
 
+}
+#open-modal-button::after {
+  content: "Agregar Imagenes"; 
+}
 
 .add-order-button:hover,
 .add-order-button:focus,
+.add-order-button-trade:hover,
+.add-order-button-trade:focus,
 .cancel-order-button:hover,
 .cancel-order-button:focus {
   background-color: rgb(117, 111, 111);
@@ -280,6 +310,8 @@ select:focus {
   cursor: pointer;
   color: white;
 }
+
+
 
 /* Estilos para el botón de cerrar */
 .close {
@@ -416,14 +448,18 @@ th, td {
 
 }
   /* Estilos para pantallas con resolución menor o igual a 860px */
-  @media (max-width: 860px) {
+  @media screen and (max-width: 768px) {
     .card-body {
         flex-direction: column; /* Cambia la dirección del flujo de los elementos a vertical */
         overflow-y: auto;
         position: relative;
+        padding: 1px;
     }
     .account-type {
         margin-bottom: 10px; /* Agrega un margen inferior a los contenedores de los botones */
+    }
+    .card-title {
+      text-align: center;
     }
 }
 #choose-create-account {
@@ -457,15 +493,15 @@ input[type="file"]:not(:valid) + img {
   max-width: fit-content;
 }
 
-#grid-container-cuentas #capital_riesgo,
-#grid-container-cuentas #n_operaciones {
+.readonly-input input {
   outline: none;
   box-shadow: 0px 0px 0px #fff;
   background-color: #eaeaea;
   border: 1px solid #d8d8d8;
   font-weight: 500 !important;
   cursor: default;
-  }  
+  } 
+    
 #grid-container-cuentas #n_login {
   border: none;
 }
@@ -585,6 +621,11 @@ input[type="file"]:not(:valid) + img {
   border-color: white;
   color:   #000000ad;
 }
+@media screen and (max-width: 768px) {
+.edit{
+  display: none;
+}
+}
 
 .card-title {
   font-weight: bold;
@@ -666,23 +707,6 @@ input[type="file"]:not(:valid) + img {
   height: auto;
 }
 
-#open-modal-button {
-  display: inline-block;
-  background-color: #32373f;
-  color: #fff;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: 77%;
-}
-
-#open-modal-button:hover {
-  background-color: rgb(117, 111, 111);
-}
 
 .pulse {
   animation: pulse 1.2s infinite;
@@ -1081,8 +1105,7 @@ textarea {
 
 .content {
   margin-left: 75px;
-  padding: 20px;
-  top: 11px;
+  padding: 20px; 
   position: relative;
 }
 
@@ -1091,8 +1114,7 @@ textarea {
   .content {
     margin: 0px;
     padding: 0px;
-    display: revert;
-    top: 21px;
+    display: revert;  
   }
 }
 
@@ -1173,6 +1195,11 @@ background-color:#e69946;
   left: 0;
   z-index: 100;
 }
+@media screen and (max-width: 768px) {
+.menu {
+    top: 43px;
+  }
+}
 
 .menu ul:hover { 
   background: #e3b98e;
@@ -1220,4 +1247,12 @@ background-color:#e69946;
 
 .input-group .input-group-append .help-button:hover i {
   color: #555;
+}
+
+.estiloUno {
+  background-color: #eaeaea;
+}
+
+.estiloDos {
+  background-color: white;
 }

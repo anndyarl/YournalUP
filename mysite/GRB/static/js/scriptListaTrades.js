@@ -38,4 +38,26 @@ swap.addEventListener('blur', enviarFormulario);
     swapInput.value = value;
   });
   
- 
+
+
+var lastScrollTop = 0;
+var openModalButton = document.getElementById("open-modal-button");
+
+function handleScroll() {
+  var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+  if (scrollTop > lastScrollTop) {
+    // Deslizar hacia abajo
+    openModalButton.classList.remove("hide");
+  } else {
+    // Deslizar hacia arriba
+    openModalButton.classList.add("hide");
+  }
+
+  lastScrollTop = scrollTop;
+}
+
+window.addEventListener("scroll", handleScroll);
+window.addEventListener("touchmove", handleScroll);
+
+

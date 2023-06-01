@@ -8,12 +8,16 @@ let operacionesRestantesInput = document.getElementById('operaciones_restantes')
 let capitalActualInput = document.getElementById('capital_actual');
 let nivelRiesgoInput = document.getElementById('nivel_riesgo');
 let nloginInput = document.getElementById('n_login');
-//Calcular Riesgo
+
+// Calcular Riesgo
+
 // Agregamos un eventListener al evento input en ambos input para que se calcule el resultado en tiempo real
 cuentaInput.addEventListener('input', calculateResultRiesgo);
 nOperacionesInput.addEventListener('input', calculateResultRiesgo);
+riesgoPorOperacionInput.addEventListener('input', calculateResultRiesgo);
 nloginInput.addEventListener('input', calculateResultRiesgo);
 
+//Calcular Riesgo
 function calculateResultRiesgo() {
   cuentaInput.value = cuentaInput.value.replace(/[^\d.-]/g, '');
   nloginInput.value = nloginInput.value.replace(/[^\d.-]/g, '');
@@ -28,6 +32,7 @@ function calculateResultRiesgo() {
   }
   let capitalRiesgo = cuenta / nOperaciones ;
   capitalRiesgoInput.value = capitalRiesgo.toFixed(2); // Redondeamos el resultado a dos decimales y lo mostramos en el tercer input
+  //sacar porcentaje de riesgo 
 }
 //Fin Calcular Riesgo
 
@@ -67,13 +72,14 @@ function seleccionarRiesgo() {
 }
 //Fin Seleccionar Riesgo
 
-//Calcular  operaciones maximas a utilizar 
-// Agregamos un eventListener al evento input en ambos input para que se calcule el resultado en tiempo real
-cuentaInput.addEventListener('input', calculateOperacionesRestantes);
-riesgoPorOperacionInput.addEventListener('input', calculateOperacionesRestantes);
-capitalRiesgoInput.addEventListener('input', calculateOperacionesRestantes);
 
-function calculateOperacionesRestantes() {
+//Calcular número de operaciones recomendadas 
+// Agregamos un eventListener al evento input en ambos input para que se calcule el resultado en tiempo real
+cuentaInput.addEventListener('input', calculateNoperaciones);
+riesgoPorOperacionInput.addEventListener('input', calculateNoperaciones);
+capitalRiesgoInput.addEventListener('input', calculateNoperaciones);
+
+function calculateNoperaciones() {
   let cuenta = parseFloat(cuentaInput.value);
   let capitalRiesgo = parseFloat(capitalRiesgoInput.value);
 
@@ -81,78 +87,13 @@ function calculateOperacionesRestantes() {
 
     // Validamos si existen datos dentro del input
     if (nOperaciones == 0 || isNaN(nOperaciones)) {
-      operacionesRestantesInput.value = "";     
+      nOperacionesInput.value = "";        
       return;
     }
   nOperacionesInput.value = nOperaciones.toFixed(); // Redondeamos el resultado a dos decimales y lo mostramos en el tercer input
-  operacionesRestantesInput.value = nOperaciones.toFixed(); 
+ 
 }
 //Fin Calcular  operaciones maximas a utilizar 
-
-//Seleccionar capital actual 
-// Agregamos un eventListener al evento input en ambos input para que se calcule el resultado en tiempo real
-cuentaInput.addEventListener('input', seleccionarCuenta);
-
-function seleccionarCuenta() {
-  let cuenta = parseFloat(cuentaInput.value); 
-  let capitalActual = 0;
-// Validamos selección de riesgo
-switch (cuenta) {
-  case 200000:
-  case 100000:
-  case 50000:
-  case 40000:
-  case 25000:
-  case 10000:  
-  capitalActual =  cuenta;
-    break;
-  default:
-    capitalActualInput.value = cuenta;
-    nOperacionesInput.value = "";
-    return;
-}
-
-capitalActualInput.value = capitalActual.toFixed();
-
-}
-//Fin Seleccionar capital actual 
-
-//Seleccionar Nivel de riesgo 
-riesgoPorOperacionInput.addEventListener('input', seleccionarNivelDeRiesgo);
-
-function seleccionarNivelDeRiesgo() {
-  const riesgoPorOperacion = parseFloat(riesgoPorOperacionInput.value);
-  let nivelRiesgo = "";
-
-  switch (riesgoPorOperacion) {
-    case 2:
-      nivelRiesgo = "Muy Riesgoso";
-      break;
-    case 1:
-      nivelRiesgo = "Riesgoso";
-      break;
-    case 0.5:
-      nivelRiesgo = "Optimo";
-      break;
-    case 0.4:
-      nivelRiesgo = "Moderado";
-      break;
-    case 0.3:
-      nivelRiesgo = "Muy Mamón";
-      break;
-    case 0.2:
-      nivelRiesgo = "Mamonisimo";
-      break;
-    case 0.1:
-      nivelRiesgo = "Ultra Mamón";
-      break;
-    default:
-      nivelRiesgo = "";
-      break;
-  }
-
-  nivelRiesgoInput.value = nivelRiesgo;
-}
 
 
 $(document).ready(function() {
@@ -187,3 +128,10 @@ document.addEventListener('DOMContentLoaded', function() {
     otroBrokerField.style.display = 'none';
   }
 });
+
+var elemento = document.getElementById("n_operaciones");
+if (id_tipo_cuenta == 1) {
+  elemento.classList.add("estiloUno");
+} else {
+  elemento.classList.add("estiloDos");
+}

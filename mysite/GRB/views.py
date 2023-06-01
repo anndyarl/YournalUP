@@ -115,17 +115,18 @@ def lista_trades_de_cuentas(request, id_cuenta):
     Vista para la página "lista_cuentas_id".
     """
     if not request.user.is_authenticated:
-        return redirect("login")
+        return redirect("login")    
     request.session["id_cuenta"] = id_cuenta
     cuenta = CUENTAS.objects.get(id_cuenta=id_cuenta)
     cuentas = CUENTAS.objects.all()
     trades = TRADES.objects.filter(id_cuenta_id=id_cuenta)
     user = request.user  # Obtiene el objeto de usuario autenticado
+    
 
     id_tipo_cuenta = request.session["id_tipo_cuenta"]
     formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta, instance=cuenta)
     if formulario.is_valid():
-        cuenta = formulario.save()
+        cuenta = formulario.save(commit=False)         
 
     beneficio_total = TRADES.objects.filter(id_cuenta_id=id_cuenta).aggregate(total_beneficio_real=Sum('beneficio_real'))['total_beneficio_real']
     if beneficio_total is None:
@@ -138,7 +139,7 @@ def lista_trades_de_cuentas(request, id_cuenta):
         porcentaje_beneficio_total = 0
     else:
         porcentaje_beneficio_total = round(porcentaje_beneficio_total, 2)
-
+    
     cuenta_inicial = cuenta.cuenta
     comision = cuenta.comision
     swap = cuenta.swap
@@ -148,8 +149,8 @@ def lista_trades_de_cuentas(request, id_cuenta):
     if beneficio_total is not None:
         capital_actual += beneficio_total
 
-    if porcentaje_beneficio_total is not None:
-        capital_actual += porcentaje_beneficio_total  
+    # if porcentaje_beneficio_total is not None:
+    #     capital_actual += porcentaje_beneficio_total  
 
     if comision is not None:
         capital_actual += comision
@@ -159,7 +160,22 @@ def lista_trades_de_cuentas(request, id_cuenta):
 
     if isinstance(user, User):  # Check if user is your custom User model
         cuenta.user = user
-    cuenta.capital_actual = cuenta_inicial + capital_actual    
+    cuenta.capital_actual = cuenta_inicial + capital_actual  
+    cuenta.id_tipo_cuenta_id = id_tipo_cuenta
+    if 0 < cuenta.riesgo_operacion < 1:
+                    cuenta.nivel_riesgo = "Muy Conservador"
+    elif cuenta.riesgo_operacion == 1:
+                    cuenta.nivel_riesgo = "Optimo"
+    elif 1 < cuenta.riesgo_operacion < 1.5:
+                    cuenta.nivel_riesgo = "Bueno"
+    elif 1.5 <= cuenta.riesgo_operacion <= 2:
+                    cuenta.nivel_riesgo = "Moderado"
+    elif 2 < cuenta.riesgo_operacion < 3:
+                    cuenta.nivel_riesgo = "Riesgoso"
+    elif cuenta.riesgo_operacion >= 3:
+                    cuenta.nivel_riesgo = "Muy Riesgoso"
+    else:
+                    cuenta.nivel_riesgo = "N/A"
     cuenta.save()
     
     n_registros = trades.filter(
@@ -183,6 +199,8 @@ def lista_trades_de_cuentas(request, id_cuenta):
         }
     else:
         cuenta.operaciones_restantes = o_restantes
+        nivel_riesgo = cuenta.nivel_riesgo
+        
         cuenta.save()
         context = {
             "cuentas": cuentas,
@@ -193,67 +211,72 @@ def lista_trades_de_cuentas(request, id_cuenta):
             "capital_actual": capital_actual,
             "formulario": formulario,
             "id_cuenta": id_cuenta,
+            "nivel_riesgo": nivel_riesgo,
         }
 
     return render(request, "cuentas/trades/index.html", context)
 
 @csrf_protect
 def crear_cuentas(request, id_tipo_cuenta):
-    """
-    Vista para la página "crear_cuentas".
-    """
     if not request.user.is_authenticated:
         return redirect("login")
     
     error_message = ""
     cuentas = CUENTAS.objects.all()
-    user = request.user  # Obtiene el objeto de usuario autenticado
-
+    user = request.user    
     try:
-        request.session["id_tipo_cuenta"] = id_tipo_cuenta
-        if id_tipo_cuenta == 1:
-            formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta, initial={'user': user})
-            if request.method == "POST":
-                if formulario.is_valid():
-                    cuenta = formulario.save(commit=False)
-                    cuenta.id_tipo_cuenta_id = request.session["id_tipo_cuenta"]
-                    cuenta.cuenta_seleccionada = formulario.cleaned_data.get("cuenta_seleccionada")                  
-                    if isinstance(user, User):  # Check if user is your custom User model
-                        cuenta.user = user
-                    cuenta.save()
+        formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta, initial={'user': user})
+      
+        if request.method == "POST" and formulario.is_valid():
+            
+            cuenta = formulario.save(commit=False)
+            cuenta.id_tipo_cuenta_id = id_tipo_cuenta
+            cuenta.riesgo_operacion = float(formulario.cleaned_data.get("riesgo_operacion"))
+            cuenta.n_operaciones = formulario.cleaned_data.get("n_operaciones")
+            
+            try:                
+                if id_tipo_cuenta == 1:
+                    cuenta.cuenta_seleccionada = formulario.cleaned_data.get("cuenta")
+                    cuenta.capital_actual = cuenta.cuenta_seleccionada
+                elif id_tipo_cuenta == 2:
+                    cuenta.cuenta_ingresada = formulario.cleaned_data.get("cuenta")
+                    cuenta.capital_actual = cuenta.cuenta_ingresada
 
-                    url = reverse("lista_cuentas", args=[id_tipo_cuenta])
-                    return redirect(url)
+                cuenta.operaciones_restantes = cuenta.n_operaciones
+
+                if 0 < cuenta.riesgo_operacion < 1:
+                    cuenta.nivel_riesgo = "Muy Conservador"
+                elif cuenta.riesgo_operacion == 1:
+                    cuenta.nivel_riesgo = "Optimo"
+                elif 1 < cuenta.riesgo_operacion < 1.5:
+                    cuenta.nivel_riesgo = "Bueno"
+                elif 1.5 <= cuenta.riesgo_operacion <= 2:
+                    cuenta.nivel_riesgo = "Moderado"
+                elif 2 < cuenta.riesgo_operacion < 3:
+                    cuenta.nivel_riesgo = "Riesgoso"
+                elif cuenta.riesgo_operacion >= 3:
+                    cuenta.nivel_riesgo = "Muy Riesgoso"
                 else:
-                    error_message = "Los datos ingresados no son válidos."
-                    if formulario.errors:
-                        print(formulario.errors)
-        elif id_tipo_cuenta == 2:
-            formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta)
-            if request.method == "POST":
-                if formulario.is_valid():
-                    cuenta = formulario.save(commit=False)
-                    cuenta.id_tipo_cuenta_id = request.session["id_tipo_cuenta"]
-                    cuenta.cuenta_ingresada = formulario.cleaned_data.get("cuenta_ingresada")               
-                    if isinstance(user, User):
-                        cuenta.user = user
-                    cuenta.save()
+                    cuenta.nivel_riesgo = "N/A"
+                  # Asignar el valor a la variable nivel_riesgo
+               
+               
+                if isinstance(user, User):
+                    cuenta.user = user
 
-                    url = reverse("lista_cuentas", args=[id_tipo_cuenta])
-                    return redirect(url)
-                else:
-                    error_message = "Los datos ingresados no son válidos."
-                    if formulario.errors:
-                        print(formulario.errors)
-        else:
-            return HttpResponseBadRequest("Invalid id_tipo_cuenta")
+                cuenta.save()
+                url = reverse("lista_cuentas", args=[id_tipo_cuenta])
+                return redirect(url)
 
+            except Exception as e:
+                error_message = "Ocurrió un error al procesar los datos del formulario: {}".format(str(e))
+      
         context = {
             "cuentas": cuentas,
             "formulario": formulario,
             "id_tipo_cuenta": id_tipo_cuenta,
             "error_message": error_message,
-            "user_value": str(user),  # Agrega el valor de user como una cadena
+            "user_value": str(user),          
         }
         return render(request, "cuentas/crear_cuentas.html", context)
     except Exception as e:
@@ -263,10 +286,9 @@ def crear_cuentas(request, id_tipo_cuenta):
             "formulario": None,
             "id_tipo_cuenta": id_tipo_cuenta,
             "error_message": error_message,
-            "user_value": str(user),  # Agrega el valor de user como una cadena
+            "user_value": str(user),
         }
         return render(request, "cuentas/crear_cuentas.html", context)
-
 
 # def editar_cuentas(request, id_cuenta):
 #     """

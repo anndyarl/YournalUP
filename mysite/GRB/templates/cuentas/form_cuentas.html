@@ -2,11 +2,16 @@
 
 <form enctype="multipart/form-data" method="post" id="myModal">
    {% csrf_token %}
-   {% if error_message %}
-   <div class="alert alert-danger" role="alert">
-     {{ error_message }}
-   </div>
-   {% endif %}   
+   {% if formulario.errors %}
+   <ul>
+     {% for campo, errores in formulario.errors.items %}
+       {% for error in errores %}
+         <li>{{ campo }}: {{ error }}</li>
+       {% endfor %}
+     {% endfor %}
+   </ul>
+ {% endif %}
+ {{error_message}}
    <div class="container" id="grid-container-cuentas"> 
     <div class="mb-3">
       <label for="broker" class="form-label">Selecciona una empresa:</label>
@@ -28,7 +33,7 @@
     
    
 <div class="mb-3">
-  <label for="n_login" class="form-label">Número de Login:</label>
+  <label for="n_login" class="form-label">Login:</label>
   <div class="input-group">
     <input type="text" id="n_login" class="form-control" name="n_login" value="{{ formulario.n_login.value | default:'' }}">
     <div class="input-group-append">
@@ -81,6 +86,8 @@
         {% endif %}
       {% endif %}
     </div>
+
+    {% if id_tipo_cuenta == 1 %}
        <div class="mb-3">
          <label for="riesgo_operacion" class="form-label">Seleccione riesgo:</label>
          <select id="riesgo_operacion" class="form-control" name="riesgo_operacion">
@@ -93,27 +100,52 @@
             {% endfor %}
           </select>        
         </div> 
-        <div class="mb-3">
+        <div class="mb-3 readonly-input">
          <label for="capital_riesgo" class="form-label">Capital riesgo:</label>
          <input type="text" id="capital_riesgo" readonly class="form-control" name="capital_riesgo" value="{{ formulario.capital_riesgo.value | default:'' }}">
        </div>  
-       <div class="mb-3">
-         <label for="n_operaciones" class="form-label">Número de Operaciones:</label>
+       <div class="mb-3 readonly-input">
+         <label for="n_operaciones" class="form-label">Operaciones recomendadas:</label>
          <input type="text" id="n_operaciones" readonly class="form-control" name="n_operaciones" value="{{ formulario.n_operaciones.value | default:'' }}">
-       </div>    
+       </div>  
+
+       {% elif id_tipo_cuenta == 2 %}
        <div class="mb-3">
-         <label for="operaciones_restantes" class="form-label visually-hidden">Operaciones Restantes:</label>
-         <input type="text" id="operaciones_restantes" readonly class="form-control visually-hidden" name="operaciones_restantes"  value="{{ formulario.operaciones_restantes.value | default:'' }}">
-       </div>    
-       <div class="mb-3">
-         <label for="nivel_riesgo"  class="form-label visually-hidden" >Nivel de Riesgo:</label>
-         <input type="text" id="nivel_riesgo" readonly class="form-control visually-hidden" name="nivel_riesgo" value="{{ formulario.nivel_riesgo.value | default:'' }}">
-       </div>
-       <div class="mb-3">
-         <label for="capital_actual"  class="form-label visually-hidden" >Capital Actual:</label>
-         <input type="text" id="capital_actual" readonly class="form-control visually-hidden" name="capital_actual"  value="{{ formulario.capital_actual.value | default:'' }}">
-       </div>
-       <div class="mb-3">
+        <label for="n_operaciones" class="form-label">Ingresa una cantidad de operaciones:</label>
+        <input type="text" id="n_operaciones" class="form-control" name="n_operaciones" value="{{ formulario.n_operaciones.value | default:'' }}">
+      </div> 
+      <div class="mb-3 readonly-input">
+        <label for="riesgo_operacion" class="form-label">Porcentaje de riesgo:</label>
+      {% if formulario.riesgo_operacion_ingresada.errors %}
+      <input type="text" readonly id="riesgo_operacion" class="form-control is-invalid" name="riesgo_operacion" value="{{ formulario.riesgo_operacion.value | default:'' }}">
+      <div class="invalid-feedback">
+          {% for error in formulario.riesgo_operacion_ingresada.errors %}
+          {{ error }}
+          {% endfor %}
+      </div>
+   
+  {% else %}
+      <input type="text" readonly id="riesgo_operacion" class="form-control" name="riesgo_operacion" value="{{ formulario.riesgo_operacion.value | default:'' }}">
+  {% endif %}  
+</div> 
+       <div class="mb-3 readonly-input">
+        <label for="capital_riesgo" class="form-label">Capital riesgo:</label>
+        <input type="text" readonly id="capital_riesgo"  class="form-control" name="capital_riesgo" value="{{ formulario.capital_riesgo.value | default:'' }}">
+      </div>  
+       {% endif %}
+       {% comment %} <div class="mb-3">
+         <label for="operaciones_restantes" >Operaciones Restantes:</label>
+         <input type="text" id="operaciones_restantes"   name="operaciones_restantes"  value="{{ formulario.operaciones_restantes.value | default:'' }}">
+       </div>     {% endcomment %}
+       {% comment %} <div class="mb-3">
+         <label for="nivel_riesgo"   >Nivel de Riesgo:</label>
+         <input type="text" id="nivel_riesgo"   name="nivel_riesgo" value="{{ formulario.nivel_riesgo.value | default:'' }}">
+       </div> {% endcomment %}
+       {% comment %} <div class="mb-3">
+         <label for="capital_actual"   >Capital Actual:</label>
+         <input type="text" id="capital_actual"   name="capital_actual"  value="{{ formulario.capital_actual.value | default:'' }}">
+       </div> {% endcomment %}
+       {% comment %} <div class="mb-3">
          <label for="id_tipo_cuenta" class="form-label visually-hidden">Tipo de Cuenta:</label>
        <select id="id_tipo_cuenta" readonly class="form-control visually-hidden" name="id_tipo_cuenta" >
             {% for choice in formulario.id_tipo_cuenta.field.choices %}
@@ -122,7 +154,7 @@
                 {% endif %}
             {% endfor %}
           </select>
-       </div>
+       </div> {% endcomment %}
 
 </div>
 <div class="center-button">
@@ -130,5 +162,10 @@
   <a name="" id="" class="cancel-order-button"  href="{% url 'lista_cuentas' request.session.id_tipo_cuenta  %}" role="button">Cancelar</a>   
 </div>
 
-  <script src="{% static 'js/scriptCuentas.js' %}"></script>
+      {% if id_tipo_cuenta == 1 %}
+      <script src="{% static 'js/scriptCuentas.js' %}"></script>
+      {% else %}
+      <script src="{% static 'js/scriptCuentas_Personal.js' %}"></script>
+      {% endif %}
+  
 </form>
