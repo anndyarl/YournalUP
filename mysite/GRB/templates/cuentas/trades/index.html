@@ -13,7 +13,7 @@
   {% if exist_row > 0 %}
   <div class="card">
     <div class="card-header">   
-      <a name="" id="myBtn" class="add-order-button-trade" href="{% url 'crear' %}">
+      <a id="open-modal-button" class="add-order-button" href="{% url 'crear' %}">
         <i class="fas fa-plus"></i> 
       </a>      
     </div>      
@@ -21,7 +21,7 @@
   <div class="card-body">
     {% comment %} <div class="card-table"> {% endcomment %}
     <h4 class="card-title">Mis trades</h4>     
-        <div class="table-responsive">
+      
           <div class="tabla-scroll">
             <table class="table table-hover" >
               <thead>
@@ -88,7 +88,7 @@
               </tbody>
             </table>
           </div>
-        </div>     
+         
     </div>
   </div>
   {% else %}

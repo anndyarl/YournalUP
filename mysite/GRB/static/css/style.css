@@ -245,7 +245,7 @@ select:focus {
   display: inline-block;
   font-size: 16px;
   cursor: pointer;
-  margin: 10px; 
+  margin: 0;
   border-radius: 0.375rem; 
   /* width: 70%;  */
   text-align: center;
@@ -264,7 +264,8 @@ select:focus {
   color: white;
   padding: 10px;
   text-decoration: none;
-  display: inline-block;
+  display: none; /* Oculta inicialmente el botón */
+  position: fixed;
   font-size: 16px;
   cursor: pointer;
   margin: 13px; 
@@ -273,13 +274,33 @@ select:focus {
   text-align: center;
    width: 46px; 
   position: fixed;
-  bottom: 150px;
-  right: 0;
+  bottom: 93px;
+  left: 0;
   border-radius: 22px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.52);
-  transition: box-shadow 0.3s ease-in-out; 
+  transition: transform 0.3s ease-in-out; /* Agrega una transición */animation: bounce 1s infinite; /* Agrega la animación de rebote */
   z-index: 200; 
  
+}
+.add-order-button-trade.show {
+  display: block; /* Muestra el botón */
+ 
+}
+.add-order-button-trade.show {
+  display: block; /* Muestra el botón */
+  animation: bounce 1s forwards; /* Agrega la animación de rebote */
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0); /* Define la posición inicial y final sin cambios */
+  }
+  40% {
+    transform: translateY(-10px); /* Define la posición a mitad del rebote */
+  }
+  60% {
+    transform: translateY(-5px); /* Define la posición en el otro extremo del rebote */
+  }
 }
 
 .add-order-button-trade:hover,
@@ -316,7 +337,6 @@ select:focus {
 .close {
   color: #aaa;
   float: right;
-  font-size: 28px;
   font-weight: bold;
   
 }
@@ -358,9 +378,15 @@ div.tabla-scroll {
   -webkit-overflow-scrolling: touch; /* Agrega esta propiedad para un desplazamiento suave en dispositivos iOS */
   scroll-behavior: smooth; /* Agrega esta propiedad para un desplazamiento suave en dispositivos compatibles */
 }
-div.tabla-scroll table {
-  max-width: 100%; /* Ancho máximo de la tabla */
+@media screen and (max-width: 768px) {
+  div.tabla-scroll {
+    max-height: 249px;   
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; 
+  }
+ 
 }
+
 .table-hover tbody tr:hover {
   background-color: #e69946; /* Cambia el color a tu preferencia */
   

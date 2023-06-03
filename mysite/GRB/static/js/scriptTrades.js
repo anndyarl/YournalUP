@@ -427,4 +427,26 @@ window.onscroll = function() {
 //   }
 // });
 
+// Obtén el botón
+var myBtn = document.getElementById("open-modal-button");
 
+// Obtén la posición actual del scroll
+var prevScrollpos = window.pageYOffset;
+
+// Función para manejar el evento de scroll
+window.onscroll = function() {
+  // Obtén la posición actual del scroll
+  var currentScrollPos = window.pageYOffset;
+
+  // Verifica si el scroll se está moviendo hacia arriba
+  if (prevScrollpos > currentScrollPos) {
+    // Muestra el botón y agrega la clase 'show' para aplicar el estilo de transición
+    myBtn.classList.add("show");
+  } else {
+    // Oculta el botón y remueve la clase 'show'
+    myBtn.classList.remove("show");
+  }
+
+  // Guarda la posición actual del scroll para la próxima iteración
+  prevScrollpos = currentScrollPos;
+};
