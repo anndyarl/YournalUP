@@ -13,8 +13,7 @@ urlpatterns = [
     path('', views.custom_login, name='login'),   
     path('cuentas/logout/', views.logout_view, name='logout'),
     path('register/', register_view, name='register'),
-    path('cuentas/seleccionar_cuenta', views.seleccionar_cuenta, name='seleccionar_cuenta'),
-
+    path('cuentas/seleccionar_cuenta', views.seleccionar_cuenta, name='seleccionar_cuenta'),  
     path('cuentas/<int:id_tipo_cuenta>/', views.lista_cuentas, name='lista_cuentas'),
     path('cuentas/<int:id_tipo_cuenta>/crear_cuentas', views.crear_cuentas, name='crear_cuentas'),
     path('cuentas/<int:id_cuenta>/trades/', views.lista_trades_de_cuentas, name='lista_trades_de_cuentas'), # views.lista_trades_de_cuentas se va a buscar la clase en views.py y name='lista_trades_de_cuentas' se utiliza para el redireccionamiento en los html con href

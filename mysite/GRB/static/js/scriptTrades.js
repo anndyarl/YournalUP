@@ -288,32 +288,6 @@ function expandImage(img) {
 }
 
 
-$(document).ready(function () {
-  $("#open-modal-button").click(function () { 
-    event.preventDefault();   
-    $("#nuevocontainer").addClass("show");
-    $("#nuevocontainer").addClass("modal-open");
-    $("#nuevocontainer").css("display", "block");
-  
-  });
-
-  $(".close").click(function () {
-    $("#nuevocontainer").removeClass("show");
-    $("#nuevocontainer").removeClass("modal-open");
-    $("#nuevocontainer").css("display", "none");
-  });
-
-  $("#expand-modal-button").click(function () {
-    $(".modal-dialog").toggleClass("expanded");
-  });
-});
-
-$("#nuevocontainer").click(function(event) {
-  if (event.target.id === "nuevocontainer") {
-    $("#nuevocontainer").hide();
-  }
-});
-
  // Configuración del calendario
  $( function() {
   $( "#fecha" ).datepicker({
@@ -338,8 +312,8 @@ $(document).ready(function () {
     modalBodyAdd.slideToggle(50, function() {
       toggleButton.html(modalBodyAdd.hasClass("show") ? '<i class="fas fa-plus"></i>' : '<i class="fas fa-minus"></i>');
       modalBodyAdd.toggleClass("show");
-      $('#nuevocontainer').animate({
-        scrollTop: $('#nuevocontainer')[0].scrollHeight
+      $('.modal-container').animate({
+        scrollTop: $('.modal-container')[0].scrollHeight
       }, 500);
     });
   });
@@ -367,86 +341,30 @@ $('.update-button').click(function () {
 });
 
 
+document.addEventListener('DOMContentLoaded', function() {
+  var toggleButton = document.getElementById('open-modal-button');
+  var modalContainer = document.querySelector('.modal-container');
+  var closeButton = modalContainer.querySelector('.close');
+  var expandModalButton = document.getElementById('expand-modal-button');
+  var gridContainerMaster = document.querySelector('.grid-container-master');
+  var gridContainer = document.querySelector('.grid-container');
 
+  toggleButton.addEventListener('click', function() {
+    modalContainer.classList.add('show');
+  });
 
-// Obtener el botón "Volver arriba"
-var mybutton = document.getElementById("back-to-top-button");
+  closeButton.addEventListener('click', function() {
+    modalContainer.classList.remove('show');
+  });
 
-// Cuando el usuario hace scroll hacia abajo desde la parte superior de la página, mostrar el botón
-window.onscroll = function() {
-  event.preventDefault(); 
-  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-    mybutton.style.display = "block";
-  } else {
-    mybutton.style.display = "none";
-  }
-}
-
-// // Cuando el usuario hace clic en el botón, volver arriba de manera suave
-// mybutton.addEventListener("click", function() {
-//   event.preventDefault(); 
-//   // Obtenemos el elemento con clase "modal-content"
-//   var modalContent = document.querySelector(".modal-body");
-  
-//   // Obtenemos la posición del elemento
-//   var modalContentPosition = modalContent.getBoundingClientRect().top;
-  
-//   // Animamos el scroll hacia la posición del elemento
-//   window.scrollBy({
-//     top: modalContentPosition,
-//     left: 0,
-//     behavior: 'smooth'
-//   });
-// });
-
-// var lastScrollTop = 0;
-// var openModalButton = document.getElementById("open-modal-button");
-
-// function handleScroll() {
-//   var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-//   if (scrollTop > lastScrollTop) {
-//     // Deslizar hacia abajo
-//     openModalButton.classList.remove("hide");
-//   } else {
-//     // Deslizar hacia arriba
-//     openModalButton.classList.add("hide");
-//   }
-
-//   lastScrollTop = scrollTop;
-// }
-
-// window.addEventListener("scroll", handleScroll);
-// window.addEventListener("touchmove", handleScroll);
-
-
-// document.getElementById("accept-button").addEventListener("click", function() {
-//   var confirmation = confirm("¿Deseas permanecer en esta página?");
-//   if (!confirmation) {
-//     document.getElementById("cancel-link").removeAttribute("href");
-//   }
-// });
-
-// Obtén el botón
-var myBtn = document.getElementById("open-modal-button");
-
-// Obtén la posición actual del scroll
-var prevScrollpos = window.pageYOffset;
-
-// Función para manejar el evento de scroll
-window.onscroll = function() {
-  // Obtén la posición actual del scroll
-  var currentScrollPos = window.pageYOffset;
-
-  // Verifica si el scroll se está moviendo hacia arriba
-  if (prevScrollpos > currentScrollPos) {
-    // Muestra el botón y agrega la clase 'show' para aplicar el estilo de transición
-    myBtn.classList.add("show");
-  } else {
-    // Oculta el botón y remueve la clase 'show'
-    myBtn.classList.remove("show");
-  }
-
-  // Guarda la posición actual del scroll para la próxima iteración
-  prevScrollpos = currentScrollPos;
-};
+  expandModalButton.addEventListener('click', function() {
+    if (gridContainerMaster.style.gridTemplateColumns != '1fr') {    
+      gridContainerMaster.style.gridTemplateColumns = '1fr';
+      gridContainer.style.display = 'none';
+    }
+    else{
+      gridContainerMaster.style.gridTemplateColumns = 'repeat(2, 1fr)';
+      gridContainer.style.display = 'grid';
+    }
+  });  
+});

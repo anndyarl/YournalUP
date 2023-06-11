@@ -135,3 +135,7 @@ if (id_tipo_cuenta == 1) {
 } else {
   elemento.classList.add("estiloDos");
 }
+
+function goBack() {
+  window.history.back();
+}

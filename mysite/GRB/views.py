@@ -29,6 +29,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.forms import UserCreationForm
+from device_detector import DeviceDetector
 
 
 
@@ -67,6 +68,8 @@ def logout_view(request):
     logout(request)
     if not request.user.is_authenticated:
         return redirect("login")
+    
+
 @csrf_protect
 def register_view(request):
     if request.method == 'POST':
@@ -91,7 +94,7 @@ def nosotros(request):
 def seleccionar_cuenta(request):
     """
     Vista para la página "seleccionar_cuenta".
-    """
+    """     
     if not request.user.is_authenticated:
         return redirect("login")
     return render(request, "cuentas/seleccionar_cuenta.html")
@@ -214,7 +217,7 @@ def lista_trades_de_cuentas(request, id_cuenta):
             "nivel_riesgo": nivel_riesgo,
         }
 
-    return render(request, "cuentas/trades/index.html", context)
+    return render(request, "cuentas/trades/trades.html", context)
 
 @csrf_protect
 def crear_cuentas(request, id_tipo_cuenta):
@@ -223,7 +226,8 @@ def crear_cuentas(request, id_tipo_cuenta):
     
     error_message = ""
     cuentas = CUENTAS.objects.all()
-    user = request.user    
+    user = request.user   
+    request.session["id_tipo_cuenta"] = id_tipo_cuenta 
     try:
         formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta, initial={'user': user})
       
@@ -383,8 +387,7 @@ def editar(request, id):
         request.session["id"] = id
         trade = TRADES.objects.get(id=id)
         cuentas = CUENTAS.objects.all()
-        get_id_trade_images = TRADEIMAGE.objects.filter(trade_id=id)
-
+        get_id_trade_images = TRADEIMAGE.objects.filter(trade_id=id)       
         recorre_clase_image = [(trade_image.image, trade_image)
                                for trade_image in get_id_trade_images]
 

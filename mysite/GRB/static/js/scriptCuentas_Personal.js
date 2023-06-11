@@ -64,3 +64,15 @@ function calculateResultRiesgo() {
     }
   });
   
+  $(document).ready(function() {
+    // Abrir el modal al hacer clic en el botón de ayuda
+    $("#open-modal-help").click(function() {
+      $('#modalayuda').modal('show');
+    });
+  
+    // Cerrar el modal al hacer clic en el botón de cierre
+    $("#modalayuda .close").click(function() {
+      $('#modalayuda').modal('hide');
+    });
+  });
+  

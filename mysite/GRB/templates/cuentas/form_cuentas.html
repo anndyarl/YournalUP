@@ -29,37 +29,34 @@
     <div class="mb-3" id="otroBrokerField" {% if formulario.broker.value != 'Otro' %}style="display: none;"{% endif %}>
       <label for="otro_broker" class="form-label">Otro:</label>
       <input type="text" id="otro_broker" class="form-control" name="otro_broker" value="{{ formulario.otro_broker.value | default:'' }}">
-    </div>
-    
+    </div>    
    
-<div class="mb-3">
-  <label for="n_login" class="form-label">Login:</label>
-  <div class="input-group">
-    <input type="text" id="n_login" class="form-control" name="n_login" value="{{ formulario.n_login.value | default:'' }}">
-    <div class="input-group-append">
-      <button id="open-modal-help" type="button" class="help-button" data-toggle="modal" data-target="#helpModal">
-        <i class="fas fa-question-circle"></i> <!-- Reemplaza con el ícono que desees usar, por ejemplo, Font Awesome -->
-      </button>
-    </div>
-  </div>
-</div>
-<!-- Modal -->
-<!-- Modal -->
-<div id="modalayuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">
-  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-    <div class="modal-content-help">			
-      {% comment %} <div class="modal-header">        
-        <a type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <i class="fas fa-times"></i>
-        </a>
-      </div> {% endcomment %}
-      <div class="modal-body">
-        <img class="modal-image-help" src="{% static 'img/authorization.png' %}" alt="Imagen de ayuda">
+    <div class="mb-3">
+      <label for="n_login" class="form-label">Login:</label>
+      <div class="input-group">
+        <input type="text" id="n_login" class="form-control" name="n_login" value="{{ formulario.n_login.value | default:'' }}">
+        <div class="input-group-append">
+          <button id="open-modal-help" type="button" class="help-button" data-toggle="modal" data-target="#helpModal">
+            <i class="fas fa-question-circle"></i> <!-- Reemplaza con el ícono que desees usar, por ejemplo, Font Awesome -->
+          </button>
+        </div>
       </div>
-      
     </div>
-  </div>
-</div>
+    <!-- Modal -->
+    <div id="modalayuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">
+      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content-help">			
+          {% comment %} <div class="modal-header">        
+            <a type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <i class="fas fa-times"></i>
+            </a>
+          </div> {% endcomment %}
+          <div class="modal-body">
+            <img class="modal-image-help" src="{% static 'img/authorization.png' %}" alt="Imagen de ayuda">
+          </div>      
+        </div>
+      </div>
+    </div>
      <div class="mb-3">     
         {% if id_tipo_cuenta == 1 %}
           <label for="cuenta" class="form-label">Seleccione una cuenta:</label>

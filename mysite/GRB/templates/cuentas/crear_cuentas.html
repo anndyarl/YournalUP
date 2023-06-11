@@ -1,31 +1,52 @@
 {% extends "base.html" %}
 {% block titulo %} Agregar Cuenta {% endblock %}
 {% block contenido %} 
-<div class="container-cuentas">
+<div class="container-cuentas">       
+    <div class="card">          
+                <div class="col-md-12">
+                  {% if id_tipo_cuenta == 1 %}
+                  <div class="card-body">
+                    <h4 class="card-title">Gestiona tu cuenta de Fondeo que has puesto en marcha</h4> 
+                    <p class="card-text">
+                      <i class="fas fa-check"></i> Establece tu cuenta y selecciona el nivel de riesgo con el cual deseas comenzar a operar.
+                    </p> 
+                    <p class="card-text">
+                      <i class="fas fa-check"></i> Calcularemos el número de operaciones que deberás respetar para no superar la perdida máxima de tu challenge.
+                    </p>                                        
+                    <p class="card-text">
+                      <i class="fas fa-check"></i> Ten en cuenta que una vez que hayas creado una cuenta, no podrás actualizar sus características. Asegúrate de ingresar correctamente tus datos desde el principio.
+                    </p>
+                  </div>                  
+                  {% elif id_tipo_cuenta == 2 %}
+                      <div class="card-body">
+                        <h4 class="card-title">Gestiona tu cuenta personal que has puesto en marcha</h4> 
+                        <p class="card-text">
+                          <i class="fas fa-check"></i> Establece el saldo actual de tu cuenta y el número de operaciones que deseas realizar.
+                        </p> 
+                        <p class="card-text">
+                          <i class="fas fa-check"></i> Calcularemos el riesgo por ti, para que puedas comenzar a operar respetando tu plan de trading desde el principio.
+                        </p>                                        
+                        <p class="card-text">
+                          <i class="fas fa-check"></i> Ten en cuenta que una vez que hayas creado una cuenta, no podrás actualizar sus características. Asegúrate de ingresar correctamente tus datos desde el principio.
+                        </p>
+                      </div>                     
+                      {% endif %} 
+                      <div class="row no-gutters">
+                        <div class="col-md-12">
+                          <img src="https://via.placeholder.com/300x200" class="card-img" alt="Imagen de banner">
+                      </div>                   
+                </div>
+               
+            </div>
+    </div>
     <div class="card">       
-        <div class="card-body text-center">            
-            <h4 class="card-title">Completa los detalles de tu cuenta</h4>
-            <div class="mt-1">
-                {% include 'cuentas/form_cuentas.html' %} 
-            </div>
-        </div>
-    </div>    
-    <div class="card">
-            <div class="row no-gutters">
-                <div class="col-md-6">
-                    <div class="card-body">
-                        <h4 class="card-title">¿Cansado de perder cuenta tras cuenta?</h4>
-                        <p class="card-text">Con nuestra gestión de riesgos, nunca más perderás una cuenta de fondeo o personal.</p>
-                        <p class="card-text">Selecciona la cuenta que mejor se adapte a tus necesidades y comienza a operar sin preocupaciones!</p>
-                        <p class="card-text">Ten en cuenta que una vez que hayas creado una cuenta, no podrás actualizar sus características. Asegúrate de elegir la cuenta adecuada desde el principio.</p>
-         
-                    </div>
-                </div>
-                <div class="col-md-5">
-                    <img src="https://via.placeholder.com/300x600" class="card-img" alt="Imagen de banner">
-                </div>
-            </div>
-        </div>
+      <div class="card-body text-center">            
+          <h4 class="card-title">Completa los detalles de tu cuenta</h4>
+          <div class="mt-1">
+              {% include 'cuentas/form_cuentas.html' %} 
+          </div>
+      </div>
+  </div>
 </div>
 
 
