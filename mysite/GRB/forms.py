@@ -214,13 +214,16 @@ class ImageForm(forms.ModelForm):
           
     titulo = forms.CharField(required=False)
     descripcion = forms.CharField(required=False)
-
+    image = forms.ImageField(required=True)
     class Meta:
         """
         Meta class for ImageForm.
         """
         model = IMAGE
         fields = '__all__'
+        widgets = {
+            'image': forms.ClearableFileInput(attrs={'multiple': True}),
+        }
 
 
 class TradeImageForm(forms.ModelForm):

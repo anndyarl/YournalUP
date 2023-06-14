@@ -29,7 +29,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.forms import UserCreationForm
-from device_detector import DeviceDetector
 
 
 
@@ -387,7 +386,7 @@ def editar(request, id):
         request.session["id"] = id
         trade = TRADES.objects.get(id=id)
         cuentas = CUENTAS.objects.all()
-        get_id_trade_images = TRADEIMAGE.objects.filter(trade_id=id)       
+        get_id_trade_images = TRADEIMAGE.objects.filter(trade_id=id)
         recorre_clase_image = [(trade_image.image, trade_image)
                                for trade_image in get_id_trade_images]
 
@@ -395,53 +394,61 @@ def editar(request, id):
         trade_fecha_str = trade.fecha.strftime("%d/%m/%Y")
         trade.fecha = datetime.strptime(trade_fecha_str, "%d/%m/%Y").date()
 
-        if request.method == "POST":
-            formulario = TradeForm(request.POST, request.FILES, instance=trade)
-            if formulario.is_valid():
-                 # Obtener la cuenta del nuevo trade
-                id_cuenta = request.session.get('id_cuenta')
-                # Obtiene los datos que se ingresan y luego los guarda en la base de datos asociándolos al trade
-                if request.FILES:
-                    for image in request.FILES.getlist('image'):
-                        titulo = request.POST.get('titulo')
-                        descripcion = request.POST.get('descripcion')
+        formulario = TradeForm(request.POST, request.FILES, instance=trade)
+        if request.method == "POST" and formulario.is_valid():  
+                try:    
+                    # Obtener la cuenta del nuevo trade
+                    id_cuenta = request.session.get('id_cuenta')
+                    # Obtiene los datos que se ingresan y luego los guarda en la base de datos asociándolos al trade
+                    if request.FILES:
+                        for image in request.FILES.getlist('image'):
+                            titulo = request.POST.get('titulo')
+                            descripcion = request.POST.get('descripcion')
 
-                        img = IMAGE.objects.create(image=image, titulo=titulo, descripcion=descripcion)
-                        # Crear una nueva instancia de TradeImage y guardarla en la base de datos
-                        new_trade_image = TRADEIMAGE(trade=trade, image=img)
-                        new_trade_image.save()
+                            img = IMAGE.objects.create(image=image, titulo=titulo, descripcion=descripcion)
+                            # Crear una nueva instancia de TradeImage y guardarla en la base de datos
+                            new_trade_image = TRADEIMAGE(trade=trade, image=img)
+                            new_trade_image.save()
 
-                # Actualizar los títulos, descripciones y las imágenes existentes
-                for image, trade_image in recorre_clase_image:
-                    titulo = request.POST.get(f'titulo_{trade_image.id}')
-                    descripcion = request.POST.get(f'descripcion_{trade_image.id}')
-                    if request.FILES.get(f'image_{trade_image.id}'):
-                        image_file = request.FILES.get(f'image_{trade_image.id}')
-                        # Eliminar la imagen anterior
-                        default_storage.delete(trade_image.image.image.path)
-                        # Guardar la nueva imagen en el sistema de archivos
-                        image_name = f'{str(uuid.uuid4())}.{image_file.name.split(".")[-1]}'
-                        image_path = default_storage.save(image_name, image_file)
-                        trade_image.image.image = image_path
-                    trade_image.image.titulo = titulo
-                    trade_image.image.descripcion = descripcion
-                    trade_image.image.save()
+                    # Actualizar los títulos, descripciones y las imágenes existentes
+                    for image, trade_image in recorre_clase_image:
+                        titulo = request.POST.get(f'titulo_{trade_image.id}')
+                        descripcion = request.POST.get(f'descripcion_{trade_image.id}')
+                        if request.FILES.get(f'image_{trade_image.id}'):
+                            image_file = request.FILES.get(f'image_{trade_image.id}')
+                            # Eliminar la imagen anterior
+                            default_storage.delete(trade_image.image.image.path)
+                            # Guardar la nueva imagen en el sistema de archivos
+                            image_name = f'{str(uuid.uuid4())}.{image_file.name.split(".")[-1]}'
+                            image_path = default_storage.save(image_name, image_file)
+                            trade_image.image.image = image_path
+                        trade_image.image.titulo = titulo
+                        trade_image.image.descripcion = descripcion
+                        trade_image.image.save()
 
-                trade.id_cuenta_id = id_cuenta  # Asignar el id_cuenta_id al objeto trade
-                trade = formulario.save()
-                return redirect("editar", trade.id)
+                    trade.id_cuenta_id = id_cuenta  # Asignar el id_cuenta_id al objeto trade
+                    trade = formulario.save()
+                    return redirect("editar", trade.id)
+                except Exception as e:
+                     error_message = "Se produjo un error al procesar los datos del formulario: {}".format(str(e))
         else:
             formulario = TradeForm(instance=trade)
 
-        context = {"cuentas": cuentas, "formulario": formulario, "recorre_clase_image": recorre_clase_image}
+        error_message = ""
+        context = {
+            "cuentas": cuentas,
+            "formulario": formulario,
+            "recorre_clase_image": recorre_clase_image,
+            "error_message": error_message
+        }
         return render(request, "cuentas/trades/editar.html", context)
 
-    except Exception as error:
-        error_message = str(error)
-        print(error_message)
+    except Exception as e:
+        error_message = "Se produjo un error al procesar los datos del formulario: {}".format(str(e))
 
-        context = {"error_message": error_message}
-        return render(request, "cuentas/trades/editar.html", context)
+    context = {"error_message": error_message}
+    return render(request, "cuentas/trades/editar.html", context)
+
 
 
 

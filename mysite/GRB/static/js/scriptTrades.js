@@ -49,27 +49,36 @@ stoplossInput.addEventListener('input', calcularLotaje);
 const activoSelect = document.getElementById('activo');
 const activoSeleccionadoLabel = document.getElementById('activo_seleccionado');
 
-activoSelect.addEventListener('change', () => {
-  const activoSeleccionado = activoSelect.value;  
+
+activoSelect.addEventListener('change', () => { 
   lotajeInput.value = ""; // Reiniciamos el valor del input de lotaje al seleccionar un nuevo activo
   stoplossInput.value = "";
   takeprofitInput.value = "";
   ratioInput.value = "";
   BeneficioEsperadoInput.value = "";
   utilidadProyectadaInput.value = "";
+
+  // if(activoSelect.value === '' ){
+  //   stoploss.disabled = true; // Deshabilitar el campo
+  //   takeprofit.disabled = true; 
+  // }
+  // else{
+  //   stoploss.disabled = false; // Deshabilitar el campo
+  //   takeprofit.disabled = false;
+  // }
+    
 });
 
 function calcularLotaje() {
   const capitalRiesgo = parseFloat(capitalRiesgoInput.value);
   const stoploss = parseFloat(stoplossInput.value);
-
-  // Validamos si existen datos dentro del input
-  if (stoploss === 0 || isNaN(stoploss)) {
+  
+   // Validamos si existen datos dentro del input
+   if (stoploss === 0 || isNaN(stoploss)) {
     lotajeInput.value = "";
     takeprofitInput.value = "";
     return;
   }
-
   const activoSeleccionado = activoSelect.value;
 
   fetch(FULL_URL)
@@ -367,4 +376,19 @@ document.addEventListener('DOMContentLoaded', function() {
       gridContainer.style.display = 'grid';
     }
   });  
+});
+
+// var textarea = document.getElementById('content');
+
+// textarea.addEventListener('input', function() {
+//   this.style.height = 'auto';
+//   this.style.height = this.scrollHeight + 'px';
+// });
+
+var textareaId = "id_descripcion_" + trade_image.id;
+var textarea = document.getElementById(textareaId);
+
+textarea.addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = this.scrollHeight + 'px';
 });

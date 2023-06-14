@@ -99,24 +99,36 @@
   {% endif %}
 
 </div>
-
+  <div class="background-button-commission">
+<a id="open-modal-button-commission" class="add-button-commission"><i class="fas fa-fw fa-angle-double-up"></i></a>
+  </div>
 {% if lista_trades_de_cuentas %}
     {% if beneficio_total %}
-        <div class="card-footer">
-        <form id="myForm" enctype="multipart/form-data" method="post">
-          <div class="benefits-container"> 
-              {% csrf_token %}     
-                  <label for="beneficio_total" id="beneficio_total" class="form-label">Beneficios</label>            
-                  <input type="text" readonly class="form-control" id="beneficio_total" name="beneficio_total" value="$ {{ beneficio_total | default:'' }}"> 
-                  <label for="porcentaje_beneficio_total" id="porcentaje_beneficio_total" class="form-label">Utilidad</label>            
-                  <input type="text" readonly class="form-control" id="porcentaje_beneficio_total" name="porcentaje_beneficio_total" value="{{ porcentaje_beneficio_total | default:'' }} %">         
-                  <label for="comision" class="form-label">Comisión</label>           
-                  <input type="text" class="form-control" id="comision"  name="comision" placeholder="-" value="{{ formulario.comision.value | default:''}}">             
-                  <label for="swap" class="form-label">Swap</label>
-                  <input type="text" class="form-control" id="swap" name="swap" placeholder="-" value="{{ formulario.swap.value | default:'' }}">
-          </div>
-        </form>
-        </div>
+        <form id="myForm" enctype="multipart/form-data" method="post">    
+          {% csrf_token %}    
+          <div class="modal-container-commission container-commission-desktop">  
+            {% comment %} <h4 class="card-trade">Descuentos y Beneficios</h4>			 {% endcomment %}
+            <div class="mb-1">
+              <label for="comision" class="label-commission">Comisión</label>           
+              <input type="text" class="form-control" id="comision"  name="comision" placeholder="0.0" value="{{ formulario.comision.value | default:''}}">             
+            </div>
+            <div class="mb-1">
+              <label for="swap" class="label-commission">Swap</label>
+              <input type="text" class="form-control" id="swap" name="swap" placeholder="0.0" value="{{ formulario.swap.value | default:'' }}">    
+            </div>
+            <div class="mb-1">
+              <label for="beneficio_total"  class="label-commission">Beneficios</label>            
+              <input type="text" readonly class="form-control" id="beneficio_total" name="beneficio_total" value="$ {{ beneficio_total | default:'' }}"> 
+            </div>
+            <div class="mb-4">
+              <label for="porcentaje_beneficio_total" class="label-commission">Utilidad</label>            
+              <input type="text" readonly class="form-control" id="porcentaje_beneficio_total" name="porcentaje_beneficio_total" value="{{ porcentaje_beneficio_total | default:'' }} %">           
+            </div>
+            <div class="mb-1">
+               <button type="submit" class="add-order-button-commission"></i>Guardar</button>
+            </div>
+            </div>
+        </form>         
     {% endif %}
 {% endif %}
 <div id="loading-icon" style="display: none;">
