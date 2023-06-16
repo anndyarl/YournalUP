@@ -50,14 +50,15 @@ porcentaje_beneficio_total.disabled = true;
         toggleButton.classList.add('expand');
         toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-down"></i>';
         isExpanded = true;
-        modalContainerCommission.classList.add('show');
+        modalContainerCommission.classList.toggle('show');
       } else {
         toggleButton.classList.remove('expand');
         toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-up"></i>';
         isExpanded = false;
-        modalContainerCommission.classList.remove('show');
+        modalContainerCommission.classList.toggle('show');
       
       }
     });
   });
+  
   

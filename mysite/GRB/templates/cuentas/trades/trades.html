@@ -106,7 +106,7 @@
     {% if beneficio_total %}
         <form id="myForm" enctype="multipart/form-data" method="post">    
           {% csrf_token %}    
-          <div class="modal-container-commission container-commission-desktop">  
+          <div id="modal-container-commission" class="modal-container-commission container-commission-desktop">  
             {% comment %} <h4 class="card-trade">Descuentos y Beneficios</h4>			 {% endcomment %}
             <div class="mb-1">
               <label for="comision" class="label-commission">Comisión</label>           

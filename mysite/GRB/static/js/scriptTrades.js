@@ -359,7 +359,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var gridContainer = document.querySelector('.grid-container');
 
   toggleButton.addEventListener('click', function() {
-    modalContainer.classList.add('show');
+    modalContainer.classList.toggle('show');
   });
 
   closeButton.addEventListener('click', function() {
@@ -367,13 +367,16 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   expandModalButton.addEventListener('click', function() {
-    if (gridContainerMaster.style.gridTemplateColumns != '1fr') {    
+    if (gridContainerMaster.style.gridTemplateColumns != '1fr') { 
+      gridContainerMaster.classList.toggle('expand');   
       gridContainerMaster.style.gridTemplateColumns = '1fr';
       gridContainer.style.display = 'none';
+    
     }
     else{
       gridContainerMaster.style.gridTemplateColumns = 'repeat(2, 1fr)';
       gridContainer.style.display = 'grid';
+      gridContainerMaster.classList.toggle('expand');  
     }
   });  
 });

@@ -138,13 +138,12 @@
 				<!-- El botón que mostrará/ocultará el modal-body-add -->					
 				
 				{% if  recorre_clase_image %}
-					<div class="modal-body line-top" id="modalBodyAdd">	
-						<h4 class="new-register-image-trade">Nuevo</h4>										
+					<div class="modal-body line-top" id="modalBodyAdd">
 						<div class="image-container">
 							<div class="mb-3">
 								<div class="form-group">
 									<input type="text" id="titulo" class="form-control" name="titulo" placeholder="Ingresa un título" value="{{ image.titulo.value | default:'' }}">
-									<textarea class="form-control" type="text" id="content" placeholder="Ingresa una descripcion" name="descripcion">{{ image.descripcion.value|default:'' }}</textarea>
+									<textarea class="form-control" type="text" id="content" placeholder="Ingresa una descripción" name="descripcion">{{ image.descripcion.value|default:'' }}</textarea>
 									<div class="file-upload">
 										<input type="file" id="fileInput" placeholder="adjunta una imagen" name="image">
 										<label for="fileInput">Seleccionar imagen</label>
@@ -161,7 +160,7 @@
 						<div class="mb-3">
 							<div class="form-group">
 								<input type="text" id="titulo" class="form-control" name="titulo" placeholder="Ingresa un título" value="{{ image.titulo.value | default:'' }}">
-								<textarea class="form-control" rows="3" type="text" id="content" placeholder="Ingresa una descripcion" name="descripcion">{{ image.descripcion.value|default:'' }}</textarea>
+								<textarea class="form-control" rows="3" type="text" id="content" placeholder="Ingresa una descripción" name="descripcion">{{ image.descripcion.value|default:'' }}</textarea>
 								<div class="file-upload">
 									<input type="file" id="fileInput" placeholder="adjunta una imagen" name="image">
 									<label for="fileInput">Seleccionar imagen</label>
@@ -172,9 +171,14 @@
 					</div>							
 				{% endif %}	
 				</div>
+				
 				{% if recorre_clase_image %}	
-				<a id="toggleButton" class="btn btn-primary btn-add"><i class="fas fa-plus"></i></a>				
-				{% endif %}     
+				<div class="image-container">
+					<a id="toggleButton" class="btn btn-primary btn-add"><i class="fas fa-plus"></i></a>	
+				</div>			
+				{% endif %}   
+			
+			
 		</div>
 		{% else %}
 		<div class="card-body">
