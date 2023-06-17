@@ -48,12 +48,12 @@ porcentaje_beneficio_total.disabled = true;
     toggleButton.addEventListener('click', function() {
       if (!isExpanded) {
         toggleButton.classList.add('expand');
-        toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-down"></i>';
+        toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-right"></i>';
         isExpanded = true;
         modalContainerCommission.classList.toggle('show');
       } else {
         toggleButton.classList.remove('expand');
-        toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-up"></i>';
+        toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-left"></i>';
         isExpanded = false;
         modalContainerCommission.classList.toggle('show');
       
@@ -61,4 +61,5 @@ porcentaje_beneficio_total.disabled = true;
     });
   });
   
+
   

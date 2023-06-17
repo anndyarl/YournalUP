@@ -230,8 +230,9 @@ input:checked + .slider:before {
     place-content: center;
     align-items: center;
     padding: 10px;
+    overflow: hidden;
   }
-
+     
 
   nav ul {
     display: flex;
@@ -240,25 +241,55 @@ input:checked + .slider:before {
     padding: 0;
     text-align: center;
   }
+
+  .arrow-left,
+  .arrow-right {
+    display: none;
+  }
   /* Media query para pantallas más pequeñas */
   @media screen and (max-width: 768px) {
-    nav ul {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      text-align: center;
+    nav ul {    
+      flex-wrap: nowrap;
+      overflow-x: scroll;
+      -webkit-overflow-scrolling: touch; /* Propiedad para mejorar el desplazamiento en dispositivos iOS */  
 
     }
+    nav li {
+      flex: 0 0 50%; /* Mostrar solo dos elementos por pantalla */
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .arrow {
+      position: absolute;
+      top: auto;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      color: #fff;
+      text-align: center;
+      line-height: 30px;
+      cursor: pointer;
+      padding: 8px;
+      margin: 3px;
+    }
+    
+    .arrow:hover {
+      background-color: #555;
+    }
+    
+    .arrow-right {
+      display: block;
+      right: 0;
+    }
+    
+    .arrow-left {
+      display: block;
+      left: 0;
+    }
+    
   }
-
-
-
-  nav li {
-    margin: 0 10px;
-  }
-
+  
   nav a {
     text-decoration: none;
     color: white
@@ -415,7 +446,7 @@ input:checked + .slider:before {
     right: 0;
     border-radius: 22px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.52);
-    transition: transform 0.3s ease-in-out; /* Agrega una transición */animation: bounce 1s infinite; /* Agrega la animación de rebote */
+    transition: transform 0.3s ease-in-out; /* Agrega una transición */animation: bounce 10s infinite; /* Agrega la animación de rebote */
     z-index: 200;
     /* content:''!important; */
   }
@@ -853,6 +884,7 @@ input:checked + .slider:before {
   @media screen and (max-width: 768px) {
     .modal-content {
       padding: 12px;  
+      height: 100vh;
     }
   
   }
@@ -877,7 +909,7 @@ input:checked + .slider:before {
 
 
   .pulse {
-    animation: pulse 1.2s infinite;
+    animation: pulse 2.5s infinite;
   }
 
   @keyframes pulse {
@@ -1432,40 +1464,52 @@ input:checked + .slider:before {
     #modal-container-commission {
       position: fixed;
       display: block;
-      bottom: -100%;
-      left: 0;
-      right: 0;
+      bottom: -200px;    
+      right: -100%;     
       padding: 15px;
       background: #32373f;
       box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.2);
-      opacity: 0;
-      transition: bottom 0.3s ease-in-out, opacity 0.3s ease-in-out;
-      z-index: 999;
+      opacity: 0; /* Inicialmente, el menú está oculto */
+      transition: right 0.3s ease-in-out, opacity 0.3s ease-in-out;
+      z-index: 200;
       height: 100vh;
     }
     #modal-container-commission.show { 
-      bottom: -30%;
-      opacity: 1;
+      right: 0; /* Muestra el menú en la posición izquierda */
+      opacity: 1; /* Hace visible el menú */
     }  
 
     .add-button-commission{
       display: block;
-      padding: 8px;  
-      width: 20%;
-      background: #e69946;
-      position: fixed;
-      bottom: 0;
-      right: 40%;
-      border-radius: 14px;
+      margin-top: 20px;
+      background-color: #32373f;
+      border: none;
       color: white;
+      padding: 10px;
+      text-decoration: none;
+      position: fixed;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 13px;
+      border-radius: 0.375rem;
+      width: 110px;
       text-align: center;
-      cursor: pointer;    
-      transition: transform 0.2s ease; /* Transición suave de 0.3 segundos para el efecto de expansión */     
+      width: 46px;
+      position: fixed;
+      bottom: 5px;
+      right: 0;
+      border-radius: 22px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.52);
+      transition: transform 0.3s ease-in-out;
+      animation: bounce 1s infinite;
+      z-index: 200;
+      content: '' !important; 
     }
 
     .add-button-commission.expand {
       color: white;
       transform: scale(1.2); /* Hace que el botón se expanda un 10% */   
+      border: 1px solid #e69946;
      
     }
     .add-button-commission:hover {
@@ -1557,6 +1601,7 @@ input:checked + .slider:before {
   border: 1px solid #ddd;
   text-align: justify;
   padding: 20px;
+  z-index: 300;
 }
 
 #quick-profile.open {
