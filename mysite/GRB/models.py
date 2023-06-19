@@ -258,29 +258,3 @@ class TRADEIMAGE(models.Model):
     #         image.delete()
     #     super().delete(using=using, keep_parents=keep_parents)
 
-class DESCUENTOS(models.Model):
-    """
-    clase Modelo "DESCUENTOS".
-    """
-    id_descuento = models.AutoField(primary_key=True)
-    # id_cuenta = models.ForeignKey(
-    #     CUENTAS, on_delete=models.CASCADE, verbose_name="Id Cuenta", null=True
-    # ) 
-    # comision = models.DecimalField(
-    #     max_digits=10, decimal_places=2, verbose_name="Comisión", null=True
-    # )
-    # swap =  models.DecimalField(
-    #     max_digits=10, decimal_places=2, verbose_name="Swap", null=True
-    # )
-
-
-    objects = models.Manager()
-
-    def __str__(self):
-        fila = (
-            "Comisión: "
-            + str(self.comision)
-            + "Swap "
-            + str(self.swap)
-            )
-        return fila

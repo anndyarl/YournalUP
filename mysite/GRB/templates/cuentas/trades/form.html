@@ -82,7 +82,29 @@
 				<div class="mb-1">
 					<label for="takeprofit" class="form-label">Take Profit</label>
 					<input type="text" id="takeprofit" class="form-control" name="takeprofit" value="{{ formulario.takeprofit.value | default:'' }}">
-					</div>					
+				</div>	
+			</div>	
+			{% if request.resolver_match.view_name == 'editar' %}			
+			  <!-- Modal -->
+			  <div id="modalayuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">
+				<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+				  <div class="modal-content-help">			
+					 <div class="modal-header">        
+					  <a type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<i class="fas fa-times"></i>
+					  </a>
+					</div> 
+					<div class="modal-body">
+						<p>Una vez finalizado tu trade podrás detallar aquí tus ganancias y/o pérdidas.</p>
+					</div>      
+				  </div>
+				</div>
+			  </div>	
+			<div class="mb-1">
+				<h4 class="tittle-trade">Beneficios</h4>
+			</div>	
+			<p>Una vez finalizado tu trade podras detallar aquí tus ganancias y/o perdidas.</p>
+			<div class="grid-container-form">							
 				<div class="mb-1">
 					<label for="beneficio_real" class="form-label">Beneficio real</label>
 					<input type="text"  id="beneficio_real" class="form-control" name="beneficio_real" value="{{ formulario.beneficio_real.value | default:'' }}">
@@ -91,8 +113,8 @@
 					<label for="porcentaje_beneficio_real" class="form-label">Utilidad</label>
 					<input type="text" readonly id="porcentaje_beneficio_real" name="porcentaje_beneficio_real" value="{{ formulario.porcentaje_beneficio_real.value | default:'' }}">
 				</div>	
-				
-			</div>	
+			</div>		
+			{% endif %}
 			<div class="mb-1">
 				<div class="center-button">
 					<button name="" id="" class="add-order-button" type="submit">Aceptar</button>

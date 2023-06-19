@@ -879,6 +879,7 @@ input:checked + .slider:before {
     background-color: #fff;  
     padding: 20px;
     border: 1px solid #ddd; 
+    
   }
 
   @media screen and (max-width: 768px) {

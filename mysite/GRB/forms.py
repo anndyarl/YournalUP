@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.widgets import Select
-from .models import TRADES, CUENTAS, IMAGE, DESCUENTOS
+from .models import TRADES, CUENTAS, IMAGE
 from django.contrib.auth.forms import AuthenticationForm
 
 class CustomAuthForm(AuthenticationForm):
@@ -214,7 +214,7 @@ class ImageForm(forms.ModelForm):
           
     titulo = forms.CharField(required=False)
     descripcion = forms.CharField(required=False)
-    image = forms.ImageField(required=True)
+    image = forms.ImageField(required=False)  
     class Meta:
         """
         Meta class for ImageForm.
@@ -235,14 +235,3 @@ class TradeImageForm(forms.ModelForm):
         model = IMAGE
         fields = '__all__'
 
-class Descuentosform(forms.ModelForm):
-
-    class Meta:
-        """
-        Meta class for DescuentosForm.
-        """
-        comision = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
-        swap = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
-
-        model = DESCUENTOS
-        fields = '__all__'

@@ -419,8 +419,8 @@ def editar(request, id):
                             # Eliminar la imagen anterior
                             default_storage.delete(trade_image.image.image.path)
                             # Guardar la nueva imagen en el sistema de archivos
-                            image_name = f'{str(uuid.uuid4())}.{image_file.name.split(".")[-1]}'
-                            image_path = default_storage.save(image_name, image_file)
+                            # image_name = f'{str(uuid.uuid4())}.{image_file.name.split(".")[-1]}'                          
+                            image_path = default_storage.save(f'imagenes/{image_file.name}', image_file)
                             trade_image.image.image = image_path
                         trade_image.image.titulo = titulo
                         trade_image.image.descripcion = descripcion

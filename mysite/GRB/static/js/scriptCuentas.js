@@ -129,13 +129,4 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-var elemento = document.getElementById("n_operaciones");
-if (id_tipo_cuenta == 1) {
-  elemento.classList.add("estiloUno");
-} else {
-  elemento.classList.add("estiloDos");
-}
 
-function goBack() {
-  window.history.back();
-}

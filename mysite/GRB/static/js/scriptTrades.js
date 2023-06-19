@@ -255,6 +255,7 @@ function calculateUtilidadProyectada() {
 
 //Calcular porcentaje Utilidad Beneficio real
 // Agregamos un eventListener al evento input en ambos input para que se calcule el resultado en tiempo real
+if(BeneficioRealInput && porcentajeBeneficioRealInput){
 cuentaInput.addEventListener('input', calculateUtilidadBeneficioReal);
 BeneficioRealInput.addEventListener('input', calculateUtilidadBeneficioReal);
 // porcentajeBeneficioRealInput.addEventListener('input', calculateUtilidadBeneficioReal);
@@ -274,6 +275,7 @@ function calculateUtilidadBeneficioReal() {
   let porcentaje_beneficio_real = BeneficioReal * 100 / cuenta;
   porcentajeBeneficioRealInput.value = porcentaje_beneficio_real.toFixed(2); // Redondeamos el resultado a dos decimales y lo mostramos en el tercer input
   
+}
 }
 //Fin Calcular Porcentaje Utilidad Beneficio real
 
@@ -388,10 +390,15 @@ document.addEventListener('DOMContentLoaded', function() {
 //   this.style.height = this.scrollHeight + 'px';
 // });
 
-var textareaId = "id_descripcion_" + trade_image.id;
-var textarea = document.getElementById(textareaId);
 
-textarea.addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = this.scrollHeight + 'px';
-});
+
+// Verificar si el modal ya ha sido mostrado antes
+if (!localStorage.getItem('modalShown')) {
+  // Mostrar el modal si no ha sido mostrado antes
+  const modal = document.getElementById('modalayuda');
+  const modalInstance = new bootstrap.Modal(modal);
+  modalInstance.show();
+
+  // Guardar la información en el almacenamiento local para indicar que el modal ha sido mostrado
+  localStorage.setItem('modalShown', 'true');
+}
