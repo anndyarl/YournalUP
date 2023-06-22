@@ -1,25 +1,17 @@
 {% extends "base.html" %} {% block titulo %} Crear Trade {% endblock %}
 {% block contenido %} 
-{% comment %} {% include 'cuentas/trades/nav.html' %} {% endcomment %}
-        <div class="nav-card">
-            <div class="nav-indicator">  
-                <div class="card-body text-center">
-                    {% comment %} <h4 class="card-title">Completa los detalles de tu trade</h4> {% endcomment %}
-                    {% comment %} <div class="mt-4">   {% endcomment %}
-                        <div class="nav-list">
-                            {% include 'cuentas/trades/nav_list.html' %}
-                            </div>
-                    {% comment %} </div> {% endcomment %}
-                </div>      
-            </div> 
-            <div class="card-form">  
-                <div class="card-body text-center">
-                    {% comment %} <h4 class="card-title">Completa los detalles de tu trade</h4> {% endcomment %}
+        <div class="card">
+            <div class="card-header">
+                <div class="nav-list">
+                    {% include 'cuentas/trades/nav_list.html' %}
+                    </div>
+            </div>
+            <div class="card-body">
+                <div class="card-body text-center">         
                     <div class="mt-1">  
                         {% include 'cuentas/trades/form.html' %}
                     </div>
-                </div>      
-            </div> 
+                </div>    
         </div>
 
 {% endblock %}    

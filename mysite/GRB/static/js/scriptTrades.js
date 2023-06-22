@@ -383,22 +383,30 @@ document.addEventListener('DOMContentLoaded', function() {
   });  
 });
 
-// var textarea = document.getElementById('content');
 
-// textarea.addEventListener('input', function() {
-//   this.style.height = 'auto';
-//   this.style.height = this.scrollHeight + 'px';
-// });
+const textarea1 = document.getElementById('descripcion');
+textarea1.addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = this.scrollHeight + 'px';
+});
 
 
 
-// Verificar si el modal ya ha sido mostrado antes
-if (!localStorage.getItem('modalShown')) {
-  // Mostrar el modal si no ha sido mostrado antes
-  const modal = document.getElementById('modalayuda');
-  const modalInstance = new bootstrap.Modal(modal);
-  modalInstance.show();
 
-  // Guardar la información en el almacenamiento local para indicar que el modal ha sido mostrado
-  localStorage.setItem('modalShown', 'true');
-}
+// Obtener todos los elementos de texto de descripción
+const textAreas = document.querySelectorAll('[id^="descripcion_"]');
+
+// Iterar sobre cada elemento de texto de descripción
+textAreas.forEach((textarea) => {
+  // Establecer la altura inicial en función del contenido existente
+  textarea.style.height = textarea.scrollHeight + 'px';
+
+  textarea.addEventListener('input', function () {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+
+    // Almacenar el contenido del textarea en el almacenamiento local
+    localStorage.setItem('textareaContent', this.value);
+  });
+});
+

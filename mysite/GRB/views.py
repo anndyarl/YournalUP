@@ -397,10 +397,11 @@ def editar(request, id):
         formulario = TradeForm(request.POST, request.FILES, instance=trade)
         if request.method == "POST" and formulario.is_valid():  
                 try:    
+                   
                     # Obtener la cuenta del nuevo trade
                     id_cuenta = request.session.get('id_cuenta')
                     # Obtiene los datos que se ingresan y luego los guarda en la base de datos asociándolos al trade
-                    if request.FILES:
+                    if request.FILES:                   
                         for image in request.FILES.getlist('image'):
                             titulo = request.POST.get('titulo')
                             descripcion = request.POST.get('descripcion')
@@ -409,9 +410,9 @@ def editar(request, id):
                             # Crear una nueva instancia de TradeImage y guardarla en la base de datos
                             new_trade_image = TRADEIMAGE(trade=trade, image=img)
                             new_trade_image.save()
-
-                    # Actualizar los títulos, descripciones y las imágenes existentes
-                    for image, trade_image in recorre_clase_image:
+                    # trade_image_ids = []
+                    # Actualizar los títulos, descripciones y las imágenes existentes                  
+                    for image, trade_image in recorre_clase_image:                       
                         titulo = request.POST.get(f'titulo_{trade_image.id}')
                         descripcion = request.POST.get(f'descripcion_{trade_image.id}')
                         if request.FILES.get(f'image_{trade_image.id}'):
@@ -424,10 +425,12 @@ def editar(request, id):
                             trade_image.image.image = image_path
                         trade_image.image.titulo = titulo
                         trade_image.image.descripcion = descripcion
+                        # trade_image_ids.append(trade_image.id)
                         trade_image.image.save()
 
                     trade.id_cuenta_id = id_cuenta  # Asignar el id_cuenta_id al objeto trade
-                    trade = formulario.save()
+                    trade = formulario.save()                   
+                 
                     return redirect("editar", trade.id)
                 except Exception as e:
                      error_message = "Se produjo un error al procesar los datos del formulario: {}".format(str(e))
@@ -440,6 +443,7 @@ def editar(request, id):
             "formulario": formulario,
             "recorre_clase_image": recorre_clase_image,
             "error_message": error_message
+               
         }
         return render(request, "cuentas/trades/editar.html", context)
 

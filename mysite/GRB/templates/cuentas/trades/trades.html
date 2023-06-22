@@ -12,83 +12,96 @@
   {{ mensaje_error }}
   {% endif %}
 
-  <div class="card">
-    <div class="card-header">   
+  <div class="card-table">
+    <div class="card-header"> 
       <a  class="add-order-button" href="{% url 'crear' %}" role="button">
         <i class="fas fa-plus"></i> Agregar trade
-      </a> 
+      </a>  
+      <h4 class="card-title">Filtros</h4>   
     </div>      
  {% if exist_row > 0 %}
-  <div class="card-body">
-    {% comment %} <div class="card-table"> {% endcomment %}
-    <h4 class="card-title">Mis trades</h4>     
-      
-          <div class="tabla-scroll">
-            <table class="table table-hover" >
-              <thead>
-                <tr>
-                  <th scope="col">Trade</th>
-                  <th scope="col">Fecha</th>
-                  <th scope="col">Activo</th>
-                  <th scope="col">Orden</th>
-                  <th scope="col">Stoploss</th>
-                  <th scope="col">TakeProfit</th>           
-                  <th scope="col">Volumen</th>
-                  <th scope="col">Ratio</th>
-                  <th scope="col">Resultado</th>
-                  <th scope="col">Beneficio Real</th>    
-                  <th scope="col">Utilidad</th>
-                  <th scope="col"></th>          
-                  <th scope="col" class="edit"></th>       
-                </tr>
-              </thead>
-              <tbody>
-                {% for trades in lista_trades_de_cuentas %}
-                <tr class="editable-row" ondblclick="window.location.href='{% url 'editar' trades.id %}'">
-                  <td>{{ trades.id }}</td>
-                  <td>{{ trades.fecha|date:"d/m/Y" }}</td>
-                  <td>{{ trades.activo }}</td>
-                  <td
-                    {% if trades.orden == 'Venta' %}class="text-danger"{% endif %}
-                    {% if trades.orden == 'Compra' %}class="text-success"{% endif %}>
-                    {{ trades.orden }}
-                  </td>
-                  <td>{{ trades.stoploss }}</td>
-                  <td>{{ trades.takeprofit }}</td>
-                  <td>{{ trades.lotaje }}</td>
-                  <td>{{ trades.ratio }}</td>
-                  <td
-                    {% if trades.resultado == 'Programada' %}class="text-warning"{% endif %}
-                    {% if trades.resultado == 'Ejecución por Mercado' %}class="text-warning"{% endif %}
-                    {% if trades.resultado == 'Take Profit' %}class="text-success"{% endif %}
-                    {% if trades.resultado == 'Stop Loss' %}class="text-danger"{% endif %}
-                    {% if trades.resultado == 'Break Even' %}class="text-info"{% endif %}
-                    {% if trades.resultado == 'Cierre Manual en Positivo' %}class="text-success"{% endif %}
-                    {% if trades.resultado == 'Cierre Manual en Negativo' %}class="text-danger"{% endif %}>
-                    {{ trades.resultado }}
-                  </td>
-                  {% if trades.beneficio_real %}
-                  <td>$ {{ trades.beneficio_real }}</td>
-                  <td>{{ trades.porcentaje_beneficio_real }} %</td>
-                  {% else %}
-                  <td>-</td>
-                  <td>-</td>
-                  {% endif %}
-                  <td class="edit">
-                    <a class="btn-custom" href="{% url 'editar' trades.id %}" role="button">
-                      <i class="fas fa-edit"></i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn-custom" href="{% url 'eliminar' trades.id %}" role="button">
-                      <i class="fas fa-trash-alt"></i>
-                    </a>
-                  </td>
-                </tr>
-                {% endfor %}                
-              </tbody>
-            </table>
-          </div>         
+  <div class="card-body"> 
+    <h4 class="card-title">Mis trades</h4>   
+    <div class="tabla-scroll">     
+      <table class="table table-hover">
+        <thead>
+          <tr>     
+            <th scope="col"></th>     
+            <th scope="col"> <i class="fas fa-flag"></i></th>
+            <th scope="col">N° registro</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Activo</th>
+            <th scope="col">Orden</th>
+            <th scope="col">Stoploss</th>
+            <th scope="col">TakeProfit</th>
+            <th scope="col">Volumen</th>
+            <th scope="col">Ratio</th>
+            <th scope="col">Resultado</th>
+            <th scope="col">Beneficio Real</th>
+            <th scope="col">Utilidad</th>
+            {% comment %} <th scope="col"></th>
+            <th scope="col" class="edit"></th> {% endcomment %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for trades in lista_trades_de_cuentas %}
+          <tr class="editable-row" ondblclick="window.location.href='{% url 'editar' trades.id %}'">
+            <td>
+              <div class="dropdown">
+                <i id="dropdown-icon" class="fas fa-ellipsis-v dropdown-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                <div id="dropdown-menu" class="dropdown-menu">
+                  <a class="dropdown-item" href="{% url 'editar' trades.id %}">
+                    <i class="fas fa-edit"></i> Editar
+                  </a>
+                  <a class="dropdown-item" href="{% url 'eliminar' trades.id %}">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                  </a>
+                </div>
+              </div>
+            </td>
+            <td>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" class="fila-checkbox" id="checkbox_{{ trades.id }}">
+              <label for="checkbox_{{ trades.id }}" class="checkbox-label"></label>  
+              <div class="flag-swallowtail-icon">
+              </div>     
+            </div>
+           </td>
+            <td>            
+              {{ trades.id }}
+            </td>
+            <td>{{ trades.fecha|date:"d/m/Y" }}</td>
+            <td>{{ trades.activo }}</td>
+            <td {% if trades.orden == 'Venta' %}class="text-danger"{% endif %}
+              {% if trades.orden == 'Compra' %}class="text-success"{% endif %}>
+              {{ trades.orden }}
+            </td>
+            <td>{{ trades.stoploss }}</td>
+            <td>{{ trades.takeprofit }}</td>
+            <td>{{ trades.lotaje }}</td>
+            <td>{{ trades.ratio }}</td>
+            <td {% if trades.resultado == 'Programada' %}class="text-warning"{% endif %}
+              {% if trades.resultado == 'Ejecución por Mercado' %}class="text-warning"{% endif %}
+              {% if trades.resultado == 'Take Profit' %}class="text-success"{% endif %}
+              {% if trades.resultado == 'Stop Loss' %}class="text-danger"{% endif %}
+              {% if trades.resultado == 'Break Even' %}class="text-info"{% endif %}
+              {% if trades.resultado == 'Cierre Manual en Positivo' %}class="text-success"{% endif %}
+              {% if trades.resultado == 'Cierre Manual en Negativo' %}class="text-danger"{% endif %}>
+              {{ trades.resultado }}
+            </td>
+            {% if trades.beneficio_real %}
+            <td>$ {{ trades.beneficio_real }}</td>
+            <td>{{ trades.porcentaje_beneficio_real }} %</td>
+            {% else %}
+            <td>-</td>
+            <td>-</td>
+            {% endif %}
+           
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>  
     </div>
   </div>
   {% else %} 

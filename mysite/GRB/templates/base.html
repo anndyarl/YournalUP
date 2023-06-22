@@ -38,20 +38,20 @@
   </head>
    <body>
     <header>         
-          <nav class="navbar">        
-              <a href="{% url 'seleccionar_cuenta' %}">
-                <img alt="" style="width: 28px; filter: brightness(0) invert(1);">
-                <span style="font-size: 16px; color: #fff; margin-left: 5px;">YOURNALUP</span>
-              </a>
-          </nav>
+      <nav class="nav-right">        
+        <a href="{% url 'seleccionar_cuenta' %}">
+            <img alt="" style="width: 28px; filter: brightness(0) invert(1);">
+            <span style="font-size: 16px; color: #fff; margin-left: 5px;">YOURNALUP</span>
+        </a>
+      </nav>
       {% if user.is_authenticated %}
-      <nav>
+      <nav class="nav-left">
         <div class="navbar-nav">
           <a id="menu-toggle" class="dropdown-toggle">
             <div class="user-avatar-circle">
-              <span>{{ user.first_name|slice:":1" }}</span>
-            </div>       
-          </a>
+              <span>{{ user.first_name|slice:":1" }}</span>          
+            </div>            
+          </a>               
           <div id="quick-profile">       
               <div class="nav-item center">
                   <span class="user-name">{{ user.first_name }} {{ user.last_name }}</span>
@@ -84,6 +84,13 @@
           </div>
         </div>
       </nav> 
+      <nav class="nav-left">
+        <div class="navbar-nav">
+        <a id="menu-toggle" class="dropdown-toggle">  
+            <i class="fas fa-bell"></i>  
+        </a>
+      </div>     
+      </nav>
           {% endif %} 
     </header>
      

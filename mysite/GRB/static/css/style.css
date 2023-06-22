@@ -1,5 +1,14 @@
 /* Estilos generales */
-
+:root {
+  --color-background: black;
+  --color-background-foot: #32373f;
+}
+html{ 
+  overflow-y: auto;
+  scrollbar-width: none; /* Ancho de la barra de desplazamiento */
+  scrollbar-color: #888 #f1f1f1; /* Color del "pulgar" y color de fondo de la barra de desplazamiento */
+  scroll-behavior: smooth;
+}
   body {
     font-family: Segoe UI Historic, Segoe UI, Helvetica, Arial, sans-serif;
     background-color: white;
@@ -10,9 +19,11 @@
     font-size: 15px;
     font-weight: 500;
     display: block;   
-    position: relative;
-    min-height: 100vh; /* Establece una altura mínima para que el contenido se extienda hasta la parte inferior de la ventana del navegador */
+    position: relative;  
+ 
+    /* min-height: 100vh; Establece una altura mínima para que el contenido se extienda hasta la parte inferior de la ventana del navegador */
   }
+ 
  /* Estilos para boton modo nocturno */
  .switch {
   position: relative;
@@ -73,12 +84,12 @@ input:checked + .slider:before {
 
 /* Estilos para el modo nocturno */
 .dark-mode  { 
-  background-color: #333;
+  background-color: var(--color-background);
   color: #FFF;
 }
 
 .dark-mode table {
-  background-color: #333;
+  background-color: var(--color-background);
   color: #FFF;
 }
 
@@ -98,7 +109,7 @@ input:checked + .slider:before {
 .dark-mode select,
 .dark-mode textarea,
 .dark-mode .file-upload {
-  background-color: #32373f;
+  background-color: var(--color-background-foot);
   color: #fff;
  
 }
@@ -109,7 +120,7 @@ input:checked + .slider:before {
 .dark-mode textarea:hover,
 .dark-mode textarea:focus
 {
-  background-color: #32373f;
+  background-color: var(--color-background-foot);
   color: #fff;
 }
 
@@ -117,15 +128,15 @@ input:checked + .slider:before {
 .dark-mode .file-upload:focus, 
 .dark-mode .file-upload label:hover,
 .dark-mode .file-upload label:focus {
-  background-color: #333;
+  background-color: var(--color-background);
   cursor: pointer;
 }
 
 .dark-mode .card {
-  background-color: #333;
+  background-color: var(--color-background);
 }
 .dark-mode .modal-content{
-  background-color: #333;
+  background-color: var(--color-background);
 }
 .dark-mode .btn-custom {
   color:#fff;
@@ -153,7 +164,7 @@ input:checked + .slider:before {
 
 }
 .dark-mode .modal-container-commission{
-  background-color: #32373f;
+  background-color: var(--color-background-foot);
   color: #fff;
 }
 
@@ -166,7 +177,7 @@ input:checked + .slider:before {
   cursor: auto;
 }
 .dark-mode #quick-profile {
-  background-color: #32373f;
+  background-color: var(--color-background);
   color: #fff;
   border: 1px solid #e69946;
 }
@@ -174,7 +185,43 @@ input:checked + .slider:before {
   color: #fff;
 }
 .dark-mode  .new-register-image-trade {
-  background-color: #32373f;
+  background-color: var(--color-background);
+}
+.dark-mode .label-commission { 
+  background: black;
+  color: white; 
+}
+.dark-mode #modal-container-commission{
+  background: black;
+  color: white;
+  border: 1px solid #e69946;
+}
+.dark-mode #swap,
+.dark-mode #comision{
+  background-color: black;
+  color: white;
+}
+.dark-mode #beneficio_total,
+.dark-mode #porcentaje_beneficio_total{
+  background-color: black;
+  color: white;
+}
+.dark-mode .add-order-button-commission {
+  background-color: #e69946;
+  color: #fff;
+}
+.dark-mode .close{
+  color: white;
+}
+.dark-mode .dropdown-menu
+{
+  background-color: black;
+  color: white;
+  border: 1px solid #e69946;
+}
+.dark-mode .dropdown-item{
+  background-color: black;
+  color: white;  
 }
 
   .content-container {
@@ -198,7 +245,10 @@ input:checked + .slider:before {
     header {
     height: 43px;
     }
-
+   
+  }
+  .nav-right {
+    margin-right: auto;
   }
   main {
     margin-top: 50px; /* Margen superior igual a la altura del encabezado */
@@ -240,15 +290,25 @@ input:checked + .slider:before {
     margin: 0;
     padding: 0;
     text-align: center;
+    font-size: 12px;
+    
   }
 
   .arrow-left,
   .arrow-right {
     display: none;
   }
+  @media screen and (max-width: 1157px) {
+    nav ul{
+     display: grid;
+     grid-template-columns: repeat(4, 1fr);
+     
+    }
+  }
   /* Media query para pantallas más pequeñas */
   @media screen and (max-width: 768px) {
     nav ul {    
+      display: flex;
       flex-wrap: nowrap;
       overflow-x: scroll;
       -webkit-overflow-scrolling: touch; /* Propiedad para mejorar el desplazamiento en dispositivos iOS */  
@@ -516,20 +576,70 @@ input:checked + .slider:before {
   }
 
   div.tabla-scroll {
-    max-height: 352px;
+    max-height: 480px;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* Agrega esta propiedad para un desplazamiento suave en dispositivos iOS */
-    scroll-behavior: smooth; /* Agrega esta propiedad para un desplazamiento suave en dispositivos compatibles */
+    scrollbar-width: thin; /* Ancho de la barra de desplazamiento */
+    scrollbar-color: #888 #f1f1f1; /* Color del "pulgar" y color de fondo de la barra de desplazamiento */
+    scroll-behavior: smooth;
   }
+  
   @media screen and (max-width: 768px) {
     div.tabla-scroll {
       max-height: 249px;
       overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
     }
-
   }
-
+  
+  /* Personalización para Chrome, Safari y Opera */
+  div.tabla-scroll::-webkit-scrollbar,
+  div.modal-container::-webkit-scrollbar  {
+    width: 8px; /* Ancho de la barra de desplazamiento */
+  }
+  
+  div.tabla-scroll::-webkit-scrollbar-track,
+  div.modal-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Color de fondo de la barra de desplazamiento */
+  }
+  
+  div.tabla-scroll::-webkit-scrollbar-thumb,
+  div.modal-container::-webkit-scrollbar-thumb {
+    background-color: #888; /* Color del "pulgar" de la barra de desplazamiento */
+  }
+  
+  div.tabla-scroll::-webkit-scrollbar-thumb:hover,
+  div.modal-container::-webkit-scrollbar-thumb:hover  {
+    background-color: #555; /* Color del "pulgar" de la barra de desplazamiento al pasar el cursor sobre él */
+  }
+  
+  /* Personalización para Firefox */
+  div.tabla-scroll,
+  div.modal-container {
+    scrollbar-width: thin; /* Ancho de la barra de desplazamiento */
+    scrollbar-color: #888 #f1f1f1; /* Color del "pulgar" y color de fondo de la barra de desplazamiento */
+  }
+  
+  /* Personalización para Internet Explorer y Microsoft Edge (versiones basadas en Chromium) */
+  div.tabla-scroll,
+  div.modal-container {
+    scrollbar-width: thin; /* Ancho de la barra de desplazamiento */
+    scrollbar-color: #888 #f1f1f1; /* Color del "pulgar" y color de fondo de la barra de desplazamiento */
+  }
+  
+  div.tabla-scroll::-ms-scrollbar-track,
+  div.modal-container::-ms-scrollbar-track  {
+    background-color: #f1f1f1; /* Color de fondo de la barra de desplazamiento */
+  }
+  
+  div.tabla-scroll::-ms-scrollbar-thumb,
+  div.modal-container::-ms-scrollbar-thumb {
+    background-color: #888; /* Color del "pulgar" de la barra de desplazamiento */
+  }
+  
+  div.tabla-scroll::-ms-scrollbar-thumb:hover,
+  div.modal-container::-ms-scrollbar-thumb:hover {
+    background-color: #555; /* Color del "pulgar" de la barra de desplazamiento al pasar el cursor sobre él */
+  }
+  
   .table-hover tbody tr:hover {
     background-color: #e69946; /* Cambia el color a tu preferencia */
 
@@ -615,6 +725,9 @@ input:checked + .slider:before {
     color: white;
 
   }
+  .card-body {
+    padding: 0px;
+  }
     /* Estilos para pantallas con resolución menor o igual a 860px */
     @media screen and (max-width: 768px) {
       .card-body {
@@ -690,7 +803,7 @@ input:checked + .slider:before {
   .grid-container-master.expand {  
     grid-template-columns: repeat(1, 1fr);
   }
-  @media screen and (max-width: 1158px) {
+  @media screen and (max-width: 1247px) {
     .grid-container-master {   
       grid-template-columns: repeat(1, 1fr);
     }
@@ -716,7 +829,7 @@ input:checked + .slider:before {
     color: #fff;
     font-weight: bold; 
     margin-right: 12px;
-    margin-left: 12px;
+    /* margin-left: 12px; */
   } 
   @media screen and (max-width: 768px) {
     .grid-container-master {
@@ -752,7 +865,7 @@ input:checked + .slider:before {
 
   .grid-container-2 {
     overflow-y: auto;
-    max-height: 630px;
+    max-height: 671px;
     margin: 7px;
   }
 
@@ -822,9 +935,20 @@ input:checked + .slider:before {
     display: none;
   }
   }
-
+  .card-table {
+    display: grid;
+    grid-template-columns: 15% 85%;
+    grid-gap: 10px;  
+  }
+  @media screen and (max-width: 768px) {
+    .card-table {
+      display: flex;     
+      flex-direction: column;
+    }
+  }
   .card-title {
     font-weight: bold;
+    padding: 8px;
   }
 
   .card-title-timeframe{
@@ -884,8 +1008,7 @@ input:checked + .slider:before {
 
   @media screen and (max-width: 768px) {
     .modal-content {
-      padding: 12px;  
-      height: 100vh;
+      padding: 12px; 
     }
   
   }
@@ -1001,6 +1124,7 @@ input:checked + .slider:before {
 
   .nav-list ul li {
     margin: 0 2px;
+    display: inline-block;
   }
 
   .nav-container {
@@ -1067,7 +1191,7 @@ input:checked + .slider:before {
     text-align: center;
     font-weight: 500 !important;
     color:white;
-    cursor: default;
+    cursor: default;  
   }
   @media screen and (max-width: 768px) {
 
@@ -1091,6 +1215,9 @@ input:checked + .slider:before {
       cursor: default;
       font-size: 11px;
     }
+    nav ul {
+    
+    }
   }
 
   .nav-container div {
@@ -1106,7 +1233,7 @@ input:checked + .slider:before {
 
   .image-container {
     position: relative;
-    border: 1px solid #dee2e6; 
+    border: none;
     margin: 15px;
   }
 
@@ -1124,6 +1251,8 @@ input:checked + .slider:before {
 
   #toggleButton {
     width: 100%;
+    background-color: #e69946;  
+    border: none;
   }
 
   .delete-button {
@@ -1176,7 +1305,8 @@ input:checked + .slider:before {
   }
   textarea {
     resize: none;
-    height: auto; 
+    height: auto;   
+    overflow: hidden;
   }
 
   .file-upload {
@@ -1395,17 +1525,13 @@ input:checked + .slider:before {
     bottom: 0;
     background-color: #32373f;
     color: white;
-    padding-right: 181px;
+    padding-right: 18.1%;
     right: 0;
-    gap: 22px;
+    gap: 2%;
     justify-content: center;
-    padding-left: 200px;
-    padding-top: 18px;
-    padding-bottom: 1px;
-    background-image: linear-gradient(white, white);
-    background-position: center center, left top;
-    background-repeat: no-repeat;
-    background-size: 1px 70%;
+    padding-left: 20%;
+    padding-top: 1.8%;
+    padding-bottom: 0.1%;
   }
  
   .label-commission {
@@ -1432,6 +1558,23 @@ input:checked + .slider:before {
     color: white;
     border: 1px solid #e69946;
   }
+
+  @media screen and (max-width: 768px)
+   {
+    #beneficio_total,
+    #porcentaje_beneficio_total,
+    #swap,
+    #comision{
+    background-color: white;
+    color: #32373f;
+    }
+    .label-commission {
+      background-color: white;
+      color: #32373f;
+    }
+
+   }
+
   .add-button-commission{
     display: none;  
   }
@@ -1468,7 +1611,7 @@ input:checked + .slider:before {
       bottom: -200px;    
       right: -100%;     
       padding: 15px;
-      background: #32373f;
+      background: white;
       box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.2);
       opacity: 0; /* Inicialmente, el menú está oculto */
       transition: right 0.3s ease-in-out, opacity 0.3s ease-in-out;
@@ -1484,7 +1627,7 @@ input:checked + .slider:before {
       display: block;
       margin-top: 20px;
       background-color: #32373f;
-      border: none;
+      border: 1px solid #e69946;
       color: white;
       padding: 10px;
       text-decoration: none;
@@ -1509,8 +1652,7 @@ input:checked + .slider:before {
 
     .add-button-commission.expand {
       color: white;
-      transform: scale(1.2); /* Hace que el botón se expanda un 10% */   
-      border: 1px solid #e69946;
+      transform: scale(1.2); /* Hace que el botón se expanda un 10% */         
      
     }
     .add-button-commission:hover {
@@ -1527,7 +1669,7 @@ input:checked + .slider:before {
     }
     .add-order-button-commission{
       display: block; 
-      background: #e69946;    
+      background: #32373f;    
       border: none;
       color: white;
       padding: 10px;
@@ -1626,5 +1768,59 @@ input:checked + .slider:before {
 }
 
 
+.checkbox-wrapper {
+  display: inline-block;
+  position: relative;
+  padding-left: 25px;
+  cursor: pointer;
+}
 
+.fila-checkbox {
+  display: none;
+}
 
+.checkbox-label {
+  position: absolute;
+  bottom: -7px;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ddd;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.checkbox-label::before {
+  content: '';
+  position: absolute;
+  bottom: -1.8px;
+  left: -1.7px;
+  width: 16px;
+  height: 16px;
+  background-color: #5cb85c;
+  border-radius: 3px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid #5cb85c;
+}
+.fila-checkbox:checked + .checkbox-label:before {
+  opacity: 1;
+}
+
+.flag-swallowtail-icon {  
+  
+  display: inline-block;
+  position: relative;
+  
+}
+
+.dropdown-menu.show {
+  display: block; 
+ 
+}
+.dropdown-menu {
+  z-index: 9999;
+  position: absolute;
+  top: -48px;
+}
