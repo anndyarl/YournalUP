@@ -2,12 +2,11 @@
 {% block contenido %}
 {% load static %}
 
-<div class="card-table">
+<div class="card">
   <div class="card-header">  
     <a name="" id="myBtn" class="add-order-button" href="{% url 'crear_cuentas' request.session.id_tipo_cuenta %}" role="button">
       <i class="fas fa-plus"></i> Agregar cuenta
-    </a>  
-    <h4 class="card-title">Filtros</h4>  
+    </a>    
   </div>  
   <div class="card-body">    
     {% if request.session.id_tipo_cuenta == 1 %}

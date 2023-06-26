@@ -8,7 +8,7 @@ from .forms import TradeForm, CuentaForm
 # from .forms import ImagenForm
 # from django.http import Http404
 # from django.http import JsonResponse
-from django.http import HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpResponse
 
 # import os
 from django.contrib.auth import authenticate, login, logout
@@ -29,7 +29,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.forms import UserCreationForm
-
+import json
 
 
 @csrf_protect
@@ -479,6 +479,20 @@ def eliminar(request, id):
     url = reverse("lista_trades_de_cuentas", args=[id_cuenta])
     return redirect(url)
 
+def eliminar_seleccionados(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        ids = data['ids']
+        
+        # Realizar la eliminación de los elementos correspondientes a los IDs recibidos
+        for id in ids:
+            eliminar(request, id)
+
+        # Retornar una respuesta exitosa (código 200) si la eliminación se realizó correctamente
+        return HttpResponse(status=200)
+
+    # Retornar una respuesta de error (código 400) si la solicitud no es de tipo POST
+    return HttpResponseBadRequest()
 
 def eliminar_imagen(request, image_id):
     """

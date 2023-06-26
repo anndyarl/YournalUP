@@ -1,15 +1,15 @@
-const form = document.getElementById('myForm');
-const comision = document.getElementById('comision');
-const swap = document.getElementById('swap');
-let timeoutId;
+// const form = document.getElementById('commission-form');
+// const comision = document.getElementById('comision');
+// const swap = document.getElementById('swap');
+// let timeoutId;
 
 
-const enviarFormulario = () => {
-  form.submit();
-};
+// const enviarFormulario = () => {
+//   form.submit();
+// };
 
-comision.addEventListener('blur', enviarFormulario);
-swap.addEventListener('blur', enviarFormulario);
+// comision.addEventListener('blur', enviarFormulario);
+// swap.addEventListener('blur', enviarFormulario);
 beneficio_total.disabled = true; 
 porcentaje_beneficio_total.disabled = true; 
 
@@ -81,63 +81,65 @@ porcentaje_beneficio_total.disabled = true;
       localStorage.setItem(checkboxId, this.checked.toString());
     });
   }
-// Obtener todas las instancias del menú desplegable
-const dropdowns = document.querySelectorAll('.dropdown');
+  const dropdowns = document.querySelectorAll('.dropdown');
 
-// Agregar evento de clic a cada menú desplegable
-dropdowns.forEach(function(dropdown) {
-  const dropdownIcon = dropdown.querySelector('.dropdown-button');
-  const dropdownMenu = dropdown.querySelector('.dropdown-menu');
-
-  // Función para abrir el menú desplegable
-  function openDropdown() {
-    closeDropdowns();
-    dropdownMenu.classList.add('show');
-    // document.body.style.overflow = 'hidden'; // Bloquear el scroll del body
-    // const tablaScroll = dropdown.closest('.tabla-scroll'); // Obtener la referencia a la tabla
-    // if (tablaScroll) {
-    //   tablaScroll.style.overflow = 'hidden'; // Bloquear el scroll de la tabla
-    // }
-  }
-
-  // Función para cerrar el menú desplegable
-  function closeDropdown() {
-    dropdownMenu.classList.remove('show');
-    // document.body.style.overflow = ''; // Habilitar el scroll del body
-    // const tablaScroll = dropdown.closest('.tabla-scroll'); // Obtener la referencia a la tabla
-    // if (tablaScroll) {
-    //   tablaScroll.style.overflow = ''; // Habilitar el scroll de la tabla
-    // }
-  }
-
-  // Abrir el menú desplegable al hacer clic o tocar en el icono
-  dropdownIcon.addEventListener('click', function(event) {
-    event.stopPropagation();
-    openDropdown();
-  });
-
-  // Cerrar el menú desplegable al hacer clic fuera de él
-  document.addEventListener('click', function() {
-    closeDropdown();
-  });
-
-  // Cerrar el menú desplegable al tocar fuera de él en dispositivos táctiles
-  document.addEventListener('touchstart', function(event) {
-    if (!dropdown.contains(event.target)) {
-      closeDropdown();
+  dropdowns.forEach(function(dropdown) {
+    const dropdownIcon = dropdown.querySelector('.dropdown-button');
+    const dropdownMenu = dropdown.querySelector('.dropdown-menu, .dropdown-menu-cuentas');
+  
+    function openDropdown() {
+      closeDropdowns();
+      dropdownMenu.classList.add('show');
     }
+  
+    function closeDropdown() {
+      dropdownMenu.classList.remove('show');
+    }
+  
+    dropdownIcon.addEventListener('click', function(event) {
+      event.stopPropagation();
+      openDropdown();
+    });
+  
+    document.addEventListener('click', function() {
+      closeDropdown();
+    });
+  
+    document.addEventListener('touchstart', function(event) {
+      if (!dropdown.contains(event.target)) {
+        closeDropdown();
+      }
+    });
+  });
+  
+  function closeDropdowns() {
+    dropdowns.forEach(function(dropdown) {
+      const dropdownMenu = dropdown.querySelector('.dropdown-menu, .dropdown-menu-cuentas');
+      dropdownMenu.classList.remove('show');
+    });
+  }
+  
+ 
+  document.addEventListener('DOMContentLoaded', function() {  
+  var modalContainer = document.querySelector('.modal-container-commission');
+  var closeButton = modalContainer.querySelector('.close');
+
+  
+  closeButton.addEventListener('click', function() {
+    modalContainer.classList.remove('show');
   });
 });
 
-// Cerrar todos los menús desplegables
-function closeDropdowns() {
-  dropdowns.forEach(function(dropdown) {
-    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
-    dropdownMenu.classList.remove('show');
-  });
-  document.body.style.overflow = ''; // Habilitar el scroll del body al cerrar todos los menús
-  const tablaScrolls = document.querySelectorAll('.tabla-scroll');
-  tablaScrolls.forEach(function(tablaScroll) {
-    tablaScroll.style.overflow = ''; // Habilitar el scroll de todas las tablas al cerrar todos los menús
-  });
-}
+// Agrega la clase 'edited' al elemento padre del input, imagen o textarea que se haya editado
+$('input').on('input', function() {
+  const Container = $(this).closest('.modal-container-commission, .container-commission-desktop');
+  Container.addClass('edited');
+  Container.find('.add-order-button-commission').removeClass('disabled-button').show();
+});
+
+// Mostrar solo el botón de actualización correspondiente al hacer clic en el elemento correspondiente
+$('.add-order-button-commission').click(function() {
+  const Container = $(this).closest('.modal-container-commission, .container-commission-desktop');
+  Container.removeClass('edited');
+  $(this).addClass('disabled-button');
+});

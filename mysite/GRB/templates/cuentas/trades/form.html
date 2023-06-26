@@ -124,7 +124,7 @@
 			<div class="modal-content">	
 				<div class="modal-header">				
 					<a type="button" class="close" data-dismiss="modal-container" aria-label="Close">
-						<i class="fas fa-times"></i>
+						<i class="fas fa-times close-modal"></i>
 					</a>
 					<a type="button" class="btn btn-sm btn-outline-secondary ml-auto" id="expand-modal-button">
 						<i class="fas fa-expand"></i>
@@ -133,9 +133,15 @@
 				<div class="modal-body">	{{ trade_image_id }}
 				{% for image, trade_image in recorre_clase_image %}								
 							<div class="image-container">
-								<div class="delete-button">
-									<a href="{% url 'eliminar_imagen' image.id %}" class="btn btn-custom"><i class="fas fa-trash-alt"></i></a>
-								</div>
+								<div class="dropdown-delete">
+									<i id="dropdown-icon" class="fas fa-ellipsis-h btn dropdown-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+									<div id="dropdown-menu" class="dropdown-menu">									 
+									  <a class="dropdown-item" href="{% url 'eliminar_imagen' image.id %}">
+										<i class="fas fa-trash-alt"></i> Eliminar
+									  </a>
+									</div>
+								  </div>
+								
 								<div class="mb-3">
 									<div class="form-group"> 
 										<input type="text" class="form-control" id="id_titulo_{{trade_image.id}}" name="titulo_{{trade_image.id}}" value="{{image.titulo}}">
@@ -144,7 +150,7 @@
 										<img src="{{ image.image.url }}" width="1000" class="img-fluid rounded-top expandable-image" alt="" onclick="expandImage(this)">
 										<div class="file-upload">
 											<input type="file" id="fileInput" class="form-control" placeholder="adjunta una imagen" name="image_{{trade_image.id}}">
-											<label for="fileInput">Actualizar imagen</label>
+											<label class="update-image" for="fileInput">Actualizar imagen</label>
 										</div>
 										
 									</div>
@@ -226,9 +232,9 @@
 	</div>
 	{% if request.resolver_match.view_name == 'editar' %}	
 			{% if recorre_clase_image %}
-			<a id="open-modal-button" class="add-order-button-trade"><i class="fas fa-fw fa-plus"></i></a>
+			<a id="open-modal-button" class="add-details">  <i class="fas fa-image"></i><sup><i class="fas fa-sync-alt update-details-icon"></i></sup></a>
 			{% else %}
-			<a id="open-modal-button" class="add-order-button-trade"><i class="fas fa-fw fa-plus pulse"></i></a>
+			<a id="open-modal-button" class="add-details"> <i class="fas fa-image"></i><sup><i class="fas fa-plus pulse add-details-icon"></i></sup></a>
 			{% endif %}		
 	{% endif %}
 		<script src="{% static 'js/scriptTrades.js' %}"></script>
