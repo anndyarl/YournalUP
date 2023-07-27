@@ -1,19 +1,15 @@
 {% extends "base.html" %} {% block titulo %} Editar Trade {% endblock %}
 {% block contenido %} 
-<div class="card">
-    <div class="card-header">
-        <div class="nav-list">
-            {% include 'cuentas/trades/nav_list.html' %}
-            </div>
-    </div>
-    <div class="card-body">
-        <div class="card-body text-center">         
-            <div class="mt-1">  
-                {% include 'cuentas/trades/form.html' %}
-            </div>
-        </div>    
-</div>
-
+<div class="nav-list">
+    {% include 'cuentas/trades/nav_list.html' %}
+</div>          
+<div class="card-body">
+    <div class="card-body text-center">         
+        <div class="mt-1">  
+            {% include 'cuentas/trades/form.html' %}
+        </div>  
+    </div>      
+</div>  
 {% endblock %} 
 
 

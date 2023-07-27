@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+<div class="card">
+    <div class="card-header bg-dark text-white text-center">
+        <h2 class="mb-0">Elige tu plan Pro</h2>
+        <p class="font-weight-bold mt-2">Si eliges la opción anual, obtienes hasta un 16% de descuento, lo que supone 2 meses gratuitos</p>
+    </div>
+	{{ amount }}
+    <div class="card-body d-flex justify-content-center" id="choose-create-account">
+        <!-- Información para el plan Mensual -->
+        <div class="cuenta-box-body mensual" id="mensual-info">
+            <div class="cuenta-box-heading">Mensual</div>
+            <p class="font-price">$5.95 / mes</p>
+            <form method="post" action="{% url 'gopro' %}">
+                {% csrf_token %}
+                <input type="hidden" name="plan" value="mensual">
+                {% if user.is_authenticated %}
+                <div class="account-type">
+                    <button type="submit" class="btn btn-primary account-type-text">Comprar ahora</button>
+                </div>
+                {% else %}
+                <div class="account-type">
+                    <a href="{% url 'login' %}">
+                        <h4 class="account-type-text">Iniciar sesión para comprar</h4>
+                    </a>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+        <!-- Información para el plan Anual -->
+        <div class="cuenta-box-body anual" id="anual-info">
+            <div class="cuenta-box-heading">Anual</div>
+            <p class="font-price">$3.95 / mes</p>
+            <form method="post" action="{% url 'gopro' %}">
+                {% csrf_token %}
+                <input type="hidden" name="plan" value="anual">
+                {% if user.is_authenticated %}
+                <div class="account-type">
+                    <button type="submit" class="btn btn-primary account-type-text">Comprar ahora</button>
+                </div>
+                <div class="offer">
+                    <p class="mt-4 font-weight-bold">16% de descuento en el plan anual, Supone 2 meses gratuito</p>
+                </div>
+                {% else %}
+                <div class="account-type">
+                    <a href="{% url 'login' %}">
+                        <h4 class="account-type-text">Iniciar sesión para comprar</h4>
+                    </a>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

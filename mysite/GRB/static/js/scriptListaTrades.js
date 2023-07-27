@@ -85,7 +85,7 @@ porcentaje_beneficio_total.disabled = true;
 
   dropdowns.forEach(function(dropdown) {
     const dropdownIcon = dropdown.querySelector('.dropdown-button');
-    const dropdownMenu = dropdown.querySelector('.dropdown-menu, .dropdown-menu-cuentas');
+    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
   
     function openDropdown() {
       closeDropdowns();
@@ -114,7 +114,7 @@ porcentaje_beneficio_total.disabled = true;
   
   function closeDropdowns() {
     dropdowns.forEach(function(dropdown) {
-      const dropdownMenu = dropdown.querySelector('.dropdown-menu, .dropdown-menu-cuentas');
+      const dropdownMenu = dropdown.querySelector('.dropdown-menu');
       dropdownMenu.classList.remove('show');
     });
   }
@@ -123,7 +123,6 @@ porcentaje_beneficio_total.disabled = true;
   document.addEventListener('DOMContentLoaded', function() {  
   var modalContainer = document.querySelector('.modal-container-commission');
   var closeButton = modalContainer.querySelector('.close');
-
   
   closeButton.addEventListener('click', function() {
     modalContainer.classList.remove('show');
@@ -131,7 +130,7 @@ porcentaje_beneficio_total.disabled = true;
 });
 
 // Agrega la clase 'edited' al elemento padre del input, imagen o textarea que se haya editado
-$('input').on('input', function() {
+$('input, select').on('input', function() {
   const Container = $(this).closest('.modal-container-commission, .container-commission-desktop');
   Container.addClass('edited');
   Container.find('.add-order-button-commission').removeClass('disabled-button').show();
@@ -143,3 +142,47 @@ $('.add-order-button-commission').click(function() {
   Container.removeClass('edited');
   $(this).addClass('disabled-button');
 });
+
+// document.addEventListener('DOMContentLoaded', function() {
+//   var toggleButton = document.getElementById('open-modal-button');
+//   var modalContainer = document.getElementById('modal-confirm');
+//   var closeButton = modalContainer.querySelector('.close'); 
+
+//   toggleButton.addEventListener('click', function() {
+//     modalContainer.classList.toggle('show');
+//   });
+
+//   closeButton.addEventListener('click', function() {
+//     modalContainer.classList.remove('show');
+//   });
+
+// });
+ document.addEventListener('DOMContentLoaded', function() {
+var tablaScroll = document.querySelector('.tabla-scroll');
+
+tablaScroll.addEventListener('mouseenter', function() {
+  tablaScroll.classList.remove('hide-scrollbar');
+});
+
+tablaScroll.addEventListener('mouseleave', function() {
+  tablaScroll.classList.add('hide-scrollbar');
+});
+ });
+
+  
+  //Alert Notifications
+  function cerrarMensaje(btn) {
+    var alertDiv = btn.parentNode;
+    alertDiv.style.display = 'none';
+  }  
+  var alertDiv = document.querySelector('.alert.alert-info');
+  if (alertDiv) {
+    alertDiv.style.transition = 'opacity 10s'; // Duración de la transición: 5 segundos
+    alertDiv.style.opacity = '1'; // Establecer la opacidad inicial en 1 para mostrar el mensaje
+    setTimeout(function() {
+      alertDiv.style.opacity = '0';
+      setTimeout(function() {
+        alertDiv.style.display = 'none';
+      }, 10000); // 5000 milisegundos = 5 segundos (tiempo de espera después de la transición)
+    }, 3000); // 3000 milisegundos = 3 segundos (tiempo de espera antes de iniciar la transición)
+  }

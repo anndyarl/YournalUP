@@ -3,9 +3,13 @@
     {% if cuenta.id_cuenta == request.session.id_cuenta %}
    
     <nav>
-      <div class="arrow arrow-left">◀</div>
-      <div class="arrow arrow-right">▶</div>
       <div>
+        <div class="arrow arrow-left">
+          <button class="slide-button-list"><i class="fas fa-fw fa-angle-left"></i></button>  
+        </div>
+        <div class="arrow arrow-right">
+          <button class="slide-button-list"><i class="fas fa-fw fa-angle-right"></i></button>  
+        </div>
         <ul data-role="listview" data-inset="true">
           <li>
             <label>Login</label>
@@ -45,8 +49,8 @@
       </div>
     </nav>
     
-      
+  
     {% endif %}
   {% endfor %}
-
+  
   {% endblock %}

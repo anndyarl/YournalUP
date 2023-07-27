@@ -1,10 +1,16 @@
+
 {% extends "base.html" %}
-
 {% block titulo %} Seleccionar tipo de Cuenta {% endblock %}
-
 {% block contenido %} 
-<div class="container-seleccionar-cuentas">
+{% for mensaje in messages %}
+<div class="alert alert-info notifications-alert" role="alert">
+    {{ mensaje }}
+    <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
+</div>	
+{% endfor %}
 
+
+{% comment %} <div class="container-seleccionar-cuentas"> {% endcomment %}
 <div class="card">
     <div class="row no-gutters">
         <div class="col-md-6">
@@ -26,11 +32,11 @@
     <div class="card-body d-flex justify-content-center align-items-center" id="choose-create-account">    
         <div class="cuenta-box-body fondeo">
             <div class="cuenta-box-heading">Fondeo </div>   
-            <p>Gestiona una cuenta de fondeo</p>
+            <p>Define tu riesgo y calcularemos la cantidad de trade que debes respetar para tu challenge</p>
             {% if user.is_authenticated %} 
             <div class="account-type">                               
                 <a href="{% url 'crear_cuentas' 1 %}">
-                    <h4 class="account-type-text">Crear una cuenta</h4>
+                    <h4 class="account-type-text">Crear cuenta</h4>
                 </a>
             </div>
             {% else %}
@@ -41,13 +47,13 @@
             </div>
             {% endif %}
         </div>  
-        <div class="cuenta-box-body personal">            
-            <div class="cuenta-box-heading">Personal </div>   
-            <p>Gestiona una cuenta personal </p>
+        <div class="cuenta-box-body personal">          
+            <div class="cuenta-box-heading">Personal</div>          
+            <p>Define la cantidad de trade a operar y calcularemos tu riesgo y la cantidad de trade a respetar</p>
             {% if user.is_authenticated %}
             <div class="account-type">
                 <a href="{% url 'crear_cuentas' 2 %}">
-                    <h4 class="account-type-text">Crear una cuenta</h4>
+                    <h4 class="account-type-text">Crear cuenta</h4>
                 </a>
             </div>
             {% else %}
@@ -57,9 +63,26 @@
                 </a>
             </div>
             {% endif %}
-        </div>     
+        </div>  
+        <div class="cuenta-box-body personal">            
+            <div class="cuenta-box-heading">Libre</div>   
+            <p>Define tu riesgo por cada trade a operar si ya eres un trader más experimentado</p>
+            {% if user.is_authenticated %}
+            <div class="account-type">
+                <a href="{% url 'crear_cuentas' 2 %}">
+                    <h4 class="account-type-text">Crear cuenta</h4>
+                </a>
+            </div>
+            {% else %}
+            <div class="account-type">
+                <a href="{% url 'login' %}">
+                    <h4 class="account-type-text">Iniciar sesión para crear una cuenta</h4>
+                </a>
+            </div>
+            {% endif %}
+        </div>  
     </div>
 </div>
-</div>
+{% comment %} </div> {% endcomment %}
 
 {% endblock %}

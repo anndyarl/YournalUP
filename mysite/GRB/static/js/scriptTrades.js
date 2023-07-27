@@ -35,7 +35,7 @@ let porcentajeBeneficioRealInput = document.getElementById('porcentaje_beneficio
 //Fin Aun no se que hace
 
 // ID de la hoja de cálculo y rango de la celda que deseas obtener
-const SHEET_ID = '1zAxSH9QkkzrcQKKm57YyE1sN16Gq93HA764_EiOfe00';
+const SHEET_ID = '1vs-Qp3D73AZxpkb39KtwQATMAybyzsqc9tbAqvFUP-E';
 const SHEET_TITLE = 'Factores';
 const SHEET_RANGE = 'Factores!A2:C53';
 
@@ -94,6 +94,10 @@ function calcularLotaje() {
           const instrumento = rows[i].c[0].v;
           if (instrumento === activoSeleccionado) {
             factor = rows[i].c[2].v;
+            if(factor < 10)
+            {
+              factor = 10;
+            }
             break; // Si se encuentra la coincidencia, se sale del bucle
           }
         }
@@ -313,7 +317,7 @@ function expandImage(img) {
 
 
 // Despliega nuevo formulario de ingreso, haciendo scroll hasta el final del modal
-modalBodyAdd.style.display = "none";
+// modalBodyAdd.style.display = "none";
 
 $(document).ready(function () {
   const toggleButton = $("#toggleButton");
@@ -333,7 +337,14 @@ $(document).ready(function () {
 $('input, textarea').on('input', function () {
   const imageContainer = $(this).closest('.image-container');
   imageContainer.addClass('edited');
-  imageContainer.find('.update-button').show();
+  imageContainer.find('.update-button').show(); 
+});
+
+$('input[type="file"]').on('change', function () {
+  const fileInput = $(this);
+  const imageContainer = fileInput.closest('.image-container');
+  imageContainer.addClass('edited');
+  imageContainer.find('.add-button').removeClass('disabled-button').show();
 });
 
 // Mostrar solo el botón de actualización correspondiente al hacer clic en el elemento correspondiente
@@ -373,8 +384,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       gridContainerMaster.classList.add('expand');   
       gridContainerMaster.style.gridTemplateColumns = '1fr';
-      gridContainer.style.display = 'none';
-    
+      gridContainer.style.display = 'none';     
     }
     else{
       gridContainerMaster.style.gridTemplateColumns = 'repeat(2, 1fr)';     
@@ -416,7 +426,7 @@ const dropdowns = document.querySelectorAll('.dropdown-delete');
 
 dropdowns.forEach(function(dropdown) {
   const dropdownIcon = dropdown.querySelector('.dropdown-button');
-  const dropdownMenu = dropdown.querySelector('.dropdown-menu, .dropdown-menu-cuentas');
+  const dropdownMenu = dropdown.querySelector('.dropdown-menu');
 
   function openDropdown() {
     closeDropdowns();
@@ -445,7 +455,85 @@ dropdowns.forEach(function(dropdown) {
 
 function closeDropdowns() {
   dropdowns.forEach(function(dropdown) {
-    const dropdownMenu = dropdown.querySelector('.dropdown-menu, .dropdown-menu-cuentas');
+    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
     dropdownMenu.classList.remove('show');
   });
 }
+
+// // Realiza una solicitud HTTP a la API para obtener los tipos de cambio
+// fetch("https://api.exchangeratesapi.io/latest?base=USD")
+//   .then(response => response.json())
+//   .then(data => {
+//     // Obtén el tipo de cambio de AUD/CAD
+//     var audCadExchangeRate = data.rates.CAD;
+
+//     // Calcula el valor de AUD/CAD para un lote de 1
+//     var audCadValue = 1 / audCadExchangeRate;
+
+//     console.log(audCadValue);  // Salida: Valor de AUD/CAD para 1 lote
+//   })
+//   .catch(error => {
+//     console.log("Error al obtener los datos de tipo de cambio:", error);
+//   });
+
+// fetch("https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=AUD&to_symbol=CAD&apikey=TU_API_KEY")
+//   .then(response => response.json())
+//   .then(data => {
+//     // Obtén el precio de cierre del último día disponible
+//     var lastDayData = data["Time Series FX (Daily)"];
+//     var dates = Object.keys(lastDayData);
+//     var lastDate = dates[0];
+//     var closePrice = parseFloat(lastDayData[lastDate]["4. close"]);
+
+//     // Calcula el valor de AUD/CAD para un lote de 1
+//     var audCadValue = 1 / closePrice;
+
+//     console.log(audCadValue);  // Salida: Valor de AUD/CAD para 1 lote
+//   })
+//   .catch(error => {
+//     console.log("Error al obtener los datos de Alpha Vantage:", error);
+//   });
+
+
+  $(document).ready(function() {
+    // Abrir el modal al hacer clic en el botón de ayuda
+    $("#open-modal-button-delete").click(function() {
+      $('#modal-confirm').modal('show');
+    });
+  
+    // Cerrar el modal al hacer clic en el botón de cierre
+    $(".btn-secondary").click(function() {
+      $('#modal-confirm').modal('hide');
+    });
+  });
+  
+  document.addEventListener('DOMContentLoaded', function() {
+   var modalContainer = document.querySelector('.grid-container-2.modal-container.container');
+
+  
+  modalContainer.addEventListener('mouseenter', function() {
+    modalContainer.classList.remove('hide-scrollbar');
+  });
+  
+  modalContainer.addEventListener('mouseleave', function() {
+    modalContainer.classList.add('hide-scrollbar');
+  });
+});
+
+  
+  //Alert Notifications
+  function cerrarMensaje(btn) {
+    var alertDiv = btn.parentNode;
+    alertDiv.style.display = 'none';
+  }  
+  var alertDiv = document.querySelector('.alert.alert-info');
+  if (alertDiv) {
+    alertDiv.style.transition = 'opacity 10s'; // Duración de la transición: 5 segundos
+    alertDiv.style.opacity = '1'; // Establecer la opacidad inicial en 1 para mostrar el mensaje
+    setTimeout(function() {
+      alertDiv.style.opacity = '0';
+      setTimeout(function() {
+        alertDiv.style.display = 'none';
+      }, 10000); // 5000 milisegundos = 5 segundos (tiempo de espera después de la transición)
+    }, 3000); // 3000 milisegundos = 3 segundos (tiempo de espera antes de iniciar la transición)
+  }

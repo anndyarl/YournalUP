@@ -32,18 +32,28 @@
               <form method="POST">
                 {% csrf_token %}
                 <div class="mb-3">             
-                  <input type="text" name="username" id="username" placeholder="Nmbre de usuario" class="form-control custom-login" required>
+                  <label for="username" class="form-label">Nombre de usuario</label>
+                  <input type="text-start" name="username" id="username" placeholder="Ingresa tu nombre de usuario" class="form-control" required>
                 </div>
                 <div class="mb-3">
-                  <input type="password" name="password" id="password" placeholder="Contraseña" class="form-control custom-login" required>
+                  <label for="password" class="form-label">Contraseña</label>
+                  <input type="password" name="password" id="password" placeholder="Ingresa tu contraseña" class="form-control" required>
                 </div>
                 <div class="text-center">
                   <button type="submit" class="btn btn-primary">Ingresar</button>
                 </div>
               </form>
+              <div class="text-center mt-3">
+                <p class="mb-0">¿Aún no tienes una cuenta?</p>
+                <a href="{% url 'register' %}" class="btn btn-secondary">Registrarse</a>
+              </div>
+              <div class="text-center mt-2">
+                <a href="#" class="btn btn-link">¿Olvidaste tu contraseña?</a>
+              </div>
             </div>  
           </div>
         </div>
+        
 
 
 

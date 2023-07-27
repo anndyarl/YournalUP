@@ -35,17 +35,25 @@
   <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>  
   <script src="https://apis.google.com/js/api.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="script.js"></script>
   </head>
    <body>
     <header>         
-      <nav class="nav-right">        
+      <div class="logo-right">        
         <a href="{% url 'seleccionar_cuenta' %}">
             <img alt="" style="width: 28px; filter: brightness(0) invert(1);">
             <span style="font-size: 16px; color: #fff; margin-left: 5px;">YOURNALUP</span>
         </a>
-      </nav>
+      </div>
       {% if user.is_authenticated %}
-      <nav class="nav-left">
+      <div class="notifications-left">
+          <div class="navbar-nav">
+            <a id="menu-toggle-notifications" class="notifications">  
+                <i class="fas fa-bell"></i>  
+            </a>
+        </div>     
+      </div>
+      <div class="profile-left">
         <div class="navbar-nav">
           <a id="menu-toggle" class="dropdown-toggle">
             <div class="user-avatar-circle">
@@ -70,12 +78,12 @@
                   <span class="slider"></span>
                 </label>
               </div>
-              <div class="nav-item nav-link">
-                <a class="nav-item nav-link" href="#">
+              {% comment %} <div class="nav-item nav-link">
+                <a class="nav-item nav-link"  href="{% url 'gopro' %}">
                   <i class='fas fa-tag'></i>
-                  <span class="menu-name">Facturación</span>
+                  <span class="menu-name">Cuenta y Facturación</span>
                 </a>
-              </div>
+              </div> {% endcomment %}
               <div class="nav-item nav-link">
                 <a class="btn btn-primary logout" href="{% url 'logout' %}">
                   <span class="menu-name">Cerrar Sesión</span>
@@ -83,55 +91,29 @@
               </div>      
           </div>
         </div>
-      </nav> 
-      <nav class="nav-left">
-        <div class="navbar-nav">
-        <a id="menu-toggle" class="dropdown-toggle">  
-            <i class="fas fa-bell"></i>  
-        </a>
-      </div>     
-      </nav>
-          {% endif %} 
+      </div>      
+          {% endif %}          
     </header>
      
-      <main>
-        {% comment %} <div class="vertical-menu">
-        
-            <div class="top-icons">
-              <div>
-                <a class="nav-item nav-link {% if request.resolver_match.url_name == 'lista_cuentas' and request.resolver_match.kwargs.id == 1 %}active{% endif %}" href="{% url 'lista_cuentas' 1 %}">
-                  <i class="fas fa-stopwatch"></i>
-                  <span class="menu-name">Cuenta de Fondeo</span>
-                </a>
-              </div>
-              <div>
-                <a class="nav-item nav-link {% if request.resolver_match.url_name == 'lista_cuentas' and request.resolver_match.kwargs.id == 2 %}active{% endif %}" href="{% url 'lista_cuentas' 2 %}">
-                  <i class="fas fa-wallet"></i>
-                  <span class="menu-name"> Cuenta Personal</span>
-                </a>
-              </div>
+      <main>     
+        {% if user.is_authenticated %}      
+        <div class="menu">
+            <div>
+              <a class="nav-item nav-link {% if request.resolver_match.url_name == 'lista_cuentas' and request.resolver_match.kwargs.id == 1 %}active{% endif %}" href="{% url 'lista_cuentas' 1 %}">
+                <i class="fas fa-stopwatch"></i>
+                <span class="menu-name">Cuenta de Fondeo</span>
+              </a>
             </div>
-          
-     
-        </div>     {% endcomment %}
-        {% if user.is_authenticated %}
-        <nav class="menu-principal">
-          <ul class="menu">
-            <li> <a class="nav-item nav-link {% if request.resolver_match.url_name == 'lista_cuentas' and request.resolver_match.kwargs.id == 1 %}active{% endif %}" href="{% url 'lista_cuentas' 1 %}">
-              <i class="fas fa-stopwatch"></i>
-              <span class="menu-name">Cuenta de Fondeo</span>
-            </a></li>
-            <li>  <a class="nav-item nav-link {% if request.resolver_match.url_name == 'lista_cuentas' and request.resolver_match.kwargs.id == 2 %}active{% endif %}" href="{% url 'lista_cuentas' 2 %}">
+            <div>
+              <a class="nav-item nav-link {% if request.resolver_match.url_name == 'lista_cuentas' and request.resolver_match.kwargs.id == 2 %}active{% endif %}" href="{% url 'lista_cuentas' 2 %}">
               <i class="fas fa-wallet"></i>
               <span class="menu-name"> Cuenta Personal</span>
-            </a></li>
-          </ul>
-        </nav>
-        {% endif %}  
-     
+              </a>
+            </div>
+        </div>      
+      {% endif %}   
              {% block contenido %}{% endblock %} 
-      
-
+             
       </main>
       <footer>
          {% comment %} <p>Yournalup Derechos Reservados &copy; 2023</p> {% endcomment %}
@@ -171,6 +153,7 @@
           menuToggle.addEventListener('click', function() {
             menuExample.classList.toggle('open');
           });
+        
 
         </script>
             <script>
@@ -228,52 +211,50 @@
           $(document).ready(function() {
             var $menu = $('nav ul');
             var menuWidth = $menu.outerWidth();
-            var visibleItems = Math.floor($menu.width() / ($menu.find('li').outerWidth() * 2)); // Calcular la cantidad de elementos visibles
+            var visibleItems = 1; // Mostrar solo un elemento por slide
           
             var totalItems = $menu.find('li').length; // Cantidad total de elementos
             var currentItem = 0; // Índice del elemento actual
           
-        // Función para desplazarse al siguiente conjunto de elementos
-        function slideNext() {
-          currentItem += visibleItems;
-        
-          if (currentItem >= totalItems) {
-            currentItem = 0;
-          }
-        
-          var scrollLeft = currentItem * menuWidth;
-          var animationDuration = 500;
-        
-          $menu.animate({ scrollLeft: scrollLeft }, animationDuration);
-        }
-        
-        // Función para desplazarse al conjunto anterior de elementos
-        function slidePrev() {
-          currentItem -= visibleItems;
-        
-          if (currentItem < 0) {
-            var remainingSets = Math.ceil(totalItems / visibleItems) - 1;
-            currentItem = remainingSets * visibleItems;
-          }
-        
-          var scrollLeft = currentItem * menuWidth;
-          var animationDuration = 500;
-        
-          $menu.animate({ scrollLeft: scrollLeft }, animationDuration);
-        }
-                
-                // Evento para desplazarse al siguiente conjunto de elementos al hacer touch en la flecha derecha
-        $('.arrow-right').on('touchstart', function() {
-          slideNext();
-        });
-
-        // Evento para desplazarse al conjunto anterior de elementos al hacer touch en la flecha izquierda
-        $('.arrow-left').on('touchstart', function() {
-          slidePrev();
-        });
-
-           
+            // Función para desplazarse al siguiente elemento
+            function slideNext() {
+              if (currentItem + visibleItems >= totalItems) {
+                return; // Ya estás en el extremo derecho, no hacer nada
+              }
+              
+              currentItem += 1;
+          
+              var scrollLeft = currentItem * menuWidth;
+              var animationDuration = 500;
+          
+              $menu.animate({ scrollLeft: scrollLeft }, animationDuration);
+            }
+          
+            // Función para desplazarse al elemento anterior
+            function slidePrev() {
+              if (currentItem <= 0) {
+                return; // Ya estás en el extremo izquierdo, no hacer nada
+              }
+              
+              currentItem -= 1;
+          
+              var scrollLeft = currentItem * menuWidth;
+              var animationDuration = 500;
+          
+              $menu.animate({ scrollLeft: scrollLeft }, animationDuration);
+            }
+          
+            // Evento para desplazarse al siguiente elemento al hacer touch en la flecha derecha
+            $('.arrow-right').on('touchstart', function() {
+              slideNext();
+            });
+          
+            // Evento para desplazarse al elemento anterior al hacer touch en la flecha izquierda
+            $('.arrow-left').on('touchstart', function() {
+              slidePrev();
+            });
           });
+          
         </script>
    </body>
  

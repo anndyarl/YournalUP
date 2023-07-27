@@ -1,7 +1,8 @@
 from django import forms
 from django.forms.widgets import Select
-from .models import TRADES, CUENTAS, IMAGE
+from .models import TRADES, CUENTAS, IMAGE, PARCIALES, TRADEPARCIALES
 from django.contrib.auth.forms import AuthenticationForm
+
 
 class CustomAuthForm(AuthenticationForm):
     username = forms.CharField(
@@ -154,7 +155,12 @@ class CuentaForm(forms.ModelForm):
     ('Otro', 'Otro'),
 
     )   
-
+    RESULTADO_CUENTA_CHOICES = (      
+        ('Ongoing', 'Ongoing'),
+        ('Repeat', 'Repeat'),     
+        ('Passed', 'Passed'),
+        ('Not passed', 'Not passed'),       
+    )
 
     def __init__(self, *args, **kwargs):
         """
@@ -173,30 +179,29 @@ class CuentaForm(forms.ModelForm):
             self.fields['cuenta'] = forms.ChoiceField(choices=self.CUENTA_CHOICES, widget=Select(), required=True)
             self.fields['riesgo_operacion'] = forms.ChoiceField(choices=self.RIESGO_CHOICES, widget=Select(), required=True)
         else:
-            self.fields['cuenta'] = forms.CharField(max_length=50, required=True)    
+            self.fields['cuenta'] = forms.DecimalField(max_digits=10, decimal_places=2, required=True)     
             self.fields['riesgo_operacion'] = forms.DecimalField(max_digits=10, decimal_places=2, required=True)   
 
-       
-        self.fields['user'].required = False
-        self.fields['id_tipo_cuenta'].required = False
+        
+        # self.fields['user'].required = True
+        # self.fields['id_tipo_cuenta'].required = True
          
     broker = forms.ChoiceField(choices=BROKER_CHOICES, widget=forms.Select(), required=True)
-    otro_broker = forms.CharField(max_length=100, required=False)  # Agrega este campo   
-    operaciones_restantes = forms.CharField(max_length=100, required=False)  # Agrega este campo    
-    nivel_riesgo = forms.CharField(max_length=100, required=False)  # Agrega este campo  
-    capital_actual = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
+    otro_broker = forms.CharField(max_length=100, required=False)  # Agrega este campo 
     comision = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
     swap = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
-
+    resultado_cuenta = forms.ChoiceField(choices=RESULTADO_CUENTA_CHOICES, widget=forms.Select(), required=False)
+    n_login = forms.CharField(max_length=12, required=True)  # Agrega este campo 
+    
     def clean(self):
         cleaned_data = super().clean()
         selected_broker = cleaned_data.get('broker')
-        otro_broker = cleaned_data.get('otro_broker')
-
+        otro_broker = cleaned_data.get('otro_broker')     
+       
         if selected_broker == 'Otro' and not otro_broker:
             self.add_error('otro_broker', 'Por favor, ingresa el nombre del otro broker.')
         elif otro_broker:
-            cleaned_data['broker'] = otro_broker
+            cleaned_data['broker'] = otro_broker 
 
         return cleaned_data
 
@@ -206,8 +211,8 @@ class CuentaForm(forms.ModelForm):
         Meta class for CuentaForm.
         """
         model = CUENTAS
-        fields = '__all__'
-
+        # fields = '__all__'
+        exclude = ['operaciones_restantes', 'nivel_riesgo', 'capital_actual', 'id_tipo_cuenta','user']
 
 
 class ImageForm(forms.ModelForm):
@@ -226,12 +231,15 @@ class ImageForm(forms.ModelForm):
         }
 
 
-class TradeImageForm(forms.ModelForm):
 
+class ParcialesForm(forms.ModelForm):
+          
+    parciales = forms.DecimalField(max_digits=10, decimal_places=2, required=False, initial=0)
     class Meta:
         """
-        Meta class for TradeImageForm.
+        Meta class for ImageForm.
         """
-        model = IMAGE
+        model = PARCIALES
         fields = '__all__'
+
 

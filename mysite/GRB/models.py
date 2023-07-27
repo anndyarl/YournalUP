@@ -65,10 +65,10 @@ class CUENTAS(models.Model):
         max_digits=10, decimal_places=2, verbose_name="Cuenta", null=True
     )
     n_operaciones = models.CharField(
-        max_length=100, verbose_name="Número de Operaciones", null=True
+        max_length=20, verbose_name="Número de Operaciones", null=True
     )
     operaciones_restantes = models.CharField(
-        max_length=100, verbose_name="Operaciones restantes", null=True
+        max_length=20, verbose_name="Operaciones restantes", null=True
     )
     capital_riesgo = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Capital riesgo", null=True
@@ -77,12 +77,12 @@ class CUENTAS(models.Model):
         max_digits=10, decimal_places=2, verbose_name="Riesgo por operación", null=True
     )
     nivel_riesgo = models.CharField(
-        max_length=100, verbose_name="Nivel de riesgo", null=True
+        max_length=50, verbose_name="Nivel de riesgo", null=True
     )
     capital_actual = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Capital actual", null=True
     )
-    n_login = models.CharField(max_length=100, verbose_name="Login", null=True)
+    n_login = models.CharField(max_length=12, verbose_name="Login", null=True)
     id_tipo_cuenta = models.ForeignKey(
         TIPOCUENTA, on_delete=models.CASCADE, verbose_name="Id tipo cuenta", null=True
     )
@@ -100,13 +100,16 @@ class CUENTAS(models.Model):
     #     max_length=100, verbose_name="Beneficio Total", null=True
     # )
     broker = models.CharField(
-        max_length=100, verbose_name="Broker", null=True
+        max_length=50, verbose_name="Broker", null=True
     )
     comision = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Comisión", null=True
     )
     swap =  models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Swap", null=True
+    )
+    resultado_cuenta = models.CharField(
+        max_length=50, verbose_name="Selecciona una resultado", null=True
     )
     
 
@@ -136,6 +139,8 @@ class CUENTAS(models.Model):
             + str(self.comision)
             + "Swap "
             + str(self.swap)
+            + "resultado_cuenta: "
+            + self.resultado_cuenta
         )
         return fila
 
@@ -173,8 +178,8 @@ class TRADES(models.Model):
     id_cuenta = models.ForeignKey(
         CUENTAS, on_delete=models.CASCADE, verbose_name="Id Cuenta", null=True
     )
-    activo = models.CharField(max_length=100, verbose_name="Activo", null=True)
-    orden = models.CharField(max_length=100, verbose_name="Orden", null=True)
+    activo = models.CharField(max_length=6, verbose_name="Activo", null=True)
+    orden = models.CharField(max_length=10, verbose_name="Orden", null=True)
     stoploss = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Stoploss", null=True
     )
@@ -191,7 +196,7 @@ class TRADES(models.Model):
     utilidad_proyectada = models.CharField(
         max_length=100, verbose_name="Utilidad proyectada", null=True
     )
-    resultado = models.CharField(max_length=100, verbose_name="Resultado", null=True)
+    resultado = models.CharField(max_length=50, verbose_name="Resultado", null=True)
     fecha = models.DateTimeField(max_length=10, verbose_name="Fecha", null=True)
     beneficio_real = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Beneficio Real", null=True
@@ -258,3 +263,34 @@ class TRADEIMAGE(models.Model):
     #         image.delete()
     #     super().delete(using=using, keep_parents=keep_parents)
 
+class PARCIALES(models.Model):
+    """
+    clase Modelo "PARCIALES".
+    """
+    id_parciales = models.AutoField(primary_key=True)
+    parciales =  models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name="parciales", null=True)
+
+    objects = models.Manager()
+
+    def __str__(self):
+        fila = "parciales: " + str(self.parciales)
+        return fila
+    
+
+class TRADEPARCIALES(models.Model):
+    """
+    clase Modelo "TRADEPARCIALES".
+    """
+
+    trade = models.ForeignKey(TRADES, on_delete=models.CASCADE)
+    id_parciales = models.ForeignKey(PARCIALES, on_delete=models.CASCADE)
+
+    objects = models.Manager()
+
+    def __str__(self):
+        fila = "trade: " + str(self.trade) + "parciales: " + str(self.id_parciales)
+        return fila
+    
+class ORDER(models.Model):
+    pass

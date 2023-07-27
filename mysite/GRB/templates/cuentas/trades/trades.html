@@ -1,149 +1,185 @@
 {% extends "base.html" %} {% block titulo %} Mis trades {% endblock %}
 {% block contenido %}
 {% load static %}
-
-
-{% load static %}
 {% csrf_token %}
-{% if mensaje_error %}
-<div class="alert alert-danger" role="alert">
-  {{ mensaje_error }}
-  {% endif %}
-  <div class="nav-list">
-    {% include 'cuentas/trades/nav_list.html' %}
+<div class="nav-list">
+  {% include 'cuentas/trades/nav_list.html' %}
+</div> 
+  <div class="card-table"> 
+    <div class="card-body body-one">      
+      {% if mensaje_error %}
+      <div class="alert alert-warning" role="alert">
+        {{ mensaje_error }}        
+        <button class="close-btn" onclick="cerrarMensajeError(this)"><span class="close-icon"></span></button>
+      </div>
+    {% endif %}
+    {% for mensaje in messages %}
+    <div class="alert alert-info notifications-alert" role="alert">
+        {{ mensaje }}
+        <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
     </div>
-  <div class="card-table">
-    <div class="card-body body-one"> 
-        <a  class="add-order-button-trade" href="{% url 'crear' %}" role="button">
-          <i class="fas fa-plus"></i> Agregar trade
-        </a>      
-        
-            <a id="open-modal-button-commission" class="add-button-commission"><i class="fas fa-fw fa-angle-double-left"></i></a>
-         
-        {% if lista_trades_de_cuentas %}
-            {% if beneficio_total %}
-          
-            <div id="modal-container-commission" class="modal-container-commission container-commission-desktop"> 
-              
-              <div class="modal-header header-commission-end">	                 			
-                <a type="button" class="close" data-dismiss="modal-container" aria-label="Close">
-                  <i class="fas fa-times close-modal"></i>
-                </a>              
-              </div>
-              <div class="modal-body">	
-                <h5 class="card-title">Descuentos</h5> 
-                <form id="commission-form" enctype="multipart/form-data" method="post">   
-                  {% csrf_token %}    
-                      <label for="comision" class="label-commission">Comisión</label>           
-                      <input type="text" class="form-control" id="comision"  name="comision" placeholder="0.0" value="{{ formulario.comision.value | default:''}}">             
-                    
-                      <label for="swap" class="label-commission">Swap</label>
-                      <input type="text" class="form-control" id="swap" name="swap" placeholder="0.0" value="{{ formulario.swap.value | default:'' }}">                 
-                      <label for="beneficio_total" class="label-commission beneficio_total">Beneficios</label>            
-                      <input type="text" readonly Id="beneficio_total" name="beneficio_total" value="$ {{ beneficio_total | default:'' }}"> 
-                      <div class="mb-4">
-                        <label for="porcentaje_beneficio_total" class="label-commission porcentaje_beneficio_total">Utilidad</label>            
-                        <input type="text" readonly  id="porcentaje_beneficio_total" name="porcentaje_beneficio_total" value="{{ porcentaje_beneficio_total | default:'' }} %">           
-                      </div>
-                    <div class="mb-1">
-                       <button type="submit" class="add-order-button-commission disabled-button"></i>Guardar</button>
-                    </div>
-                </form>  
-              </div>       
-            </div>      
-            {% endif %}
-        {% endif %}   
-    </div>      
- {% if exist_row > 0 %}
-  <div class="card-body body-two">   
-    <h4 class="card-title">Historial de trades</h4> 
-    {% comment %} <button id="eliminar-seleccionados">Eliminar Seleccionados</button>   {% endcomment %}
-    <div class="tabla-scroll">     
-      <table class="table table-trades table-hover">
-        <thead>
-          <tr>
-            <th scope="col"> <i class="fas fa-flag"></i></th>
-            <th scope="col">Cod</th>
-            <th scope="col">Fecha</th>
-            <th scope="col">Activo</th>
-            <th scope="col">Orden</th>
-            <th scope="col">Stoploss</th>
-            <th scope="col">TakeProfit</th>
-            <th scope="col">Volumen</th>
-            <th scope="col">Ratio</th>
-            <th scope="col">Resultado</th>
-            <th scope="col">Beneficio Real</th>
-            <th scope="col">Utilidad</th>
-            <th scope="col"></th>     
-            <th scope="col"></th>         
-            {% comment %} <th scope="col"></th>
-            <th scope="col" class="edit"></th> {% endcomment %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for trades in lista_trades_de_cuentas %}
-          <tr class="editable-row" ondblclick="window.location.href='{% url 'editar' trades.id %}'">
-            <td>
-              <div class="checkbox-wrapper">
-                <input type="checkbox" class="fila-checkbox" id="checkbox_{{ trades.id }}">
-                <label for="checkbox_{{ trades.id }}" class="checkbox-label"></label>
-              </div>
-            </td>
-            <td>{{ trades.id }}</td>
-            <td>{{ trades.fecha|date:"d/m/Y" }}</td>
-            <td>{{ trades.activo }}</td>
-            <td {% if trades.orden == 'Venta' %}class="venta"{% endif %}
-                {% if trades.orden == 'Compra' %}class="compra"{% endif %}>
-                {{ trades.orden }}
-            </td>
-            <td>{{ trades.stoploss }}</td>
-            <td>{{ trades.takeprofit }}</td>
-            <td>{{ trades.lotaje }}</td>
-            <td>{{ trades.ratio }}</td>
-            <td {% if trades.resultado == 'Programada' %}class="text-warning"{% endif %}
-                {% if trades.resultado == 'Ejecución por Mercado' %}class="text-warning"{% endif %}
-                {% if trades.resultado == 'Take Profit' %}class="text-success"{% endif %}
-                {% if trades.resultado == 'Stop Loss' %}class="text-danger"{% endif %}
-                {% if trades.resultado == 'Break Even' %}class="text-info"{% endif %}
-                {% if trades.resultado == 'Cierre Manual en Positivo' %}class="text-success"{% endif %}
-                {% if trades.resultado == 'Cierre Manual en Negativo' %}class="text-danger"{% endif %}>
-                {{ trades.resultado }}
-            </td>
-            {% if trades.beneficio_real %}
-            <td>$ {{ trades.beneficio_real }}</td>
-            <td>{{ trades.porcentaje_beneficio_real }} %</td>
-            {% else %}
-            <td>-</td>
-            <td>-</td>
-            {% endif %}
+{% endfor %}
+          <div class="middle-content">
+          <h4 class="card-title">Historial de trades</h4> 
+          <a  class="add-order-button-trade" href="{% url 'crear' %}" role="button">
+            <i class="fas fa-plus"></i> Agregar trade
+          </a>   
+        </div>  
+                 <div class="tabla-scroll container hide-scrollbar mt-1">         
+        <table class="table table-trades table-hover">
+          <thead>
+            <tr>
+              <th scope="col" class="first-column">-</th> 
+              <th scope="col"> <i class="fas fa-flag"></i></th>
+              <th scope="col">Cod</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Activo</th>
+              <th scope="col">Orden</th>
+              <th scope="col">Stoploss</th>
+              <th scope="col">TakeProfit</th>
+              <th scope="col">Volumen</th>
+              <th scope="col">Ratio</th>
+              <th scope="col">Resultado</th>
+              <th scope="col">Beneficio Real</th>
+              <th scope="col">Utilidad</th>  
+            </tr>
+          </thead>
+          <tbody>      
+            {% for trades in lista_trades_de_cuentas %}
+            <tr
+            {% if trades.resultado == 'Take Profit' %}class="bg-result-tp"{% endif %}
+            {% if trades.resultado == 'Stop Loss' %}class="bg-result-sl"{% endif %}        
+            {% if trades.resultado == 'Cierre Manual en Positivo' %}class="bg-result-tp"{% endif %}
+            {% if trades.resultado == 'Cierre Manual en Negativo' %}class="bg-result-sl"{% endif %} ondblclick="window.location.href='{% url 'editar' trades.id %}'">
+            
             <td>
               <div class="dropdown">
-                <i id="dropdown-icon" class="fas fa-ellipsis-h dropdown-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                <div id="dropdown-menu" class="dropdown-menu">
+                <i class="fas fa-ellipsis-h dropdown-button" aria-haspopup="true" aria-expanded="false"></i>
+                <div id="dropdown-menu" class="dropdown-menu menu-list">
                   <a class="dropdown-item" href="{% url 'editar' trades.id %}">
                     <i class="fas fa-edit"></i> Editar
-                  </a>
-                  <a class="dropdown-item" href="{% url 'eliminar' trades.id %}">
+                  </a>   
+                  {% comment %} <a id="open-modal-button-delete" class="delete-order-button" data-toggle="modal" data-target="#modal-confirm">
                     <i class="fas fa-trash-alt"></i> Eliminar
-                  </a>
-                </div>
+                  </a>    {% endcomment %}
+                </div> 
               </div>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>  
+            </td>  
+                              
+            <td>
+                <div class="checkbox-wrapper">
+                  <input type="checkbox" class="fila-checkbox" id="checkbox_{{ trades.id }}">
+                  <label for="checkbox_{{ trades.id }}" class="checkbox-label"></label>
+                </div>
+              </td>
+              <td>{{ trades.id }}</td>
+              <td>{{ trades.fecha|date:"d/m/Y" }}</td>
+              <td>{{ trades.activo }}</td>
+              <td {% if trades.orden == 'Venta' %}class="venta"{% endif %}
+                  {% if trades.orden == 'Compra' %}class="compra"{% endif %}>
+                  {{ trades.orden }}
+              </td>
+              <td>{{ trades.stoploss }}</td>
+              <td>{{ trades.takeprofit }}</td>
+              <td>{{ trades.lotaje }}</td>
+              <td>{{ trades.ratio }}</td>
+              <td {% if trades.resultado == 'Programada' %}class="text-warning"{% endif %}
+                  {% if trades.resultado == 'Ejecución por Mercado' %}class="text-warning"{% endif %}
+                  {% if trades.resultado == 'Take Profit' %}class="text-success"{% endif %}
+                  {% if trades.resultado == 'Stop Loss' %}class="text-danger"{% endif %}
+                  {% if trades.resultado == 'Break Even' %}class="text-info"{% endif %}
+                  {% if trades.resultado == 'Cierre Manual en Positivo' %}class="text-success"{% endif %}
+                  {% if trades.resultado == 'Cierre Manual en Negativo' %}class="text-danger"{% endif %}>
+                  {{ trades.resultado }}
+              </td>
+              {% if trades.beneficio_real %}
+              <td>$ {{ trades.beneficio_real }}</td>
+              <td>{{ trades.porcentaje_beneficio_real }} %</td>
+              {% else %}
+              <td>-</td>
+              <td>-</td>
+              {% endif %}            
+            </tr>
+            {% endfor %}
+          </tbody>           
+        </table>
+      </div>          
+    </div>   
+   
+  <div class="card-body body-two"> 
+    {% if lista_trades_de_cuentas %}
+    <a id="open-modal-button-commission" class="add-button-commission"><i class="fas fa-fw fa-angle-double-left"></i></a>   
+        {% comment %} {% if beneficio_total %} {% endcomment %}          
+        <div id="modal-container-commission" class="modal-container-commission container-commission-desktop"> 
+          
+          <div class="modal-header">	                 			
+            <a type="button" class="close" data-dismiss="modal-container" aria-label="Close">
+              <i class="fas fa-times close-modal"></i>
+            </a>              
+          </div>
+          <div class="modal-body">	
+            <h5 class="card-title">Descuentos</h5> 
+            <form id="commission-form" enctype="multipart/form-data" method="post">   
+              {% csrf_token %}    
+                  <label for="comision" class="label-commission">Comisión</label>           
+                  <input type="text" class="form-control" id="comision"  name="comision" placeholder="0.0" value="{{ formulario.comision.value | default:''}}">             
+                
+                  <label for="swap" class="label-commission">Swap</label>
+                  <input type="text" class="form-control" id="swap" name="swap" placeholder="0.0" value="{{ formulario.swap.value | default:'' }}">                 
+                  <label for="beneficio_total" class="label-commission beneficio_total">Beneficios</label>            
+                  <input type="text" readonly Id="beneficio_total" name="beneficio_total"  placeholder="0.0" {% if beneficio_total %} value="$ {{ beneficio_total | default:'' }}" {% endif %}> 
+                  <div class="mb-4">
+                    <label for="porcentaje_beneficio_total" class="label-commission porcentaje_beneficio_total">Utilidad</label>            
+                    <input type="text" readonly  id="porcentaje_beneficio_total" name="porcentaje_beneficio_total"  placeholder="0.0" {% if beneficio_total %} value="{{ porcentaje_beneficio_total | default:'' }} %" {% endif %}>           
+                  </div>
+
+                  {% if id_tipo_cuenta == 1 %}
+                  <div class="mb-3">
+                    <h5 class="card-title">Resultado de la cuenta</h5> 
+                    <select id="resultado_cuenta" class="form-control" name="resultado_cuenta">
+                      {% for choice in formulario.resultado_cuenta.field.choices %}
+                        {% if choice.0 == formulario.resultado_cuenta.value %}
+                          <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+                        {% else %}
+                          <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                  </div>   
+                  {% endif %}   
+                <div class="mb-1">
+                   <button type="submit" class="add-order-button-commission disabled-button"></i>Guardar</button>
+                </div>
+                
+            </form>  
+          </div>       
+        </div>      
+        {% comment %} {% endif %} {% endcomment %}
+    {% endif %}   
     </div>
   </div>
-  {% else %} 
-  <div class="card-body">
-    <h4 class="card-title">Historial de trades</h4>
-    <p>Aún no tienes registros...</p>
-  </div>  
-  {% endif %}
 </div>
-
+<!-- Modal de confirmación de eliminación -->
+<div id="modal-confirm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header-left">
+        <h5 class="modal-title">Confirmar</h5>
+      </div>
+      <div class="modal-body">
+        {% comment %} <p>¿Esta acción eliminará permanentemente su trade con codigo de registro <b>{{trade_id}}</b> ¿Deseas continuar?</p> {% endcomment %}
+      </div>
+      <div class="modal-footer">
+        <a type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">
+          <i class="close"></i>Cancelar
+        </a>
+        {% comment %} <a type="button" class="btn btn-danger" href="{% url 'eliminar' trade_id %}">
+          <i class="fas fa-trash-alt"></i> Confirmar y Eliminar
+        </a> {% endcomment %}
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="loading-icon" style="display: none;">
   <i class="fas fa-spinner fa-spin"></i> Cargando...

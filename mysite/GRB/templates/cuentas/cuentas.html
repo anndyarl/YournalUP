@@ -1,75 +1,96 @@
 {% extends "base.html" %} {% block titulo %} Mis cuentas {% endblock %} 
 {% block contenido %}
 {% load static %}
+{% if error_message %}
+      <div class="alert alert-warning" role="alert">
+        {{ error_message }}
+      </div>
+    {% endif %}   
+  {% for mensaje in mensajes %}
+    <div class="alert alert-info notifications-alert" role="alert">
+        {{ mensaje }}
+        <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
+    </div>
+{% endfor %}
 
-<div class="card">
   <div class="card-header">  
     <a name="" id="myBtn" class="add-order-button" href="{% url 'crear_cuentas' request.session.id_tipo_cuenta %}" role="button">
       <i class="fas fa-plus"></i> Agregar cuenta
-    </a>    
+    </a>  
   </div>  
   <div class="card-body">    
     {% if request.session.id_tipo_cuenta == 1 %}
-    <h4 class="card-title">MIS CUENTAS DE FONDEO</h4>        
+      <h4 class="card-title">MIS CUENTAS DE FONDEO</h4>        
     {% else %} 
-    <h4 class="card-title">MIS CUENTAS PERSONALES</h4>   
+      <h4 class="card-title">MIS CUENTAS PERSONALES</h4>   
     {% endif %}
-  
-    <div class="mt-4"></div>  
-    <div class="table-responsive">
-      <div class="tabla-scroll">
-        <table class="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col">Login</th>  
-            <th scope="col">Fecha</th>     
-            <th scope="col">Cuenta</th>
-            <th scope="col">Empresa</th>
-            {% comment %} <th scope="col">N° Operaciones</th>
-            <th scope="col">Operaciones Restantes</th> {% endcomment %}
-            <th scope="col">Capital Riesgo</th>           
-            <th scope="col">Porcentaje de Riesgo</th>
-            <th scope="col">Nivel de Riesgo</th>
-            <th scope="col">Resultado</th>
-            <th scope="col">Balance</th>  
-            <th scope="col"></th>   
-            <th scope="col" class="edit"></th>  
-          </tr>
-        </thead>
-        <tbody>
-          {% for cuenta in cuentas %}      
-          <tr class="editable-row" ondblclick="window.location.href='{% url 'lista_trades_de_cuentas' cuenta.id_cuenta %}'">
-            <td>{{ cuenta.n_login }}</td>
-            <td>{{ cuenta.fecha_cuenta|date:"d/m/Y" }}</td>
-            <td> $ {{ cuenta.cuenta }}</td>           
-            <td>{{ cuenta.broker }}</td> 
-            {% comment %} <td>{{ cuenta.n_operaciones }}</td>
-            <td>{{ cuenta.operaciones_restantes }}</td> {% endcomment %}
-            <td>$ {{ cuenta.capital_riesgo }}</td>
-            <td>{{ cuenta.riesgo_operacion }} %</td>
-            <td>{{ cuenta.nivel_riesgo }}</td>
-            <td style="color:orange;"> En proceso </td>
-            <td>$ {{ cuenta.capital_actual }}</td>
-           <td class="edit"> 
-              <a class="btn-custom" href="{% url 'lista_trades_de_cuentas' cuenta.id_cuenta %}" role="button">
-                <i class="fas fa-eye"></i> 
-              </a> 
-            </td> 
-            <td>
-              <a id="deleteLink" class="btn-custom" href="{% url 'eliminar_cuenta' request.session.id_tipo_cuenta cuenta.id_cuenta %}" role="button">
-                <i class="fas fa-trash-alt"></i>
-              </a>              
-            </td>           
-          </tr>       
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    </div>
-  </div>
+ 
+      {% csrf_token %}
+    <div class="mt-4"></div>     
+      <div class="table-responsive">
+        <div class="tabla-scroll">        
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Login</th>  
+                <th scope="col">Fecha</th>     
+                <th scope="col">Cuenta</th>
+                <th scope="col">Empresa</th>
+                <th scope="col">Capital Riesgo</th>           
+                <th scope="col">Porcentaje de Riesgo</th>
+                <th scope="col">Nivel de Riesgo</th>
+                {% if id_tipo_cuenta == 1 %}
+                <th scope="col">Resultado</th>
+                {% endif %}
+                <th scope="col">Balance</th>  
+                <th scope="col"></th>                  
+                <th scope="col" class="edit"></th>  
+              </tr>
+            </thead>
+            <tbody>
+              {% for cuenta in cuentas %}
+              <tr class="editable-row"  ondblclick="window.location.href='{% url 'lista_trades_de_cuentas' cuenta.id_cuenta %}'">
+                <td>{{ cuenta.n_login }}</td>
+                <td>{{ cuenta.fecha_cuenta|date:"d/m/Y" }}</td>
+                <td name="cuenta" data-id-cuenta="{{ cuenta.id_cuenta }}">$ {{ cuenta.cuenta }}</td>
+                <td name="broker" data-id-cuenta="{{ cuenta.id_cuenta }}">{{ cuenta.broker }}</td>
+                <td>$ {{ cuenta.capital_riesgo }}</td>
+                <td>{{ cuenta.riesgo_operacion }} %</td>               
+                <td name="nivel_riesgo" data-id-cuenta="{{ cuenta.id_cuenta }}">{{ cuenta.nivel_riesgo }}</td>  
+                {% if id_tipo_cuenta == 1 %}
+                <td  {% if cuenta.resultado_cuenta == 'Ongoing' %}class="text-warning"{% endif %}
+                {% if cuenta.resultado_cuenta == 'Passed' %}class="text-success"{% endif %}
+                {% if cuenta.resultado_cuenta == 'Not passed' %}class="text-danger"{% endif %}
+                {% if cuenta.resultado_cuenta == 'Repeat' %}class="text-info"{% endif %}
+                 name="resultado_cuenta" data-id-cuenta="{{ cuenta.id_cuenta }}">                 
+                {{cuenta.resultado_cuenta}}             
+                </td>  
+                {% endif %}         
+                <td>$ {{ cuenta.capital_actual }}</td>
+                {% comment %} <td class="edit">
+                  <a class="btn-custom" href="{% url 'editar_cuentas' request.session.id_tipo_cuenta cuenta.id_cuenta %}" role="button">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                </td> {% endcomment %}
+                <td class="edit">
+                  <a class="btn-custom" href="{% url 'lista_trades_de_cuentas' cuenta.id_cuenta %}" role="button">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                </td>
+                <td>
+                  <a id="deleteLink" class="btn-custom" href="{% url 'eliminar_cuenta' request.session.id_tipo_cuenta cuenta.id_cuenta %}" role="button">
+                    <i class="fas fa-trash-alt"></i>
+                  </a>
+                </td>               
+              </tr>
+              {% endfor %}
+            </tbody>            
+          </table>
+        </div>
+      </div>    
+ 
+
   <div class="card-footer text-muted"></div>
 </div>
-
-
 <script src="{% static 'js/scriptListaCuentas.js' %}"></script>
 {% endblock %}
