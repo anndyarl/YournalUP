@@ -46,6 +46,7 @@ let factor = 1;
 // Agregamos un eventListener al evento input en ambos inputs para que se calcule el resultado en tiempo real
 capitalRiesgoInput.addEventListener('input', calcularLotaje);
 stoplossInput.addEventListener('input', calcularLotaje);
+lotajeInput.addEventListener('input', calcularLotaje);
 const activoSelect = document.getElementById('activo');
 const activoSeleccionadoLabel = document.getElementById('activo_seleccionado');
 
@@ -68,11 +69,14 @@ activoSelect.addEventListener('change', () => {
   // }
     
 });
-
+lotajeInput.value = lotajeInput.value.replace(/[^\d.-]/g, '');
 function calcularLotaje() {
   const capitalRiesgo = parseFloat(capitalRiesgoInput.value);
   const stoploss = parseFloat(stoplossInput.value);
-  
+ 
+ 
+
+ 
    // Validamos si existen datos dentro del input
    if (stoploss === 0 || isNaN(stoploss)) {
     lotajeInput.value = "";
@@ -192,6 +196,8 @@ takeprofitInput.addEventListener('input', calculateRatio);
 function calculateRatio() {
   stoplossInput.value = stoplossInput.value.replace(/[^\d.-]/g, '');
   takeprofitInput.value = takeprofitInput.value.replace(/[^\d.-]/g, '');
+
+
   let stoploss = parseFloat(stoplossInput.value);
   let takeprofit = parseFloat(takeprofitInput.value);
 
@@ -216,6 +222,7 @@ function calculateBeneficioEsperado() {
   let lotaje = parseFloat(lotajeInput.value);
   let takeprofit = parseFloat(takeprofitInput.value);
   let stoploss = parseFloat(stoplossInput.value);
+
 
   // Validamos si existen datos dentro del input
   if (stoploss == 0 || isNaN(stoploss) || takeprofit == 0 || isNaN(takeprofit)) {
@@ -306,7 +313,7 @@ function expandImage(img) {
  // Configuración del calendario
  $( function() {
   $( "#fecha" ).datepicker({
-    dateFormat: "yy-mm-dd",
+    dateFormat: "dd-mm-yy",
     changeMonth: true,
     changeYear: true,
     yearRange: "-100:+0",
@@ -365,42 +372,63 @@ $('.update-button').click(function () {
 
 document.addEventListener('DOMContentLoaded', function() {
   var toggleButton = document.getElementById('open-modal-button');
-  var modalContainer = document.querySelector('.modal-container');
+  var modalContainer = document.querySelector('#modal-container');
   var closeButton = modalContainer.querySelector('.close');
   var expandModalButton = document.getElementById('expand-modal-button');
   var gridContainerMaster = document.querySelector('.grid-container-master');
   var gridContainer = document.querySelector('.grid-container');
 
+  // Recupera el estado de isExpanded desde la memoria local
+  var isExpanded = localStorage.getItem('isExpanded') === 'true';
+
+  // Recupera el estado de isModalOpen desde la memoria local
+  var isModalOpen = localStorage.getItem('isModalOpen') === 'true';
+
+  // Aplica el estado recuperado
+  if (isExpanded) {
+    gridContainerMaster.classList.add('expand');
+    gridContainerMaster.style.gridTemplateColumns = '1fr';
+    gridContainer.style.display = 'none';
+  }
+
+  if (isModalOpen) {
+    modalContainer.classList.add('show');
+  }
+
   toggleButton.addEventListener('click', function() {
     modalContainer.classList.toggle('show');
+    isModalOpen = !isModalOpen; // Cambia el estado
+    localStorage.setItem('isModalOpen', isModalOpen.toString()); // Guarda el estado en la memoria local
   });
 
   closeButton.addEventListener('click', function() {
     modalContainer.classList.remove('show');
+    isModalOpen = false; // Actualiza el estado
+    localStorage.setItem('isModalOpen', 'false'); // Guarda el estado en la memoria local
   });
 
   expandModalButton.addEventListener('click', function() {
-    if (gridContainerMaster.style.gridTemplateColumns != '1fr') { 
-      
-      gridContainerMaster.classList.add('expand');   
+    isExpanded = !isExpanded; // Cambia el estado
+    localStorage.setItem('isExpanded', isExpanded.toString()); // Guarda el estado en la memoria local
+
+    if (isExpanded) {
+      gridContainerMaster.classList.add('expand');
       gridContainerMaster.style.gridTemplateColumns = '1fr';
-      gridContainer.style.display = 'none';     
-    }
-    else{
-      gridContainerMaster.style.gridTemplateColumns = 'repeat(2, 1fr)';     
-      gridContainerMaster.classList.remove('expand');  
+      gridContainer.style.display = 'none';
+    } else {
+      gridContainerMaster.style.gridTemplateColumns = 'repeat(2, 1fr)';
+      gridContainerMaster.classList.remove('expand');
       gridContainer.style.display = 'grid';
     }
-  });  
-
+  });
 });
 
 
-const textarea1 = document.getElementById('descripcion');
-textarea1.addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = this.scrollHeight + 'px';
-});
+// const textarea1 = document.getElementById('descripcion');
+// textarea1.addEventListener('input', function() {
+//   this.style.height = 'auto';
+//   this.style.height = this.scrollHeight + 'px';
+// });
 
 
 
@@ -537,3 +565,19 @@ function closeDropdowns() {
       }, 10000); // 5000 milisegundos = 5 segundos (tiempo de espera después de la transición)
     }, 3000); // 3000 milisegundos = 3 segundos (tiempo de espera antes de iniciar la transición)
   }
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var info = document.querySelector('#info');
+  
+    // Muestra automáticamente el contenido al recargar la página
+    info.classList.add('show');
+  
+    // Agrega un event listener al botón de cerrar si es necesario
+    var closeInfoButton = info.querySelector('.close');
+    if (closeInfoButton) {
+      closeInfoButton.addEventListener('click', function() {   
+        info.classList.remove('show');
+      });
+    }
+  });

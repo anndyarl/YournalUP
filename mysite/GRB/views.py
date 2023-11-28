@@ -28,6 +28,8 @@ import os
 import shutil
 from datetime import datetime
 import uuid
+from django.utils.datetime_safe import datetime
+from django.utils import timezone
 
 @csrf_protect
 def custom_login(request):
@@ -229,7 +231,7 @@ def crear_cuentas(request, id_tipo_cuenta):
             cuenta.id_tipo_cuenta_id = id_tipo_cuenta
             cuenta.riesgo_operacion = float(formulario.cleaned_data.get("riesgo_operacion"))
             cuenta.n_operaciones = formulario.cleaned_data.get("n_operaciones")
-            cuenta.resultado_cuenta = "En proceso"
+            cuenta.resultado_cuenta = "Ongoing"
             try:                
                 if id_tipo_cuenta == 1:
                     cuenta.cuenta_seleccionada = formulario.cleaned_data.get("cuenta")
@@ -315,13 +317,12 @@ def crear(request):
         return redirect("login")
 
     cuentas = CUENTAS.objects.all()
+    # Obtener la cuenta del nuevo trade
+    id_cuenta = request.session.get('id_cuenta')
     formulario = TradeForm(request.POST or None, request.FILES or None)
-
+    
     if formulario.is_valid():
         trade = formulario.save(commit=False)
-
-        # Obtener la cuenta del nuevo trade
-        id_cuenta = request.session.get('id_cuenta')
         
         try:
             cuenta = CUENTAS.objects.get(id_cuenta=id_cuenta)
@@ -355,16 +356,14 @@ def crear(request):
             }
             return render(request, "cuentas/trades/crear.html", context)
 
+        trade.fecha_updated =  timezone.now()  
         trade.id_cuenta_id = id_cuenta  # Asignar el id_cuenta_id al objeto trade
         trade.save()  # Guardar el trade en la base de datos
         info_message = "Se ha agregado un nuevo trade"
         messages.info(request, info_message)
-        return redirect("editar", trade.id)
-        
-     
+        return redirect("editar", trade.id)      
 
-
-    context = {"cuentas": cuentas, "formulario": formulario}
+    context = {"cuentas": cuentas, "formulario": formulario, "id_cuenta": id_cuenta}
     return render(request, "cuentas/trades/crear.html", context)
 
 
@@ -377,39 +376,36 @@ def editar(request, id):
         if not request.user.is_authenticated:
             return redirect("login")
 
-        # request.session["id"] = id
-        trade_id =  id
-        # Obtener la cuenta del nuevo trade
+        trade_id = id
         id_cuenta = request.session.get('id_cuenta')
-        # Obtener el objeto de TRADES y las imágenes relacionadas
-        trade = TRADES.objects.get(id=id)
-        trade_fecha_str = trade.fecha.strftime("%d/%m/%Y")
-        trade.fecha = datetime.strptime(trade_fecha_str, "%d/%m/%Y").date()
-        cuentas = CUENTAS.objects.all()#se instancian todos los objetos para renderizarlos por pantalla como display
+        trade = TRADES.objects.get(id=id)    
+        # El formato desde forms se presenta al usuario dd-mm-YYYY pero por la vista se envia en formato YYYY-mm-dd
+        trade_fecha_str = trade.fecha.strftime("%Y-%m-%d")
+        trade.fecha = datetime.strptime(trade_fecha_str, "%Y-%m-%d").date()      
+
+        cuentas = CUENTAS.objects.all()
         cuenta = CUENTAS.objects.get(id_cuenta=id_cuenta)
         filtra_trade_image = TRADEIMAGE.objects.filter(trade_id=id)
         recorre_clase_image = [(trade_image.image, trade_image) for trade_image in filtra_trade_image]
 
         formulario = TradeForm(request.POST, request.FILES, instance=trade)
-        if request.method == "POST" and formulario.is_valid():
-            try:               
-
-                # Guardar las imágenes y los datos ingresados en la base de datos
+      
+        if request.method == "POST" and formulario.is_valid():         
+          
+            try:
                 if request.FILES:
-                    #CREA
+                    # Crea y guarda las imágenes y los datos ingresados en la base de datos
                     for image in request.FILES.getlist('image'):
                         titulo = request.POST.get('titulo')
                         descripcion = request.POST.get('descripcion')
                        
                         img = IMAGE.objects.create(image=image, titulo=titulo, descripcion=descripcion)
                        
-                        #Guarda trade_id y image_id en tabla auxiliar TRADEIMAGE
                         new_trade_image = TRADEIMAGE(trade=trade, image=img)
                         new_trade_image.save()
 
-                        # Guardar la imagen en la carpeta del usuario
                         username = request.user.username
-                        user_folder = os.path.join('imagenes', slugify(username + str(request.user.id)), str(cuenta.n_login),str(trade.id))
+                        user_folder = os.path.join('imagenes', slugify(username + str(request.user.id)), str(cuenta.n_login), str(trade.id))
                         os.makedirs(user_folder, exist_ok=True)
                         image_filename = os.path.join(user_folder, image.name)
 
@@ -421,34 +417,36 @@ def editar(request, id):
                         img.image = image_filename
                         img.save()
 
-                    #ACTUALIZA
                 for image, trade_image in recorre_clase_image:
-                        titulo = request.POST.get(f'titulo_{trade_image.id}')
-                        descripcion = request.POST.get(f'descripcion_{trade_image.id}')
+                    titulo = request.POST.get(f'titulo_{trade_image.id}')
+                    descripcion = request.POST.get(f'descripcion_{trade_image.id}')
 
-                        if request.FILES.get(f'image_{trade_image.id}'):
-                            image_file = request.FILES.get(f'image_{trade_image.id}')
-                            default_storage.delete(trade_image.image.image.path)
-                            username = request.user.username
-                            user_folder = os.path.join('imagenes', slugify(username + str(request.user.id)), str(cuenta.n_login),str(trade.id))
-                            os.makedirs(user_folder, exist_ok=True)
-                            image_filename = os.path.join(user_folder, image_file.name)
+                    if request.FILES.get(f'image_{trade_image.id}'):
+                        image_file = request.FILES.get(f'image_{trade_image.id}')
+                        default_storage.delete(trade_image.image.image.path)
+                        username = request.user.username
+                        user_folder = os.path.join('imagenes', slugify(username + str(request.user.id)), str(cuenta.n_login), str(trade.id))
+                        os.makedirs(user_folder, exist_ok=True)
+                        image_filename = os.path.join(user_folder, image_file.name)
 
-                            if username == request.user.username:
-                                with open(image_filename, 'wb') as file:
-                                    for chunk in image_file.chunks():
-                                        file.write(chunk)
-                            trade_image.image.image = image_filename
-                        trade_image.image.titulo = titulo
-                        trade_image.image.descripcion = descripcion
-                        trade_image.image.save()
+                        if username == request.user.username:
+                            with open(image_filename, 'wb') as file:
+                                for chunk in image_file.chunks():
+                                    file.write(chunk)
+                        trade_image.image.image = image_filename
 
-                trade.id_cuenta_id = id_cuenta  # Asignar el id_cuenta_id al objeto trade
-                trade = formulario.save()           
+                    trade_image.image.titulo = titulo
+                    trade_image.image.descripcion = descripcion
+                    trade_image.image.save()
+
+                trade.fecha_updated =  timezone.now()      
+                trade.id_cuenta_id = id_cuenta
+                trade = formulario.save()
+
                 update_message = "Trade actualizado."
                 messages.info(request, update_message)
                 return redirect("editar", trade.id)
-            
+
             except Exception as e:
                 error_message = f"Se produjo un error al procesar los datos del formulario: {str(e)}"
         else:
@@ -460,9 +458,10 @@ def editar(request, id):
             "cuentas": cuentas,
             "formulario": formulario,
             "recorre_clase_image": recorre_clase_image,
-            "error_message": error_message,           
+            "error_message": error_message,
             "mensajes": mensajes,
             "trade_id": trade_id,
+            "trade_fecha_str": trade_fecha_str
         }
 
         return render(request, "cuentas/trades/editar.html", context)
@@ -472,7 +471,6 @@ def editar(request, id):
 
     context = {"error_message": error_message}
     return render(request, "cuentas/trades/editar.html", context)
-
 
 @csrf_protect
 def eliminar(request, id):

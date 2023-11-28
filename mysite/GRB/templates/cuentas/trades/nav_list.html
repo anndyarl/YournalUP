@@ -10,41 +10,40 @@
         <div class="arrow arrow-right">
           <button class="slide-button-list"><i class="fas fa-fw fa-angle-right"></i></button>  
         </div>
-        <ul data-role="listview" data-inset="true">
-          <li>
-            <label>Login</label>
-            <input id="n_login" type="text" readonly name="n_login" value="{{ cuenta.n_login }}"/>   
-          </li>
+        <ul data-role="listview" data-inset="true">      
           <li>
             <label>Cuenta</label>         
-            <input id="cuenta" type="text" readonly name="cuenta" value="{{ cuenta.cuenta }}"/>   
+            <input id="cuenta" type="text" readonly name="cuenta" value="{{ cuenta.cuenta }} USD"/>   
           </li>
+          <li>
+            <label>Balance</label>
+            <input id="capital_actual" type="text" readonly name="capital_actual" value="{{ cuenta.capital_actual }} USD"/>   
+          </li> 
           <li>
             <label>N° Operaciones</label>
             <input id="n_operaciones" type="text" readonly name="n_operaciones" value="{{ cuenta.n_operaciones }}"/>   
           </li>
           <li>
-            <label>Operaciones Restantes</label>
+            <label>Restantes</label>
             <input id="operaciones_restantes" type="text" readonly name="operaciones_restantes" value="{{ cuenta.operaciones_restantes }}"/>   
           </li>
           <li>
             <label>Capital Riesgo</label>
           
-            <input id="capital_riesgo" type="text" readonly name="capital_riesgo" value="{{ cuenta.capital_riesgo }}"/>             
+            <input id="capital_riesgo" type="text" readonly name="capital_riesgo" value="{{ cuenta.capital_riesgo }} USD"/>             
           </li>
           <li>
-            <label>Riesgo por Operación</label>
-            <input id="riesgo_operacion" type="text" readonly name="riesgo_operacion" value="{{ cuenta.riesgo_operacion }}"/>         
+            <label>Riesgo</label>
+            <input id="riesgo_operacion" type="text" readonly name="riesgo_operacion" value="{{ cuenta.riesgo_operacion }} %"/>         
           </li>
           <li>
             <label>Nivel De Riesgo</label>
-            <input id="nivel_riesgo" type="text" readonly name="nivel_riesgo" value="{{ cuenta.nivel_riesgo }}"/>
-        
-          </li>
-          <li>
-            <label>Balance</label>
-            <input id="capital_actual" type="text" readonly name="capital_actual" value="{{ cuenta.capital_actual }}"/>   
+            <input id="nivel_riesgo" type="text" readonly name="nivel_riesgo" value="{{ cuenta.nivel_riesgo }}"/>       
           </li>      
+          <li>
+            <label>Login</label>
+            <input id="n_login" type="text" readonly name="n_login" value="{{ cuenta.n_login }}"/>   
+          </li>     
         </ul>
       </div>
     </nav>

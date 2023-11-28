@@ -1,36 +1,26 @@
-
 {% extends "base.html" %}
 {% block titulo %} Seleccionar tipo de Cuenta {% endblock %}
 {% block contenido %} 
 {% for mensaje in messages %}
-<div class="alert alert-info notifications-alert" role="alert">
+<div class="alert alert-info notifications-alert text-center" role="alert">
     {{ mensaje }}
     <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
 </div>	
 {% endfor %}
 
-
-{% comment %} <div class="container-seleccionar-cuentas"> {% endcomment %}
-<div class="card">
-    <div class="row no-gutters">
-        <div class="col-md-6">
-            <div class="card-body">
-                <h4 class="card-title">¿Qué es Yournalup?</h4>
-                <p class="card-text">Es un diario de trading, en donde registras todas tus operaciones, estas ya sean positivas o negativas con el fin de analizar los errores y aciertos hechos.</p>
-                <p class="card-text">Al mismo tiempo estarás creando tu propio plan de trading, ya que Yournalup te calculará y
-                     recomendará el riesgo con el cual podrás comenzar a trabajar.</p>
-                <p class="card-text">Pensado para traders dispuestos a realizar cuentas de fondeo y para traders con cuentas de uso personal.</p>
-                <p class="card-text">Para el caso de las cuentas de Fondeo, calcularemos por ti el máximo de operaciones que deberas respetar para no perder el máximo permitido.</p>                
-                <p class="card-text">Recuerda que una vez creada una cuenta, no podrás modificar sus características. Elige la cuenta adecuada desde el principio y la que mejor se adapte a tus necesidades.</p>
-
-            </div>
-        </div>
-        <div class="col-md-6">
-            <img src="https://via.placeholder.com/500x200" class="card-img" alt="Imagen de banner">
-        </div>
+<div class="container-seleccionar-cuentas text-center">
+    <div class="card-body">
+        <h4 class="card-title">¿Qué es Yournalup?</h4>
+        <p id="p-text" class="card-text">
+            Yournalup es más que un diario de trading, es tu aliado para mejorar tus habilidades. 
+            Registra tus operaciones, positivas y negativas, para analizar aciertos y errores. 
+            Crea tu plan de trading con la ayuda de Yournalup, que calculará y recomendará el riesgo ideal.
+            Perfecto para traders individuales y aquellos que buscan cuentas de fondeo, con límites calculados para evitar pérdidas.
+            Elige sabiamente desde el principio, ¡tu éxito depende de ello!
+        </p>
     </div>
     <div class="card-body d-flex justify-content-center align-items-center" id="choose-create-account">    
-        <div class="cuenta-box-body fondeo">
+        <div class="cuenta-box-body fondeo text-center">
             <div class="cuenta-box-heading">Fondeo </div>   
             <p>Define tu riesgo y calcularemos la cantidad de trade que debes respetar para tu challenge</p>
             {% if user.is_authenticated %} 
@@ -46,8 +36,9 @@
                 </a>
             </div>
             {% endif %}
-        </div>  
-        <div class="cuenta-box-body personal">          
+        </div> 
+
+        <div class="cuenta-box-body personal text-center">          
             <div class="cuenta-box-heading">Personal</div>          
             <p>Define la cantidad de trade a operar y calcularemos tu riesgo y la cantidad de trade a respetar</p>
             {% if user.is_authenticated %}
@@ -63,26 +54,8 @@
                 </a>
             </div>
             {% endif %}
-        </div>  
-        <div class="cuenta-box-body personal">            
-            <div class="cuenta-box-heading">Libre</div>   
-            <p>Define tu riesgo por cada trade a operar si ya eres un trader más experimentado</p>
-            {% if user.is_authenticated %}
-            <div class="account-type">
-                <a href="{% url 'crear_cuentas' 2 %}">
-                    <h4 class="account-type-text">Crear cuenta</h4>
-                </a>
-            </div>
-            {% else %}
-            <div class="account-type">
-                <a href="{% url 'login' %}">
-                    <h4 class="account-type-text">Iniciar sesión para crear una cuenta</h4>
-                </a>
-            </div>
-            {% endif %}
-        </div>  
+        </div> 
     </div>
 </div>
-{% comment %} </div> {% endcomment %}
 
 {% endblock %}

@@ -1,17 +1,15 @@
 {% load static %}
 <form enctype="multipart/form-data" method="post" id="myModalForm">
-	{% csrf_token %} 
-	{% for mensaje in mensajes %}
+	{% csrf_token %} {% for mensaje in mensajes %}
 	<div class="alert alert-info notifications-alert" role="alert">
-        {{ mensaje }}
-        <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
-    </div>	
-{% endfor %}
-{% if error_message %}
-<div class="alert alert-danger" role="alert">
-	{{ error_message }}
-</div>
-{% endif %}
+		{{ mensaje }}
+		<button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
+	</div>
+	{% endfor %} {% if error_message %}
+	<div class="alert alert-danger" role="alert">
+		{{ error_message }}
+	</div>
+	{% endif %}
 	<div class="grid-container-master">
 		<div class="grid-container">
 			<div class="mb-1">
@@ -20,7 +18,7 @@
 			<div class="grid-container-display">
 				<div class="mb-1">
 					<label for="lotaje" class="form-label">Lotaje</label>
-					<input type="text" readonly id="lotaje" class="display" name="lotaje" value="{{ formulario.lotaje.value | default:'' }}">
+					<input type="text" id="lotaje" class="form-control" name="lotaje" value="{{ formulario.lotaje.value | default:'' }}">
 				</div>
 				<div class="mb-1">
 					<label for="ratio" class="form-label">Ratio</label>
@@ -66,8 +64,10 @@
 				</div>
 				<div class="mb-1">
 					<label for="fecha" class="form-label">Fecha</label>
-					<input type="text" id="fecha" name="fecha" value="{{ formulario.fecha.value|default:'' }}">
-				</div>			
+					<input type="text" id="fecha" name="fecha" value="{{ formulario.fecha.value|default:''|date:'d-m-Y' }}"> {% if formulario.fecha_updated.value != "" %}
+					<p>Última actualización: {{ formulario.fecha_updated.value|default:''|date:'d-m-Y' }}</p>
+					{% endif %}
+				</div>
 				<div class="mb-1">
 					<label for="resultado" class="form-label">Resultado:</label>
 					<select id="resultado" class="form-control" name="resultado">
@@ -82,14 +82,29 @@
 				</div>
 				<div class="mb-1">
 					<label for="stoploss" class="form-label">Stop Loss</label>
-					<input type="text" id="stoploss" class="form-control" name="stoploss" value="{{ formulario.stoploss.value | default:'' }}">
+					<div class="input-group">
+						<input type="text" id="stoploss" placeholder="0" class="form-control" name="stoploss" value="{{ formulario.stoploss.value | default:'' }}">
+						<div class="input-group-append">
+							<span id="stoploss" class="input-group-text">
+							<i aria-hidden="true"></i> pip
+							</span>
+						</div>
+					</div>	
 				</div>
 				<div class="mb-4">
 					<label for="takeprofit" class="form-label">Take Profit</label>
-					<input type="text" id="takeprofit" class="form-control" name="takeprofit" value="{{ formulario.takeprofit.value | default:'' }}">
+					<div class="input-group">
+						<input type="text" id="takeprofit" placeholder="0" class="form-control" name="takeprofit" value="{{ formulario.takeprofit.value | default:'' }}">
+						<div class="input-group-append">
+							<span id="takeprofit" class="input-group-text text-center">
+							<i aria-hidden="true"></i> pip
+							</span>
+						</div>
+					</div>	
 				</div>
+
 			</div>
-			{% if request.resolver_match.view_name == 'editar' %}		
+			{% if request.resolver_match.view_name == 'editar' %}
 			<div class="mb-1">
 				<h4 class="tittle-trade">Beneficios</h4>
 			</div>
@@ -103,24 +118,28 @@
 					<label for="porcentaje_beneficio_real" class="form-label">Utilidad</label>
 					<input type="text" readonly id="porcentaje_beneficio_real" name="porcentaje_beneficio_real" value="{{ formulario.porcentaje_beneficio_real.value | default:'' }}">
 				</div>
-				{% comment %} <div class="mb-3">
-                    <label for="parciales" class="form-label">Parciales</label>
-                    <input type="text" id="parciales" class="form-control" name="parciales" value="{{ formulario_p.parciales.value | default:'' }}">
-                </div> {% endcomment %}
-			</div>		
+				{% comment %}
+				<div class="mb-3">
+					<label for="parciales" class="form-label">Parciales</label>
+					<input type="text" id="parciales" class="form-control" name="parciales" value="{{ formulario_p.parciales.value | default:'' }}">
+				</div> {% endcomment %}
+			</div>
 			{% endif %}
 			<div class="center-button mb-4">
-				<button name="" id="" class="add-order-button" type="submit">Aceptar</button>
-				<a name="" id="" class="cancel-order-button" href="{% url 'lista_trades_de_cuentas' request.session.id_cuenta %}" role="button">Cancelar</a> {% if request.resolver_match.view_name == 'editar' %}
+				<button class="add-order-button" type="submit"><i class="fas fa-check"></i> Aceptar</button>
+				<a class="cancel-order-button" href="{% url 'lista_trades_de_cuentas' request.session.id_cuenta %}" role="button"><i class="fas fa-times"></i> Cancelar</a> {% if request.resolver_match.view_name == 'editar' %}
+				<a class="add-order-button-trade" href="{% url 'crear' %}" role="button">
+					<i class="fas fa-plus"></i> Agregar otro
+				</a>
 				<a id="open-modal-button-delete" class="delete-order-button" data-toggle="modal" data-target="#modal-confirm">
 					<i class="fas fa-trash-alt"></i> Eliminar
-				</a>
+				</a>			   
 				{% endif%}
 			</div>
-		</div>	
-		
+		</div>
+
 		{% if request.resolver_match.view_name == 'editar' %}
-		<div class="grid-container-2 modal-container container">		
+		<div id="modal-container" class="grid-container-2 modal-container container">
 			<div class="modal-content">
 				<div class="modal-header-left">
 					<a type="button" class="close" data-dismiss="modal-container">
@@ -157,41 +176,41 @@
 						<button type="submit" class="update-button hidden update-button-{{trade_image.id}} "></i>Guardar cambios</button>
 					</div>
 					{% endfor %}
-					<!-- El botón que mostrará/ocultará el modal-body-add -->					
+					<!-- El botón que mostrará/ocultará el modal-body-add -->
 					{% if recorre_clase_image %}
-						<div class="modal-body line-top" id="modalBodyAdd">
-							<div class="image-container">
-								<div class="mb-3">
-									<div class="form-group">
-										<input type="text" id="titulo" class="form-control" name="titulo" placeholder="Ingresa un título">
-										<textarea class="form-control" type="text" id="descripcion" placeholder="Ingresa una descripción" name="descripcion"></textarea>
-										<div class="file-upload">
-											<input type="file" id="image" placeholder="adjunta una imagen" name="image">
-											<label for="fileInput">Seleccionar imagen</label>
-										</div>
+					<div class="modal-body line-top" id="modalBodyAdd">
+						<div class="image-container">
+							<div class="mb-3">
+								<div class="form-group">
+									<input type="text" id="titulo" class="form-control" name="titulo" placeholder="Ingresa un título">
+									<textarea class="form-control" type="text" id="descripcion" placeholder="Ingresa una descripción" name="descripcion"></textarea>
+									<div class="file-upload">
+										<input type="file" id="image" placeholder="adjunta una imagen" name="image">
+										<label for="fileInput">Seleccionar imagen</label>
+									</div>
 
-									</div>
 								</div>
-								<button type="submit" class="add-button disabled-button"></i>Guardar</button>
-							</div>	
-						</div>					
-					{% else%}
-						<div class="modal-body">
-							<div class="image-container">
-								<div class="mb-3">
-									<div class="form-group">
-										<input type="text" id="titulo" class="form-control" name="titulo" placeholder="Ingresa un título">
-										<textarea class="form-control" rows="3" type="text" id="descripcion" placeholder="Ingresa una descripción" name="descripcion"></textarea>
-										<div class="file-upload">
-											<input type="file" id="image" placeholder="adjunta una imagen" name="image">
-											<label for="fileInput">Seleccionar imagen</label>
-										</div>
-									</div>
-								</div>
-								<button type="submit" class="add-button disabled-button"></i>Guardar</button>
-							</div>	
+							</div>
+							<button type="submit" class="add-button disabled-button"></i>Guardar</button>
 						</div>
-					{% endif %}				
+					</div>
+					{% else%}
+					<div class="modal-body">
+						<div class="image-container">
+							<div class="mb-3">
+								<div class="form-group">
+									<input type="text" id="titulo" class="form-control" name="titulo" placeholder="Ingresa un título">
+									<textarea class="form-control" rows="3" type="text" id="descripcion" placeholder="Ingresa una descripción" name="descripcion"></textarea>
+									<div class="file-upload">
+										<input type="file" id="image" placeholder="adjunta una imagen" name="image">
+										<label for="fileInput">Seleccionar imagen</label>
+									</div>
+								</div>
+							</div>
+							<button type="submit" class="add-button disabled-button"></i>Guardar</button>
+						</div>
+					</div>
+					{% endif %}
 				</div>
 				{% if recorre_clase_image %}
 				<div class="image-container">
@@ -201,57 +220,66 @@
 			</div>
 		</div>
 		{% else %}
-				<div class="card-body text-center">
-					<h4 class="card-title">Proyecciones y recomendaciones</h4>
-
-					<p class="card-text">
-						<i class="fas fa-info"></i> Basándonos en los detalles de tu trade, como el activo, stop loss y take profit, calcularemos el volumen o lotaje recomendado para seguir tu estrategia y respetar tu plan de riesgo.
-					</p>
-					<p class="card-text">
-						<i class="fas fa-info"></i> Además, proyectaremos el beneficio esperado y su utilidad para que puedas tener una idea clara de los posibles resultados.
-					</p>				
-					<h4 class="card-title">Completa los detalles de tu trade</h4>
-					<p class="card-text">
-						<i class="fas fa-info"></i> Selecciona el activo e ingresa los parámetros de entrada y salida.
-					</p>
-					<p class="card-text">
-						<i class="fas fa-info"></i> Puedes completar el campo de "Beneficio real" una vez hayas finalizado tu trade. Así mismo podras reflejar los detalles en tu listado de trades.
-					</p>
-					<p class="card-text">
-						<i class="fas fa-info"></i> Luego que hayas aceptado la creación de tu trade, podras agregar imagenes y detallar tus analisis.
-					</p>
-				</div>			
-			</div>
-		</div>
-		{% endif %}
-		{% if request.resolver_match.view_name == 'editar' %} 
-			{% if recorre_clase_image %}
-				<a id="open-modal-button" class="add-details"> <i class="fas fa-image"></i><sup><i class="fas fa-sync-alt update-details-icon"></i></sup></a>
-			{% else %}
-				<a id="open-modal-button" class="add-details"> <i class="fas fa-image"></i><sup><i class="fas fa-plus pulse add-details-icon"></i></sup></a>
-			{% endif %}
-
-		<!-- Modal de confirmación de eliminación -->
-		<div id="modal-confirm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header-left">
-						<h5 class="modal-title">Confirmar</h5>
+		<div id="info" class="grid-container-2 container">
+			<div class="modal-content">
+				<div class="modal-header">
+					<a type="button" class="close" data-dismiss="info">
+						<i class="fas fa-times close-modal"></i>
+					</a>
+				</div>
+				<div class="modal-body">
+					<div class="info-section">
+						<h4 class="info-title">Proyecciones y Recomendaciones</h4>
+						<p class="info-description">
+							<i class="fas fa-info"></i> Basándonos en los detalles de tu trade, como el activo, stop loss y take profit, calcularemos el volumen o lotaje recomendado para seguir tu estrategia y respetar tu plan de riesgo.
+						</p>
+						<p class="info-description">
+							<i class="fas fa-info"></i> Además, proyectaremos el beneficio esperado y su utilidad para que puedas tener una idea clara de los posibles resultados.
+						</p>
 					</div>
-					<div class="modal-body">
-						<p>¿Esta acción eliminará permanentemente su trade con codigo de registro <b>{{ trade_id }}</b>, incluyendo sus imagenes adjuntas ¿Deseas continuar?</p>
-					</div>
-					<div class="modal-footer">
-						<a type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">
-							<i class="close"></i>Cancelar
-						</a>
-						<a type="button" class="btn btn-danger" href="{% url 'eliminar' trade_id %}">
-							<i class="fas fa-trash-alt"></i> Confirmar y Eliminar
-						</a> 
+					<div class="info-section">
+						<h4 class="info-title">Completa los detalles de tu trade</h4>
+						<p class="info-description">
+							<i class="fas fa-info"></i> Selecciona el activo e ingresa los parámetros de entrada y salida.
+						</p>
+						<p class="info-description">
+							<i class="fas fa-info"></i> Puedes completar el campo de "Beneficio real" una vez hayas finalizado tu trade. Así mismo podrás reflejar los detalles en tu listado de trades.
+						</p>
+						<p class="info-description">
+							<i class="fas fa-info"></i> Luego que hayas aceptado la creación de tu trade, podrás agregar imágenes y detallar tus análisis.
+						</p>
 					</div>
 				</div>
 			</div>
 		</div>
-		{% endif %}
-		<script src="{% static 'js/scriptTrades.js' %}"></script>	
+	</div>
+	{% endif %} {% if request.resolver_match.view_name == 'editar' %} {% if recorre_clase_image %}
+	<a id="open-modal-button" class="add-details"> <i class="fas fa-image"></i><sup><i class="fas fa-sync-alt update-details-icon"></i></sup></a>
+	{% else %}
+	<a id="open-modal-button" class="add-details"> <i class="fas fa-image"></i><sup><i class="fas fa-plus pulse add-details-icon"></i></sup></a>
+	{% endif %}
+
+	<!-- Modal de confirmación de eliminación -->
+	<div id="modal-confirm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header-left">
+					<h5 class="modal-title">Confirmar</h5>
+				</div>
+				<div class="modal-body">
+					<p>¿Esta acción eliminará permanentemente su trade con codigo de registro <b>{{ trade_id }}</b>, incluyendo sus imagenes adjuntas ¿Deseas continuar?</p>
+				</div>
+				<div class="modal-footer">
+					<a type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">
+						<i class="close"></i>Cancelar
+					</a>
+					<a type="button" class="btn btn-danger" href="{% url 'eliminar' trade_id %}">
+						<i class="fas fa-trash-alt"></i> Confirmar y Eliminar
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+	<script src="{% static 'js/scriptTrades.js' %}"></script>
 </form>

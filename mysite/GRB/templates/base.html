@@ -30,12 +30,14 @@
    gtag('config', 'G-SSV8X9ENHD');
    </script>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />  
+   
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css">
   <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>  
   <script src="https://apis.google.com/js/api.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="script.js"></script>
+  
   </head>
    <body>
     <header>         
@@ -189,12 +191,12 @@
                 body.classList.remove("dark-mode");
               }                  
 
-              {% comment %} window.addEventListener('contextmenu', function (e) {
-                e.preventDefault();
-              }); {% endcomment %}
+              // window.addEventListener('contextmenu', function (e) {
+              //   e.preventDefault();
+              // }); 
             </script>
 
-            {% comment %} <div id="loading-overlay">
+          <!-- <div id="loading-overlay">
               <img src="{% static 'img/loading.gif' %}" alt="Loading" />
               </div>
               <script>
@@ -204,56 +206,56 @@
               
               $("form").on("submit", function () {
                 $("#loading-overlay").fadeIn(); // Muestra el icono de carga al enviar el formulario
-              });
-            </script> {% endcomment %}
+              }); -->
+            </script> 
 
         <script>
-          $(document).ready(function() {
-            var $menu = $('nav ul');
-            var menuWidth = $menu.outerWidth();
-            var visibleItems = 1; // Mostrar solo un elemento por slide
-          
-            var totalItems = $menu.find('li').length; // Cantidad total de elementos
-            var currentItem = 0; // Índice del elemento actual
-          
-            // Función para desplazarse al siguiente elemento
-            function slideNext() {
-              if (currentItem + visibleItems >= totalItems) {
-                return; // Ya estás en el extremo derecho, no hacer nada
-              }
-              
-              currentItem += 1;
-          
-              var scrollLeft = currentItem * menuWidth;
-              var animationDuration = 500;
-          
-              $menu.animate({ scrollLeft: scrollLeft }, animationDuration);
+        $(document).ready(function() {
+        var $menu = $('nav ul');
+        var menuWidth = $menu.outerWidth();
+        var visibleItems = 1; // Mostrar solo un elemento por slide
+
+        var totalItems = $menu.find('li').length; // Cantidad total de elementos
+        var itemsPerSlide = Math.floor($menu.width() / menuWidth); // Calcular la cantidad de elementos por slide
+        var maxSlides = Math.ceil(totalItems / itemsPerSlide); // Calcular el número total de slides
+        var currentSlide = 0; // Índice del slide actual
+
+        // Función para desplazarse al siguiente slide
+        function slideNext() {
+            if (currentSlide >= maxSlides - 1) {
+                return; // Ya estás en el último slide, no hacer nada
             }
-          
-            // Función para desplazarse al elemento anterior
-            function slidePrev() {
-              if (currentItem <= 0) {
-                return; // Ya estás en el extremo izquierdo, no hacer nada
-              }
-              
-              currentItem -= 1;
-          
-              var scrollLeft = currentItem * menuWidth;
-              var animationDuration = 500;
-          
-              $menu.animate({ scrollLeft: scrollLeft }, animationDuration);
+
+            currentSlide += 1;
+            var scrollLeft = currentSlide * (itemsPerSlide * menuWidth);
+            var animationDuration = 500;
+
+            $menu.animate({ scrollLeft: scrollLeft }, animationDuration);
+        }
+
+        // Función para desplazarse al slide anterior
+        function slidePrev() {
+            if (currentSlide <= 0) {
+                return; // Ya estás en el primer slide, no hacer nada
             }
-          
-            // Evento para desplazarse al siguiente elemento al hacer touch en la flecha derecha
-            $('.arrow-right').on('touchstart', function() {
-              slideNext();
-            });
-          
-            // Evento para desplazarse al elemento anterior al hacer touch en la flecha izquierda
-            $('.arrow-left').on('touchstart', function() {
-              slidePrev();
-            });
-          });
+
+            currentSlide -= 1;
+            var scrollLeft = currentSlide * (itemsPerSlide * menuWidth);
+            var animationDuration = 500;
+
+            $menu.animate({ scrollLeft: scrollLeft }, animationDuration);
+        }
+
+        // Evento para desplazarse al siguiente slide al hacer clic en la flecha derecha
+        $('.arrow-right').on('click', function() {
+            slideNext();
+        });
+
+        // Evento para desplazarse al slide anterior al hacer clic en la flecha izquierda
+        $('.arrow-left').on('click', function() {
+            slidePrev();
+        });
+    });
           
         </script>
    </body>

@@ -43,23 +43,47 @@ porcentaje_beneficio_total.disabled = true;
   document.addEventListener('DOMContentLoaded', function() {
     var toggleButton = document.getElementById('open-modal-button-commission');
     var modalContainerCommission = document.querySelector('.modal-container-commission');
-    var isExpanded = false;
+    var isExpanded = localStorage.getItem('isCommissionExpanded') === 'true';
+  
+    // Aplica el estado recuperado
+    if (isExpanded) {
+      toggleButton.classList.add('expand');
+      toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-right"></i>';
+      modalContainerCommission.classList.add('show');
+    }
+  
+    console.log('El valor actual de isCommissionExpanded es:', isExpanded);
   
     toggleButton.addEventListener('click', function() {
-      if (!isExpanded) {
+      // Cambia el estado después de obtener el valor actual
+      isExpanded = !isExpanded;
+  
+      console.log('El valor actual de isCommissionExpanded es:', isExpanded);
+  
+      if (isExpanded) {
         toggleButton.classList.add('expand');
         toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-right"></i>';
-        isExpanded = true;
-        modalContainerCommission.classList.toggle('show');
+        modalContainerCommission.classList.add('show');
       } else {
         toggleButton.classList.remove('expand');
         toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-left"></i>';
-        isExpanded = false;
-        modalContainerCommission.classList.toggle('show');
-      
+        modalContainerCommission.classList.remove('show');
+        // Elimina la variable de la memoria local cuando se contrae
+        localStorage.removeItem('isCommissionExpanded');
       }
+  
+      // Guarda el estado actualizado en la memoria local
+      localStorage.setItem('isCommissionExpanded', isExpanded.toString());
     });
+  
+    // Guarda el estado inicial al cargar la página si no existe en la memoria local
+    if (!localStorage.getItem('isCommissionExpanded')) {
+      localStorage.setItem('isCommissionExpanded', isExpanded.toString());
+    }
   });
+  
+   
+  
   
   const checkboxes = document.getElementsByClassName('fila-checkbox');
 

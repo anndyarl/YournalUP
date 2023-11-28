@@ -74,7 +74,7 @@ class CUENTAS(models.Model):
         max_digits=10, decimal_places=2, verbose_name="Capital riesgo", null=True
     )
     riesgo_operacion = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name="Riesgo por operación", null=True
+        max_digits=2, decimal_places=1, verbose_name="Riesgo por operación", null=True
     )
     nivel_riesgo = models.CharField(
         max_length=50, verbose_name="Nivel de riesgo", null=True
@@ -197,7 +197,8 @@ class TRADES(models.Model):
         max_length=100, verbose_name="Utilidad proyectada", null=True
     )
     resultado = models.CharField(max_length=50, verbose_name="Resultado", null=True)
-    fecha = models.DateTimeField(max_length=10, verbose_name="Fecha", null=True)
+    fecha = models.DateTimeField(verbose_name="Fecha", null=True)
+    fecha_updated = models.DateTimeField(verbose_name="Fecha actualizada", null=True)
     beneficio_real = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Beneficio Real", null=True
     )    

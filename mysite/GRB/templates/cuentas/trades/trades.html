@@ -37,7 +37,7 @@
               <th scope="col">Orden</th>
               <th scope="col">Stoploss</th>
               <th scope="col">TakeProfit</th>
-              <th scope="col">Volumen</th>
+              <th scope="col">Lotaje</th>
               <th scope="col">Ratio</th>
               <th scope="col">Resultado</th>
               <th scope="col">Beneficio Real</th>
@@ -79,8 +79,8 @@
                   {% if trades.orden == 'Compra' %}class="compra"{% endif %}>
                   {{ trades.orden }}
               </td>
-              <td>{{ trades.stoploss }}</td>
-              <td>{{ trades.takeprofit }}</td>
+              <td>{{ trades.stoploss }} pips</td>
+              <td>{{ trades.takeprofit }} pips</td>
               <td>{{ trades.lotaje }}</td>
               <td>{{ trades.ratio }}</td>
               <td {% if trades.resultado == 'Programada' %}class="text-warning"{% endif %}

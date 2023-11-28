@@ -93,7 +93,8 @@ class TradeForm(forms.ModelForm):
     activo = forms.ChoiceField(choices=ACTIVO_CHOICES, widget=Select())
     orden = forms.ChoiceField(choices=ORDEN_CHOICES, widget=Select(), required=False)   
     imagenes = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}), required=False)
-    fecha = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    fecha = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), input_formats=['%d-%m-%Y'])# Este formato se muestra al usuario
+    fecha_updated = forms.DateTimeField(required=False, widget=forms.HiddenInput())
     resultado = forms.ChoiceField(choices=RESULTADO_CHOICES, widget=Select(), required=False)
     beneficio_real = forms.DecimalField(max_digits=10, decimal_places=2, required=False, initial=0)
     porcentaje_beneficio_real = forms.DecimalField(max_digits=10, decimal_places=2, required=False, initial=0)
@@ -180,7 +181,7 @@ class CuentaForm(forms.ModelForm):
             self.fields['riesgo_operacion'] = forms.ChoiceField(choices=self.RIESGO_CHOICES, widget=Select(), required=True)
         else:
             self.fields['cuenta'] = forms.DecimalField(max_digits=10, decimal_places=2, required=True)     
-            self.fields['riesgo_operacion'] = forms.DecimalField(max_digits=10, decimal_places=2, required=True)   
+            self.fields['riesgo_operacion'] = forms.DecimalField(max_digits=2, decimal_places=1, required=True)   
 
         
         # self.fields['user'].required = True

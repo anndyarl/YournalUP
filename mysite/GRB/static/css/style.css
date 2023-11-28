@@ -172,12 +172,14 @@ input:checked + .slider:before {
 }
 
 .dark-mode #takeprofit {
-  background-color: #aec0ac54;
+  background-color: #393f39;
   cursor: auto;
+  color:#fff;
 }
 .dark-mode #stoploss {
-  background-color: #d5bbbb66;
+  background-color: #554b4b;
   cursor: auto;
+  color:#fff;
 }
 .dark-mode #quick-profile {
   background-color: var(--color-background);
@@ -195,6 +197,10 @@ input:checked + .slider:before {
   color: white; 
 }
 .dark-mode #modal-container-commission{
+  background: black;
+  color: white;
+}
+.dark-mode #info{
   background: black;
   color: white;
 }
@@ -452,7 +458,7 @@ input:checked + .slider:before {
   }
 
   .center-button {
-    display: flex;
+    display: inline;
     justify-content: center;
     gap: 3px;
   }
@@ -488,6 +494,9 @@ input:checked + .slider:before {
     border-radius: 0.375rem;
     /* width: 70%;  */
     text-align: center;
+  }
+  .delete-order-button {
+    background-color: #e61313; /* Color para el botón "Delete Order" */
   }
   .add-order-button-trade{
     margin-top: 5px;
@@ -809,13 +818,15 @@ input:checked + .slider:before {
 
   .container-seleccionar-cuentas {
     display: grid;
-    grid-template-columns: repeat(1, 1fr);
+    height: 100%;
+    align-content: center;
+    padding: 5%;
   }
   
-  .container-cuentas {
+  /* .container-cuentas {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-  }
+  } */
   /* Media query para pantallas más pequeñas */
   @media screen and (max-width: 768px) {
     .container-cuentas {
@@ -832,7 +843,7 @@ input:checked + .slider:before {
     grid-template-columns: repeat(1, 1fr);
     padding: 20px;
     justify-items: stretch;
-    width: fit-content;
+    /* width: fit-content; */
     height:fit-content;
   }
   @media screen and (max-width: 768px) {
@@ -885,13 +896,10 @@ input:checked + .slider:before {
     gap: 13px;
   }
   .grid-container-display input {
-    width: 100px;
-    height: 100px;
-    border-radius: 50px; 
+    border-radius: 50px;
     background-color: #32373f;
     color: #fff;
-    font-weight: bold; 
-    margin-right: 12px;
+    font-weight: bold;
     /* margin-left: 12px; */
   } 
   @media screen and (max-width: 768px) {
@@ -972,11 +980,13 @@ input:checked + .slider:before {
   #stoploss {
     background-color: #d5bbbb;
     cursor: auto;
+    border-radius: 0.325rem;
   }
 
   #takeprofit {
     background-color: #aec0ac;
     cursor: auto;
+    border-radius: 0.325rem;
   }
 
  
@@ -1637,7 +1647,7 @@ input:checked + .slider:before {
       top: 0;     
       right: -100%;     
       bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);      
+      /* background-color: rgba(0, 0, 0, 0.5);       */
       width: 100%;
       /* height: 100vh; */
       background-color: #f2f2f2;
@@ -1645,7 +1655,21 @@ input:checked + .slider:before {
       transition: right 0.3s ease-in-out, opacity 0.3s ease-in-out;   
       z-index: 100;  
     }
-    .modal-container.show {     
+
+    #info{
+      position: fixed;
+      display: block;
+      width: 100%;
+      top: 0;
+      right: -100%;
+      padding: 15px;
+      background: white;     
+      opacity: 0;
+      transition: right 0.3s ease-in-out, opacity 0.3s ease-in-out;
+      height: 100vh;
+      z-index: 101;
+    }
+    .modal-container.show, #info.show{     
       right: 0; /* Muestra el menú en la posición izquierda */
       opacity: 1; /* Hace visible el menú */     
     }
@@ -1664,7 +1688,7 @@ input:checked + .slider:before {
       height: 100vh;
       z-index: 101;
     }
-    #modal-container-commission.show { 
+    #modal-container-commission.show, #modal-container.show { 
       right: 0; /* Muestra el menú en la posición izquierda */
       opacity: 1; /* Hace visible el menú */
     }  
@@ -2029,5 +2053,18 @@ input:checked + .slider:before {
   border-radius: 10px;
 }
 
+#p-text{
+  font-size: 18px;
+  text-align: justify;
+}
 
-
+.input-group-text {
+  position: absolute;
+  margin-inline: -3rem;
+  padding: .375rem .72rem;
+  border: none;
+  border-radius: none;
+  font-size: 0.8rem;
+  z-index: 1;
+  margin-block: 0.1rem;
+}
