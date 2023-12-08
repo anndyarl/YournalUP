@@ -1,35 +1,40 @@
 """
 Este módulo contiene importaciones.
 """
+# Importaciones de Django
 from django.shortcuts import render, redirect, reverse
-# pylint: disable=E0401
-from paypal.standard.forms import PayPalPaymentsForm
-from .models import TRADES, CUENTAS, TRADEIMAGE, IMAGE, PARCIALES, TRADEPARCIALES
-from .forms import TradeForm, CuentaForm, ParcialesForm
-from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpResponse, JsonResponse
-# import os
+from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpResponse, JsonResponse, HttpResponseServerError
 from django.contrib.auth import authenticate, login, logout
-from .forms import CustomAuthForm
-from django.core.files.storage import default_storage
-from django.db.models import Sum
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.csrf import csrf_protect
+from django.core.files.storage import default_storage
 from django.conf import settings
 from django.contrib import messages
+from django.db.models import Sum, Q
+from django.utils import timezone
+from django.urls import resolve
+
+# Importaciones de terceros
+from paypal.standard.forms import PayPalPaymentsForm
+
+# Importaciones de tu aplicación
+from .models import TRADES, CUENTAS, TRADEIMAGE, IMAGE, PARCIALES, TRADEPARCIALES
+from .forms import TradeForm, CuentaForm, ParcialesForm
+from .forms import CustomAuthForm
+
+# Importaciones estándar de Python
 import json
 import requests
 from typing import Any, Union
 from decimal import Decimal
-from django.contrib import messages
 from django.utils.text import slugify
 import os
 import shutil
 from datetime import datetime
 import uuid
-from django.utils.datetime_safe import datetime
-from django.utils import timezone
+
 
 @csrf_protect
 def custom_login(request):
@@ -109,7 +114,7 @@ def lista_cuentas(request, id_tipo_cuenta):
         user=request.user, id_tipo_cuenta_id=id_tipo_cuenta
     )
     mensajes = messages.get_messages(request)
-    return render(request, "cuentas/cuentas.html", {"cuentas": cuentas,"id_tipo_cuenta": id_tipo_cuenta,"mensajes": mensajes})
+    return render(request, "cuentas/cuentas.html", {"cuentas": cuentas,"id_tipo_cuenta": id_tipo_cuenta,"mensajes": mensajes })
 
 def lista_trades_de_cuentas(request, id_cuenta):
     if not request.user.is_authenticated:
@@ -118,7 +123,9 @@ def lista_trades_de_cuentas(request, id_cuenta):
     request.session["id_cuenta"] = id_cuenta
     cuenta = CUENTAS.objects.get(id_cuenta=id_cuenta)
     cuentas = CUENTAS.objects.all()
-    trades = TRADES.objects.filter(id_cuenta_id=id_cuenta)
+    # trades = TRADES.objects.filter(id_cuenta_id=id_cuenta)
+    trades = TRADES.objects.filter(id_cuenta=id_cuenta, estado='activo')
+    trades_eliminados = TRADES.objects.filter(id_cuenta=id_cuenta, estado='eliminado')
     user = request.user
 
     mensaje_error = ""
@@ -185,7 +192,7 @@ def lista_trades_de_cuentas(request, id_cuenta):
         cuenta.comision = 0
         cuenta.swap = 0
         mensaje_error = "Agrega tu primer Trade!"
-        cuenta.operaciones_restantes = o_restantes
+    cuenta.operaciones_restantes = o_restantes   
    
     if o_restantes == 1:  
         mensaje_error = f"Precaución: Ya tienes {abs(int(cuenta.n_operaciones)) - abs(int(o_restantes))} trades en stoploss, dale una vuelta a tu estrategia"
@@ -196,17 +203,20 @@ def lista_trades_de_cuentas(request, id_cuenta):
     elif o_restantes < 0:        
         mensaje_error = f"Precaución: La cuenta se ha excedido con {abs(int(o_restantes))} trade en negativo. Lo más probable hayas perdido tu challenge :("
   
-   
+    trades_page = resolve(request.path_info).url_name
     context = {          
         "mensaje_error": mensaje_error,
         "cuentas": cuentas,
         "lista_trades_de_cuentas": trades,
+        "lista_trades_eliminados": trades_eliminados,
         "exist_row": exist_row,
         "beneficio_total": beneficio_total,
         "porcentaje_beneficio_total": porcentaje_beneficio_total,
         "capital_actual": capital_actual,
         "formulario": formulario, 
         "id_tipo_cuenta": id_tipo_cuenta, 
+        "o_restantes": o_restantes,
+        "trades_page": trades_page
     }
     
     cuenta.save() 
@@ -316,52 +326,43 @@ def crear(request):
     if not request.user.is_authenticated:
         return redirect("login")
 
-    cuentas = CUENTAS.objects.all()
+    cuentas = CUENTAS.objects.all()      
     # Obtener la cuenta del nuevo trade
-    id_cuenta = request.session.get('id_cuenta')
+    id_cuenta = request.session.get('id_cuenta')  
     formulario = TradeForm(request.POST or None, request.FILES or None)
     
     if formulario.is_valid():
         trade = formulario.save(commit=False)
         
-        try:
-            cuenta = CUENTAS.objects.get(id_cuenta=id_cuenta)
-        except ObjectDoesNotExist:
+        # Verificar si la cuenta existe
+        cuenta_exists = CUENTAS.objects.filter(id_cuenta=id_cuenta).exists()
+        if not cuenta_exists:
             error_message = "La cuenta no existe"
+            print(f"Error message: {error_message}")
+            context = {
+                "cuentas": cuentas,
+                "formulario": formulario,
+                "error_message": error_message,
+            }
+            return render(request, "cuentas/trades/crear.html", context) 
+
+        trade.fecha_updated = timezone.now()  
+        trade.id_cuenta_id = id_cuenta  # Asignar el id_cuenta_id al objeto trade     
+
+        try:
+            trade.save()  # Guardar el trade en la base de datos
+            info_message = "Se ha agregado un nuevo trade"
+            messages.info(request, info_message)
+            return redirect("editar", trade.id)      
+        except Exception as e:
+            # Manejar el error al guardar el trade
+            error_message = f"Error al guardar el trade: {str(e)}"
             context = {
                 "cuentas": cuentas,
                 "formulario": formulario,
                 "error_message": error_message,
             }
             return render(request, "cuentas/trades/crear.html", context)
-
-        # Obtener el número de registros de resultados
-        n_registros = TRADES.objects.filter(id_cuenta_id=id_cuenta).filter(
-            resultado__in=[
-                # "Stop Loss",
-                # "Take Profit",
-                # "Break Even",
-                # "Cierre Manual en Positivo",
-                # "Cierre Manual en Negativo",
-            ]
-        ).count()
-
-        # Verificar si se puede crear un nuevo registro
-        if n_registros >= int(cuenta.n_operaciones):
-            error_message = "Ha superado el máximo de operaciones recomendadas"
-            context = {
-                "cuentas": cuentas,
-                "formulario": formulario,
-                "error_message": error_message,
-            }
-            return render(request, "cuentas/trades/crear.html", context)
-
-        trade.fecha_updated =  timezone.now()  
-        trade.id_cuenta_id = id_cuenta  # Asignar el id_cuenta_id al objeto trade
-        trade.save()  # Guardar el trade en la base de datos
-        info_message = "Se ha agregado un nuevo trade"
-        messages.info(request, info_message)
-        return redirect("editar", trade.id)      
 
     context = {"cuentas": cuentas, "formulario": formulario, "id_cuenta": id_cuenta}
     return render(request, "cuentas/trades/crear.html", context)
@@ -381,8 +382,8 @@ def editar(request, id):
         trade = TRADES.objects.get(id=id)    
         # El formato desde forms se presenta al usuario dd-mm-YYYY pero por la vista se envia en formato YYYY-mm-dd
         trade_fecha_str = trade.fecha.strftime("%Y-%m-%d")
-        trade.fecha = datetime.strptime(trade_fecha_str, "%Y-%m-%d").date()      
-
+        trade.fecha = datetime.strptime(trade_fecha_str, "%Y-%m-%d").date() 
+        estado  = trade.estado         
         cuentas = CUENTAS.objects.all()
         cuenta = CUENTAS.objects.get(id_cuenta=id_cuenta)
         filtra_trade_image = TRADEIMAGE.objects.filter(trade_id=id)
@@ -437,7 +438,13 @@ def editar(request, id):
 
                     trade_image.image.titulo = titulo
                     trade_image.image.descripcion = descripcion
-                    trade_image.image.save()
+                    trade_image.image.save()   
+
+                # if cuenta.resultado_cuenta == 'Stop Loss':
+                #     n_operaciones = cuenta.n_operaciones.strip()
+                #     o_restantes = int(n_operaciones) - 1
+                #     cuenta.operaciones_restantes = int(o_restantes)                    
+                #     cuenta.save()                       
 
                 trade.fecha_updated =  timezone.now()      
                 trade.id_cuenta_id = id_cuenta
@@ -461,7 +468,8 @@ def editar(request, id):
             "error_message": error_message,
             "mensajes": mensajes,
             "trade_id": trade_id,
-            "trade_fecha_str": trade_fecha_str
+            "trade_fecha_str": trade_fecha_str,
+            "estado": estado
         }
 
         return render(request, "cuentas/trades/editar.html", context)
@@ -471,6 +479,48 @@ def editar(request, id):
 
     context = {"error_message": error_message}
     return render(request, "cuentas/trades/editar.html", context)
+
+
+@csrf_protect
+def clonar(request, id):
+    trade_original = TRADES.objects.get(id=id)
+    id_cuenta = trade_original.id_cuenta_id
+
+    # Clona el trade
+    nuevo_trade = TRADES(
+    activo=trade_original.activo,
+    orden=trade_original.orden,
+    fecha=trade_original.fecha,
+    fecha_updated=timezone.now(),  # Puedes ajustar esto según tus necesidades
+    resultado=trade_original.resultado,
+    beneficio_real=trade_original.beneficio_real,
+    porcentaje_beneficio_real=trade_original.porcentaje_beneficio_real,
+    id_cuenta=trade_original.id_cuenta,
+    stoploss=trade_original.stoploss,
+    takeprofit=trade_original.takeprofit,
+    lotaje=trade_original.lotaje,
+    ratio=trade_original.ratio,
+    beneficio_esperado=trade_original.beneficio_esperado,
+    utilidad_proyectada=trade_original.utilidad_proyectada,
+)
+    nuevo_trade.save()
+
+    # Clona las imágenes asociadas
+    for trade_image in TRADEIMAGE.objects.filter(trade=trade_original):
+        nueva_imagen = IMAGE(
+            image=trade_image.image.image,  # Ajusta el campo según tu modelo IMAGE
+            titulo=trade_image.image.titulo,
+            descripcion=trade_image.image.descripcion,
+        )
+        nueva_imagen.save()
+
+        nuevo_trade_image = TRADEIMAGE(trade=nuevo_trade, image=nueva_imagen)
+        nuevo_trade_image.save()
+        info_message = "Se ha clonao un trade"         
+        messages.info(request, info_message)
+
+    # Redirige a la página de edición del nuevo trade   
+    return redirect("lista_trades_de_cuentas", id_cuenta=id_cuenta)
 
 @csrf_protect
 def eliminar(request, id):
@@ -492,13 +542,62 @@ def eliminar(request, id):
 
     # Eliminar el trade
     trade.delete()
-    delete_message = "Se ha eliminado un trade."             
+    delete_message = "Trade eliminado permanentemente."             
     messages.info(request, delete_message)
     # # Redirigir a la página lista_trades_de_cuentas
     # url = reverse("lista_trades_de_cuentas", args=[id_cuenta])  # obtén la URL de la vista lista_trades_de_cuentas
     # return redirect(url)  
     return redirect("lista_trades_de_cuentas", id_cuenta=id_cuenta)
 
+def reciclar(request, id):
+    trade = TRADES.objects.get(id=id)
+    id_cuenta = trade.id_cuenta_id
+
+    # Actualizar el estado del trade a "eliminado"
+    trade.estado = 'eliminado'
+    trade.save()
+
+    reciclar_message = "Trade enviado a la papelera de reciclaje."
+    messages.info(request, reciclar_message)
+
+    return redirect("lista_trades_de_cuentas", id_cuenta=id_cuenta)
+
+def restaurar(request, id):
+    trade = TRADES.objects.get(id=id)
+    id_cuenta = trade.id_cuenta_id
+
+    # Actualizar el estado del trade a "eliminado"
+    trade.estado = 'activo'
+    trade.save()
+
+    restaurar_message = "Trade restaurado"
+    messages.info(request, restaurar_message)
+
+    return redirect("trash", id_cuenta=id_cuenta)
+
+def trash(request, id_cuenta):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    request.session["id_cuenta"] = id_cuenta
+    cuenta = CUENTAS.objects.get(id_cuenta=id_cuenta)
+    cuentas = CUENTAS.objects.all()
+    trades_eliminados = TRADES.objects.filter(id_cuenta=id_cuenta, estado='eliminado')
+    user = request.user
+   
+
+    mensaje_error = ""
+    id_tipo_cuenta = request.session["id_tipo_cuenta"]
+    trash_page = resolve(request.path_info).url_name
+    context = {          
+        "mensaje_error": mensaje_error,
+        "cuentas": cuentas,
+        "lista_trades_eliminados": trades_eliminados,
+        "id_tipo_cuenta": id_tipo_cuenta,
+        "trash_page": trash_page
+    }
+
+    return render(request, "cuentas/trades/trash.html", context)
 
 def eliminar_imagen(request, image_id):
     """

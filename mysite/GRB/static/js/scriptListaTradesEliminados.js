@@ -11,83 +11,6 @@
 // comision.addEventListener('blur', enviarFormulario);
 // swap.addEventListener('blur', enviarFormulario);
 
-if (includeScripts) {
-beneficio_total.disabled = true; 
-porcentaje_beneficio_total.disabled = true; 
-
-  const comisionInput = document.getElementById('comision');
-  comisionInput.addEventListener('input', () => {
-    let value = comisionInput.value.trim();
-  
-    // Verificamos si el primer carácter es un número
-    if (/^\d/.test(value)) {
-      // Añadimos el signo menos al principio del valor
-      value = '-' + value;
-    }    
-  
-    comisionInput.value = value;
-  });
-
-
-
-  const swapInput = document.getElementById('swap');
-  swapInput.addEventListener('input', () => {
-    let value = swapInput.value.trim();
-  
-    // Verificamos si el primer carácter es un número
-    if (/^\d/.test(value)) {
-      // Añadimos el signo menos al principio del valor
-      value = '-' + value;
-    }
-  
-    swapInput.value = value;
-  });
-}
-  document.addEventListener('DOMContentLoaded', function() {
-    var toggleButton = document.getElementById('open-modal-button-commission');
-    var modalContainerCommission = document.querySelector('.modal-container-commission');
-    var isExpanded = localStorage.getItem('isCommissionExpanded') === 'true';
-  
-    // Aplica el estado recuperado
-    if (isExpanded) {
-      toggleButton.classList.add('expand');
-      toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-right"></i>';
-      modalContainerCommission.classList.add('show');
-    }
-  
-    console.log('El valor actual de isCommissionExpanded es:', isExpanded);
-  
-    toggleButton.addEventListener('click', function() {
-      // Cambia el estado después de obtener el valor actual
-      isExpanded = !isExpanded;
-  
-      console.log('El valor actual de isCommissionExpanded es:', isExpanded);
-  
-      if (isExpanded) {
-        toggleButton.classList.add('expand');
-        toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-right"></i>';
-        modalContainerCommission.classList.add('show');
-      } else {
-        toggleButton.classList.remove('expand');
-        toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-left"></i>';
-        modalContainerCommission.classList.remove('show');
-        // Elimina la variable de la memoria local cuando se contrae
-        localStorage.removeItem('isCommissionExpanded');
-      }
-  
-      // Guarda el estado actualizado en la memoria local
-      localStorage.setItem('isCommissionExpanded', isExpanded.toString());
-    });
-  
-    // Guarda el estado inicial al cargar la página si no existe en la memoria local
-    if (!localStorage.getItem('isCommissionExpanded')) {
-      localStorage.setItem('isCommissionExpanded', isExpanded.toString());
-    }
-  });
-  
-   
-  
-  
   const checkboxes = document.getElementsByClassName('fila-checkbox');
 
   // Itera sobre cada checkbox
@@ -226,7 +149,6 @@ tablaScroll.addEventListener('mouseleave', function() {
         $('.float-button').fadeOut();
     });
 });
-
 
 document.getElementById('toggle-button').addEventListener('click', function(e) {
   e.preventDefault(); // Esto previene el comportamiento predeterminado del botón

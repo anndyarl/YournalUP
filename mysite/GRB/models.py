@@ -205,6 +205,7 @@ class TRADES(models.Model):
     porcentaje_beneficio_real = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Beneficio Real", null=True
     )   
+    estado = models.CharField(max_length=20, default='activo', null=True)
     # imagenes = models.ManyToManyField(Image, blank=True, verbose_name="Imágenes", through='TradeImage', null=True)
     
     objects = models.Manager()

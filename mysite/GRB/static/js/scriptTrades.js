@@ -581,3 +581,10 @@ function closeDropdowns() {
       });
     }
   });
+
+
+  document.getElementById('toggle-button').addEventListener('click', function(e) {
+    e.preventDefault(); // Esto previene el comportamiento predeterminado del botón
+    var menu = document.getElementById('mobile-menu');
+    menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
+});

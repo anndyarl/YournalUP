@@ -27,8 +27,12 @@ urlpatterns = [
     path('cuentas/<int:id_cuenta>/trades/', views.lista_trades_de_cuentas, name='lista_trades_de_cuentas'), 
     path('cuentas/trades/crear/', views.crear, name='crear'),
     path('cuentas/trades/eliminar/<int:id>',views.eliminar, name='eliminar'), 
+    path('cuentas/trades/reciclar/<int:id>',views.reciclar, name='reciclar'), 
+    path('cuentas/trades/restaurar/<int:id>',views.restaurar, name='restaurar'), 
     path('cuentas/trades/editar/<int:id>', views.editar, name='editar'),      
     path('eliminar-imagen/<int:image_id>/', views.eliminar_imagen, name='eliminar_imagen'),
+    path('cuentas/trades/clonar/<int:id>/', views.clonar, name='clonar'),    
+    path('cuentas/<int:id_cuenta>/trash/', views.trash, name='trash'), 
      #PARCIALES
 #     path('cuentas/trades/crear_parciales', views.crear_parciales, name='crear_parciales'),   
    #PAYMENTS

@@ -1,0 +1,139 @@
+{% extends "base.html" %} {% block titulo %} Mis trades {% endblock %}
+{% block contenido %}
+{% load static %}
+{% csrf_token %}
+<div class="nav-list">
+  {% include 'cuentas/trades/nav_list.html' %}
+</div> 
+ 
+<div class=" card-body container-master"> 
+     {% include 'cuentas/trades/menu_button.html' %}  
+  <!-- Listado de trades -->
+  <div class="container-right">
+    {% if mensaje_error %}
+    <div class="alert alert-warning" role="alert">
+      {{ mensaje_error }}
+      <button class="close-btn" onclick="cerrarMensajeError(this)"><span class="close-icon"></span></button>
+    </div>
+    {% endif %} {% for mensaje in messages %}
+    <div class="alert alert-info notifications-alert" role="alert">
+      {{ mensaje }}
+      <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
+    </div>
+    {% endfor %} {% include 'cuentas/trades/form_descuentos.html' %}
+    <h4 class="card-title">Papelera de reciclaje</h4>
+    <div class="tabla-scroll container hide-scrollbar mt-1">      
+      <table class="table table-trades table-hover">
+        <thead>
+          <tr>
+            <th scope="col" class="first-column">-</th>
+            <th scope="col"> <i class="fas fa-flag"></i></th>
+            <th scope="col">Cod</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Activo</th>
+            <th scope="col">Orden</th>
+            <th scope="col">Stoploss</th>
+            <th scope="col">TakeProfit</th>
+            <th scope="col">Lotaje</th>
+            <th scope="col">Ratio</th>
+            <th scope="col">Resultado</th>
+            <th scope="col">Beneficio Real</th>
+            <th scope="col">Utilidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for trades in lista_trades_eliminados %}
+          <tr
+          {% if trades.resultado == 'Take Profit' %}class="bg-result-tp"{% endif %}
+          {% if trades.resultado == 'Stop Loss' %}class="bg-result-sl"{% endif %}        
+          {% if trades.resultado == 'Cierre Manual en Positivo' %} class="bg-result-tp"{% endif %}
+          {% if trades.resultado == 'Cierre Manual en Negativo' %} class="bg-result-sl"{% endif %} ondblclick="window.location.href='{% url 'editar' trades.id %}'">
+          
+          <td>
+              <div class="dropdown">
+                <i class="fas fa-ellipsis-h dropdown-button" aria-haspopup="true" aria-expanded="false"></i>
+                <div id="dropdown-menu" class="dropdown-menu menu-list">
+                  <a class="dropdown-item btn btn-secondary" href="{% url 'editar' trades.id %}">
+                    <i class="fas fa-edit"></i> Editar
+                  </a>
+                  <!-- <a id="open-modal-button-delete" class="dropdown-item btn btn-secondary" data-toggle="modal" data-target="#modal-confirm">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                  </a>                 -->
+                  <a class="dropdown-item btn btn-secondary" href="{% url 'restaurar' trades.id %}">
+                    <i class="fas fa-undo-alt"></i> Restaurar
+                  </a>                
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <div class="checkbox-wrapper">
+                <input type="checkbox" class="fila-checkbox" id="checkbox_{{ trades.id }}">
+                <label for="checkbox_{{ trades.id }}" class="checkbox-label"></label>
+              </div>
+            </td>
+            <td>{{ trades.id }}</td>
+            <td>{{ trades.fecha|date:"d/m/Y" }}</td>
+            <td>{{ trades.activo }}</td>
+            <td {% if trades.orden == 'Venta' %}class="venta"{% endif %}
+                {% if trades.orden == 'Compra' %}class="compra"{% endif %}>
+                {{ trades.orden }}
+            </td>
+            <td>{{ trades.stoploss }} pips</td>
+            <td>{{ trades.takeprofit }} pips</td>
+            <td>{{ trades.lotaje }}</td>
+            <td>{{ trades.ratio }}</td>
+            <td {% if trades.resultado == 'Programada' %}class="text-warning"{% endif %}
+                {% if trades.resultado == 'Ejecución por Mercado' %}class="text-warning"{% endif %}
+                {% if trades.resultado == 'Take Profit' %}class="text-success"{% endif %}
+                {% if trades.resultado == 'Stop Loss' %}class="text-danger"{% endif %}
+                {% if trades.resultado == 'Break Even' %}class="text-info"{% endif %}
+                {% if trades.resultado == 'Cierre Manual en Positivo' %}class="text-success"{% endif %}
+                {% if trades.resultado == 'Cierre Manual en Negativo' %}class="text-danger"{% endif %}>
+                {{ trades.resultado }}
+            </td>
+            {% if trades.beneficio_real %}
+            <td>$ {{ trades.beneficio_real }}</td>
+            <td>{{ trades.porcentaje_beneficio_real }} %</td>
+            {% else %}
+            <td>-</td>
+            <td>-</td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal de confirmación de eliminación -->
+<div id="modal-confirm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header-left">
+        <h5 class="modal-title">Confirmar</h5>
+      </div>
+      <div class="modal-body">
+        {% comment %} <p>¿Esta acción eliminará permanentemente su trade con codigo de registro <b>{{trade_id}}</b> ¿Deseas continuar?</p> {% endcomment %}
+      </div>
+      <div class="modal-footer">
+        <a type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">
+          <i class="close"></i>Cancelar
+        </a>
+        {% comment %} <a type="button" class="btn btn-danger" href="{% url 'eliminar' trade_id %}">
+          <i class="fas fa-trash-alt"></i> Confirmar y Eliminar
+        </a> {% endcomment %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="loading-icon" style="display: none;">
+  <i class="fas fa-spinner fa-spin"></i> Cargando...
+</div>
+
+<script src="{% static 'js/scriptListaTradesEliminados.js' %}"></script>
+{% endblock %}
+

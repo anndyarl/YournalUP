@@ -1,0 +1,39 @@
+{% if lista_trades_de_cuentas %}
+<form id="commission-form" class="commission-form" enctype="multipart/form-data" method="post">
+	{% csrf_token %}  
+    {% if id_tipo_cuenta == 1 %}
+	<div class="mb-1">
+        <label for="resultado_cuenta">Estado</label>
+		<select id="resultado_cuenta" class="form-control" name="resultado_cuenta">
+           {% for choice in formulario.resultado_cuenta.field.choices %}
+                {% if choice.0 == formulario.resultado_cuenta.value %}
+                    <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+                {% else %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                {% endif %}
+           {% endfor %}
+        </select>
+        <button class="button-discounts float-button" id="resultado_cuenta-float-button" style="display: none;">Guardar</button>
+	</div>
+	{% endif %}
+    <div class="mb-1">
+        <label for="comision">Comisión</label>
+        <input type="text" class="form-control" id="comision" name="comision" placeholder="0.0" value="{{ formulario.comision.value | default:''}}">
+        <button class="button-discounts float-button" id="comision-float-button" style="display: none;">Guardar</button>
+    </div>
+    <div class="mb-1">
+        <label for="swap">Swap</label>
+        <input type="text" class="form-control" id="swap" name="swap" placeholder="0.0" value="{{ formulario.swap.value | default:'' }}">
+        <button class="button-discounts float-button" id="swap-float-button" style="display: none;">Guardar</button>
+    </div>
+    <div class="mb-1">
+        <label for="beneficio_total" class="beneficio_total">Beneficios</label>
+        <input type="text" readonly Id="beneficio_total" class="form-control" name="beneficio_total" placeholder="0.0" {% if beneficio_total %} value="$ {{ beneficio_total | default:'' }}" {% endif %}>
+    </div> 
+    <div class="mb-1">
+		<label for="porcentaje_beneficio_total" class="porcentaje_beneficio_total">Utilidad</label>
+		<input type="text" readonly id="porcentaje_beneficio_total" class="form-control" name="porcentaje_beneficio_total" placeholder="0.0" {% if beneficio_total %} value="{{ porcentaje_beneficio_total | default:'' }} %" {% endif %}>
+	</div>
+	
+</form>
+{% endif %}

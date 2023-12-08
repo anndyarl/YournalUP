@@ -5,31 +5,30 @@
 <div class="nav-list">
   {% include 'cuentas/trades/nav_list.html' %}
 </div> 
-  <div class="card-table"> 
-    <div class="card-body body-one">      
+  <div class="card-body container-master">  
+     {% include 'cuentas/trades/menu_button.html' %}  
+    <div class="container-right">
       {% if mensaje_error %}
       <div class="alert alert-warning" role="alert">
-        {{ mensaje_error }}        
+        {{ mensaje_error }}
         <button class="close-btn" onclick="cerrarMensajeError(this)"><span class="close-icon"></span></button>
       </div>
-    {% endif %}
-    {% for mensaje in messages %}
-    <div class="alert alert-info notifications-alert" role="alert">
+      {% endif %} {% for mensaje in messages %}
+      <div class="alert alert-info notifications-alert" role="alert">
         {{ mensaje }}
         <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
-    </div>
-{% endfor %}
-          <div class="middle-content">
-          <h4 class="card-title">Historial de trades</h4> 
-          <a  class="add-order-button-trade" href="{% url 'crear' %}" role="button">
-            <i class="fas fa-plus"></i> Agregar trade
-          </a>   
-        </div>  
-                 <div class="tabla-scroll container hide-scrollbar mt-1">         
+      </div>
+      {% endfor %}      
+     
+      <h5 class="card-title titulo_bp_desktop">Beneficios/Perdidas</h5>  
+      {% include 'cuentas/trades/form_descuentos.html' %}
+
+      <h4 class="card-title">Mis trades</h4>
+      <div class="tabla-scroll container hide-scrollbar mt-1">    
         <table class="table table-trades table-hover">
           <thead>
             <tr>
-              <th scope="col" class="first-column">-</th> 
+              <th scope="col" class="first-column">-</th>
               <th scope="col"> <i class="fas fa-flag"></i></th>
               <th scope="col">Cod</th>
               <th scope="col">Fecha</th>
@@ -41,10 +40,10 @@
               <th scope="col">Ratio</th>
               <th scope="col">Resultado</th>
               <th scope="col">Beneficio Real</th>
-              <th scope="col">Utilidad</th>  
+              <th scope="col">Utilidad</th>
             </tr>
           </thead>
-          <tbody>      
+          <tbody>
             {% for trades in lista_trades_de_cuentas %}
             <tr
             {% if trades.resultado == 'Take Profit' %}class="bg-result-tp"{% endif %}
@@ -53,20 +52,23 @@
             {% if trades.resultado == 'Cierre Manual en Negativo' %}class="bg-result-sl"{% endif %} ondblclick="window.location.href='{% url 'editar' trades.id %}'">
             
             <td>
-              <div class="dropdown">
-                <i class="fas fa-ellipsis-h dropdown-button" aria-haspopup="true" aria-expanded="false"></i>
-                <div id="dropdown-menu" class="dropdown-menu menu-list">
-                  <a class="dropdown-item" href="{% url 'editar' trades.id %}">
-                    <i class="fas fa-edit"></i> Editar
-                  </a>   
-                  {% comment %} <a id="open-modal-button-delete" class="delete-order-button" data-toggle="modal" data-target="#modal-confirm">
-                    <i class="fas fa-trash-alt"></i> Eliminar
-                  </a>    {% endcomment %}
-                </div> 
-              </div>
-            </td>  
-                              
-            <td>
+                <div class="dropdown">
+                  <i class="fas fa-ellipsis-h dropdown-button" aria-haspopup="true" aria-expanded="false"></i>
+                  <div id="dropdown-menu" class="dropdown-menu menu-list">
+                    <a class="dropdown-item btn btn-secondary" href="{% url 'editar' trades.id %}">
+                      <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <a class="dropdown-item btn btn-secondary" href="{% url 'clonar' trades.id %}">
+                      <i class="fas fa-clone"></i> Clonar
+                    </a>        
+                    <a class="dropdown-item btn btn-secondary" href="{% url 'reciclar' trades.id %}">
+                      <i class="fas fa-trash-alt"></i> Eliminar
+                    </a> 
+                  </div>
+                </div>
+              </td>
+
+              <td>
                 <div class="checkbox-wrapper">
                   <input type="checkbox" class="fila-checkbox" id="checkbox_{{ trades.id }}">
                   <label for="checkbox_{{ trades.id }}" class="checkbox-label"></label>
@@ -98,67 +100,66 @@
               {% else %}
               <td>-</td>
               <td>-</td>
-              {% endif %}            
+              {% endif %}
             </tr>
             {% endfor %}
-          </tbody>           
+          </tbody>
         </table>
-      </div>          
-    </div>   
-   
-  <div class="card-body body-two"> 
-    {% if lista_trades_de_cuentas %}
-    <a id="open-modal-button-commission" class="add-button-commission"><i class="fas fa-fw fa-angle-double-left"></i></a>   
-        {% comment %} {% if beneficio_total %} {% endcomment %}          
-        <div id="modal-container-commission" class="modal-container-commission container-commission-desktop"> 
-          
-          <div class="modal-header">	                 			
-            <a type="button" class="close" data-dismiss="modal-container" aria-label="Close">
-              <i class="fas fa-times close-modal"></i>
-            </a>              
-          </div>
-          <div class="modal-body">	
-            <h5 class="card-title">Descuentos</h5> 
-            <form id="commission-form" enctype="multipart/form-data" method="post">   
-              {% csrf_token %}    
-                  <label for="comision" class="label-commission">Comisión</label>           
-                  <input type="text" class="form-control" id="comision"  name="comision" placeholder="0.0" value="{{ formulario.comision.value | default:''}}">             
-                
-                  <label for="swap" class="label-commission">Swap</label>
-                  <input type="text" class="form-control" id="swap" name="swap" placeholder="0.0" value="{{ formulario.swap.value | default:'' }}">                 
-                  <label for="beneficio_total" class="label-commission beneficio_total">Beneficios</label>            
-                  <input type="text" readonly Id="beneficio_total" name="beneficio_total"  placeholder="0.0" {% if beneficio_total %} value="$ {{ beneficio_total | default:'' }}" {% endif %}> 
-                  <div class="mb-4">
-                    <label for="porcentaje_beneficio_total" class="label-commission porcentaje_beneficio_total">Utilidad</label>            
-                    <input type="text" readonly  id="porcentaje_beneficio_total" name="porcentaje_beneficio_total"  placeholder="0.0" {% if beneficio_total %} value="{{ porcentaje_beneficio_total | default:'' }} %" {% endif %}>           
-                  </div>
-
-                  {% if id_tipo_cuenta == 1 %}
-                  <div class="mb-3">
-                    <h5 class="card-title">Resultado de la cuenta</h5> 
-                    <select id="resultado_cuenta" class="form-control" name="resultado_cuenta">
-                      {% for choice in formulario.resultado_cuenta.field.choices %}
-                        {% if choice.0 == formulario.resultado_cuenta.value %}
-                          <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
-                        {% else %}
-                          <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                        {% endif %}
-                      {% endfor %}
-                    </select>
-                  </div>   
-                  {% endif %}   
-                <div class="mb-1">
-                   <button type="submit" class="add-order-button-commission disabled-button"></i>Guardar</button>
-                </div>
-                
-            </form>  
-          </div>       
-        </div>      
-        {% comment %} {% endif %} {% endcomment %}
-    {% endif %}   
+      </div>
     </div>
   </div>
 </div>
+
+{% if lista_trades_de_cuentas %}
+<a id="open-modal-button-commission" class="add-button-commission"><i class="fas fa-fw fa-angle-double-left"></i></a>   
+    {% comment %} {% if beneficio_total %} {% endcomment %}          
+    <div id="modal-container-commission" class="modal-container-commission container-commission-desktop"> 
+      
+      <div class="modal-header">	                 			
+        <a type="button" class="close" data-dismiss="modal-container" aria-label="Close">
+          <i class="fas fa-times close-modal"></i>
+        </a>              
+      </div>
+      <div class="modal-body">	        
+        <form id="commission-form" enctype="multipart/form-data" method="post">  
+          <h5 class="card-title">Beneficios/Perdidas</h5>  
+          {% csrf_token %}    
+              <label for="comision" class="label-commission">Comisión</label>           
+              <input type="text" class="form-control" id="comision"  name="comision" placeholder="0.0" value="{{ formulario.comision.value | default:''}}">             
+            
+              <label for="swap" class="label-commission">Swap</label>
+              <input type="text" class="form-control" id="swap" name="swap" placeholder="0.0" value="{{ formulario.swap.value | default:'' }}">                 
+              <label for="beneficio_total" class="label-commission beneficio_total">Beneficios</label>            
+              <input type="text" readonly Id="beneficio_total" name="beneficio_total"  placeholder="0.0" {% if beneficio_total %} value="$ {{ beneficio_total | default:'' }}" {% endif %}> 
+              <div class="mb-4">
+                <label for="porcentaje_beneficio_total" class="label-commission porcentaje_beneficio_total">Utilidad</label>            
+                <input type="text" readonly  id="porcentaje_beneficio_total" name="porcentaje_beneficio_total"  placeholder="0.0" {% if beneficio_total %} value="{{ porcentaje_beneficio_total | default:'' }} %" {% endif %}>           
+              </div>
+
+              {% if id_tipo_cuenta == 1 %}
+              <div class="mb-3">
+                <h5 class="card-title">Resultado de la cuenta</h5> 
+                <select id="resultado_cuenta" class="form-control" name="resultado_cuenta">
+                  {% for choice in formulario.resultado_cuenta.field.choices %}
+                    {% if choice.0 == formulario.resultado_cuenta.value %}
+                      <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+                    {% else %}
+                      <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>   
+              {% endif %}   
+            <div class="mb-1">
+               <button type="submit" class="add-order-button-commission disabled-button"></i>Guardar</button>
+            </div>
+            
+        </form>  
+      </div>       
+    </div>      
+    {% comment %} {% endif %} {% endcomment %}
+{% endif %}   
+
 <!-- Modal de confirmación de eliminación -->
 <div id="modal-confirm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">
   <div class="modal-dialog" role="document">
@@ -184,6 +185,16 @@
 <div id="loading-icon" style="display: none;">
   <i class="fas fa-spinner fa-spin"></i> Cargando...
 </div>
+
+{% if exist_row > 0 %}
+  <script>
+    var includeScripts = true;
+  </script>
+{% else %}
+  <script>
+    var includeScripts = false;
+  </script>
+{% endif %}
 
 <script src="{% static 'js/scriptListaTrades.js' %}"></script>
 {% endblock %}

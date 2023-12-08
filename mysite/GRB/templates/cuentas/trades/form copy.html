@@ -5,18 +5,19 @@
 		{{ mensaje }}
 		<button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
 	</div>
-	{% endfor %}
-	{% if error_message %}
+	{% endfor %} {% if error_message %}
 	<div class="alert alert-danger" role="alert">
 		{{ error_message }}
 	</div>
 	{% endif %}
-	<div class="container-master">	
-		{% include 'cuentas/trades/menu_button.html' %}  
-	  
+	<div class="container-master">
+		{% include 'cuentas/trades/button.html' %}
 		<div class="container-right">
+			<!-- Contenedor general -->
 			<div class="grid-container-master">
+				<!-- Contenedor que contiene 3 formularios divididos -->
 				<div class="grid-container">
+					<!-- formulario proyecciones-->
 					<div class="mb-1">
 						<h4 class="tittle-trade">Proyecciones</h4>
 					</div>
@@ -38,6 +39,7 @@
 							<input type="text" readonly id="utilidad_proyectada" class="display" name="utilidad_proyectada" value="{{ formulario.utilidad_proyectada.value | default:'' }} ">
 						</div>
 					</div>
+					<!-- Formulario delattes del trade-->
 					<div class="mb-1">
 						<h4 class="tittle-trade">Detalles del trade</h4>
 					</div>
@@ -45,27 +47,27 @@
 						<div class="mb-1">
 							<label for="activo" class="form-label">Activo</label>
 							<select id="activo" class="form-control" name="activo">
-								{% for choice in formulario.activo.field.choices %}
-									{% if choice.0 == formulario.activo.value %}
-										<option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
-									{% else %}
-										<option value="{{ choice.0 }}">{{ choice.1 }}</option>
-									{% endif %}
-								{% endfor %}
-							</select>
+									{% for choice in formulario.activo.field.choices %}
+										{% if choice.0 == formulario.activo.value %}
+											<option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+										{% else %}
+											<option value="{{ choice.0 }}">{{ choice.1 }}</option>
+										{% endif %}
+									{% endfor %}
+								</select>
 							<label for="activo_seleccionado" id="activo_seleccionado" class="form-label"></label>
 						</div>
 						<div class="mb-1">
 							<label for="orden" class="form-label">Orden</label>
 							<select id="orden" class="form-control" name="orden">
-								{% for choice in formulario.orden.field.choices %}
-									{% if choice.0 == formulario.orden.value %}
-										<option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
-									{% else %}
-										<option value="{{ choice.0 }}">{{ choice.1 }}</option>
-									{% endif %}
-								{% endfor %}
-							</select>
+									{% for choice in formulario.orden.field.choices %}
+										{% if choice.0 == formulario.orden.value %}
+											<option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+										{% else %}
+											<option value="{{ choice.0 }}">{{ choice.1 }}</option>
+										{% endif %}
+									{% endfor %}
+								</select>
 						</div>
 						<div class="mb-1">
 							<label for="fecha" class="form-label">Fecha</label>
@@ -76,14 +78,14 @@
 						<div class="mb-1">
 							<label for="resultado" class="form-label">Resultado:</label>
 							<select id="resultado" class="form-control" name="resultado">
-								{% for choice in formulario.resultado.field.choices %}
-									{% if choice.0 == formulario.resultado.value %}
-										<option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
-									{% else %}
-										<option value="{{ choice.0 }}">{{ choice.1 }}</option>
-									{% endif %}
-								{% endfor %}
-							</select>
+									{% for choice in formulario.resultado.field.choices %}
+										{% if choice.0 == formulario.resultado.value %}
+											<option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
+										{% else %}
+											<option value="{{ choice.0 }}">{{ choice.1 }}</option>
+										{% endif %}
+									{% endfor %}
+								</select>
 						</div>
 						<div class="mb-1">
 							<label for="stoploss" class="form-label">Stop Loss</label>
@@ -91,10 +93,10 @@
 								<input type="text" id="stoploss" placeholder="0" class="form-control" name="stoploss" value="{{ formulario.stoploss.value | default:'' }}">
 								<div class="input-group-append">
 									<span id="stoploss" class="input-group-text">
-									<i aria-hidden="true"></i> pip
-									</span>
+										<i aria-hidden="true"></i> pip
+										</span>
 								</div>
-							</div>	
+							</div>
 						</div>
 						<div class="mb-4">
 							<label for="takeprofit" class="form-label">Take Profit</label>
@@ -102,13 +104,14 @@
 								<input type="text" id="takeprofit" placeholder="0" class="form-control" name="takeprofit" value="{{ formulario.takeprofit.value | default:'' }}">
 								<div class="input-group-append">
 									<span id="takeprofit" class="input-group-text text-center">
-									<i aria-hidden="true"></i> pip
-									</span>
+										<i aria-hidden="true"></i> pip
+										</span>
 								</div>
-							</div>	
+							</div>
 						</div>
 
 					</div>
+					<!-- Formulario de Beneficios -->
 					{% if request.resolver_match.view_name == 'editar' %}
 					<div class="mb-1">
 						<h4 class="tittle-trade">Beneficios</h4>
@@ -130,27 +133,27 @@
 						</div> {% endcomment %}
 					</div>
 					{% endif %}
-						<!-- Contenedor de botones -->
-						<div class="center-button mb-4">
-							<button class="add-order-button" type="submit"><i class="fas fa-check"></i> Aceptar</button>
-							<a class="cancel-order-button" href="{% url 'lista_trades_de_cuentas' request.session.id_cuenta %}" role="button"><i class="fas fa-times"></i> Cancelar</a>
-							 {% if request.resolver_match.view_name == 'editar' %} 
-								{% if estado == "eliminado" %}
-									<a class="add-order-button" href="{% url 'restaurar' trade_id %}" role="button">
-										<i class="fas fa-undo-alt"></i> Restaurar
-									</a>
-									<a id="open-modal-button-delete" class="delete-order-button" data-toggle="modal" data-target="#modal-confirm">
-										<i class="fas fa-trash-alt"></i> Eliminar
-									</a>
-								{% else %}
-									<a type="button" class="delete-order-button" href="{% url 'reciclar' trade_id %}">
-										<i class="fas fa-trash-alt"></i> Eliminar
-									</a>
-								{% endif %}
+					<!-- Contenedor de botones -->
+					<div class="center-button mb-4">
+						<button class="add-order-button" type="submit"><i class="fas fa-check"></i> Aceptar</button>
+						<a class="cancel-order-button" href="{% url 'lista_trades_de_cuentas' request.session.id_cuenta %}" role="button"><i class="fas fa-times"></i> Cancelar</a>
+						 {% if request.resolver_match.view_name == 'editar' %} 
+							{% if estado == "eliminado" %}
+								<a class="add-order-button" href="{% url 'restaurar' trade_id %}" role="button">
+									<i class="fas fa-undo-alt"></i> Restaurar
+								</a>
+								<a id="open-modal-button-delete" class="delete-order-button" data-toggle="modal" data-target="#modal-confirm">
+									<i class="fas fa-trash-alt"></i> Eliminar
+								</a>
+							{% else %}
+								<a type="button" class="delete-order-button" href="{% url 'reciclar' trade_id %}">
+									<i class="fas fa-trash-alt"></i> Eliminar
+								</a>
 							{% endif %}
-						</div>
+						{% endif %}
+					</div>
 				</div>
-
+				<!-- Contenedor de detalles e información-->
 				{% if request.resolver_match.view_name == 'editar' %}
 				<div id="modal-container" class="grid-container-2 modal-container container">
 					<div class="modal-content">
@@ -207,7 +210,7 @@
 									<button type="submit" class="add-button disabled-button"></i>Guardar</button>
 								</div>
 							</div>
-							{% else%}
+							{% else %}
 							<div class="modal-body">
 								<div class="image-container">
 									<div class="mb-3">
@@ -265,10 +268,12 @@
 						</div>
 					</div>
 				</div>
+				{% endif %}
 			</div>
 		</div>
 	</div>
 
+	<!-- Contenedor de botones mobile -->
 	{% endif %} {% if request.resolver_match.view_name == 'editar' %} {% if recorre_clase_image %}
 	<a id="open-modal-button" class="add-details"> <i class="fas fa-image"></i><sup><i class="fas fa-sync-alt update-details-icon"></i></sup></a>
 	{% else %}
@@ -289,9 +294,15 @@
 					<a type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">
 						<i class="close"></i>Cancelar
 					</a>
+					{% if estado == "eliminado" %}
 					<a type="button" class="btn btn-danger" href="{% url 'eliminar' trade_id %}">
 						<i class="fas fa-trash-alt"></i> Confirmar y Eliminar
 					</a>
+					{% else %}
+					<a type="button" class="btn btn-danger" href="{% url 'reciclar' trade_id %}">
+						<i class="fas fa-trash-alt"></i> Confirmar y Eliminar
+					</a>
+					{% endif %}
 				</div>
 			</div>
 		</div>

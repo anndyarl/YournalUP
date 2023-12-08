@@ -103,7 +103,8 @@ class TradeForm(forms.ModelForm):
   
     class Meta:
         model = TRADES
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ['estado']
 
 
 class CuentaForm(forms.ModelForm):
@@ -192,8 +193,8 @@ class CuentaForm(forms.ModelForm):
     comision = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
     swap = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
     resultado_cuenta = forms.ChoiceField(choices=RESULTADO_CUENTA_CHOICES, widget=forms.Select(), required=False)
-    n_login = forms.CharField(max_length=12, required=True)  # Agrega este campo 
-    
+    n_login = forms.CharField(max_length=12, required=True)  # Agrega este campo  
+
     def clean(self):
         cleaned_data = super().clean()
         selected_broker = cleaned_data.get('broker')
