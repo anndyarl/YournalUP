@@ -7,6 +7,7 @@
 let riesgoPorOperacionInput = document.getElementById('riesgo_operacion');
 let stoplossInput = document.getElementById('stoploss');
 let lotajeInput = document.getElementById('lotaje');
+let lotajeUpdatedInput = document.getElementById('lotajeUpdated');
 // Variable para el calculo el riesgo
 let cuentaInput = document.getElementById('cuenta');
 let nOperacionesInput = document.getElementById('n_operaciones');
@@ -40,13 +41,13 @@ const SHEET_TITLE = 'Factores';
 const SHEET_RANGE = 'Factores!A2:C53';
 
 const FULL_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${SHEET_TITLE}&range=${SHEET_RANGE}`;
-let factor = 1;
+let factor = 10;
 
 // Calcular Lotaje
 // Agregamos un eventListener al evento input en ambos inputs para que se calcule el resultado en tiempo real
 capitalRiesgoInput.addEventListener('input', calcularLotaje);
 stoplossInput.addEventListener('input', calcularLotaje);
-lotajeInput.addEventListener('input', calcularLotaje);
+// lotajeInput.addEventListener('input', calcularLotaje);
 const activoSelect = document.getElementById('activo');
 const activoSeleccionadoLabel = document.getElementById('activo_seleccionado');
 
@@ -69,14 +70,12 @@ activoSelect.addEventListener('change', () => {
   // }
     
 });
-lotajeInput.value = lotajeInput.value.replace(/[^\d.-]/g, '');
+
+
 function calcularLotaje() {
   const capitalRiesgo = parseFloat(capitalRiesgoInput.value);
   const stoploss = parseFloat(stoplossInput.value);
- 
- 
-
- 
+  
    // Validamos si existen datos dentro del input
    if (stoploss === 0 || isNaN(stoploss)) {
     lotajeInput.value = "";
@@ -109,14 +108,14 @@ function calcularLotaje() {
 
       const lotaje = capitalRiesgo / stoploss / factor;
       lotajeInput.value = lotaje.toFixed(2); // Redondeamos el resultado a dos decimales y lo mostramos en el tercer input
+      
+
     })
     .catch(error => {
       console.error('Error al obtener los datos del JSON:', error);
     });
 }
 // Fin Calcular Lotaje
-
-
 
 
 
@@ -311,13 +310,27 @@ function expandImage(img) {
 
 
  // Configuración del calendario
- $( function() {
-  $( "#fecha" ).datepicker({
-    dateFormat: "dd-mm-yy",
-    changeMonth: true,
-    changeYear: true,
-    yearRange: "-100:+0",
-    showButtonPanel: true
+//  $( function() {
+//   $( "#fecha" ).datepicker({
+//     dateFormat: "dd-mm-yy",
+//     changeMonth: true,
+//     changeYear: true,
+//     yearRange: "-100:+0",
+//     showButtonPanel: true
+//   });
+// });
+$(document).ready(function () {
+  $("#fecha").datepicker({
+      dateFormat: "dd-mm-yy",
+      changeMonth: true,
+      changeYear: true,
+      yearRange: "-100:+0",
+      showButtonPanel: true
+  });
+
+  // Abre el datepicker cuando se hace clic en el botón del ícono
+  $("#datepicker-trigger").click(function() {
+      $("#fecha").datepicker("show");
   });
 });
 
@@ -377,10 +390,13 @@ document.addEventListener('DOMContentLoaded', function() {
   var expandModalButton = document.getElementById('expand-modal-button');
   var gridContainerMaster = document.querySelector('.grid-container-master');
   var gridContainer = document.querySelector('.grid-container');
+  var cuadriculaModalButton = document.getElementById('cuadricula-modal-button');
+  var gridImageContainer = document.querySelector('.grid-image-container');
 
   // Recupera el estado de isExpanded desde la memoria local
   var isExpanded = localStorage.getItem('isExpanded') === 'true';
-
+  // Recupera el estado de isChanged desde la memoria local
+  var isChanged = localStorage.getItem('isChanged') === 'true';  
   // Recupera el estado de isModalOpen desde la memoria local
   var isModalOpen = localStorage.getItem('isModalOpen') === 'true';
 
@@ -393,6 +409,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (isModalOpen) {
     modalContainer.classList.add('show');
+  }
+
+  if (isChanged) {
+    gridImageContainer.classList.add('changed');
   }
 
   toggleButton.addEventListener('click', function() {
@@ -415,12 +435,34 @@ document.addEventListener('DOMContentLoaded', function() {
       gridContainerMaster.classList.add('expand');
       gridContainerMaster.style.gridTemplateColumns = '1fr';
       gridContainer.style.display = 'none';
+       // Mostrar el botón de cuadrícula cuando se expande
+    cuadriculaModalButton.style.display = 'inline-block';
     } else {
       gridContainerMaster.style.gridTemplateColumns = 'repeat(2, 1fr)';
       gridContainerMaster.classList.remove('expand');
       gridContainer.style.display = 'grid';
+       // Ocultar el botón de cuadrícula cuando se colapsa
+      cuadriculaModalButton.style.display = 'none';
     }
   });
+  
+  cuadriculaModalButton.addEventListener('click', function() {
+    isChanged = !isChanged; // Cambia el estado
+    // localStorage.setItem('isChanged', isChanged.toString()); // Guarda el estado en la memoria local
+
+    if (isChanged) { 
+      gridImageContainer.classList.add('changed');     
+    } else {         
+      gridImageContainer.classList.remove('changed');
+      // localStorage.removeItem('isChanged');  // Elimina la variable de la memoria local    
+  }
+});
+
+    // Ocultar el botón de cuadrícula al cargar la página si no está expandido
+    if (!isExpanded) {
+      cuadriculaModalButton.style.display = 'none';
+    }
+ 
 });
 
 
@@ -547,25 +589,7 @@ function closeDropdowns() {
     modalContainer.classList.add('hide-scrollbar');
   });
 });
-
   
-  //Alert Notifications
-  function cerrarMensaje(btn) {
-    var alertDiv = btn.parentNode;
-    alertDiv.style.display = 'none';
-  }  
-  var alertDiv = document.querySelector('.alert.alert-info');
-  if (alertDiv) {
-    alertDiv.style.transition = 'opacity 10s'; // Duración de la transición: 5 segundos
-    alertDiv.style.opacity = '1'; // Establecer la opacidad inicial en 1 para mostrar el mensaje
-    setTimeout(function() {
-      alertDiv.style.opacity = '0';
-      setTimeout(function() {
-        alertDiv.style.display = 'none';
-      }, 10000); // 5000 milisegundos = 5 segundos (tiempo de espera después de la transición)
-    }, 3000); // 3000 milisegundos = 3 segundos (tiempo de espera antes de iniciar la transición)
-  }
-
 
   document.addEventListener('DOMContentLoaded', function() {
     var info = document.querySelector('#info');
@@ -588,3 +612,34 @@ function closeDropdowns() {
     var menu = document.getElementById('mobile-menu');
     menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
 });
+
+$(document).ready(function () {
+  // Opción 1: Muestra un tooltip al pasar el cursor sobre el icono
+  $("#open-modal-help").tooltip({
+      title: "Modifica tu lotaje para ser más preciso con tu riesgo/beneficio",
+      placement: "top", // Puedes ajustar la posición del tooltip según tus preferencias
+  });
+
+  // Opción 2: Muestra un popover al hacer clic en el icono
+    // Muestra el popover al hacer clic en el icono
+    $("#open-modal-help").popover({
+        title: "Lotaje",
+        content: "Modifica tu lotaje para ser más exacto con tu riesgo/beneficio",
+        trigger: "manual", // Cambiado a "manual" para controlar la apertura y cierre manualmente
+        placement: "top",
+    });
+
+    // Muestra el popover al hacer clic en el icono
+    $("#open-modal-help").on("click", function () {
+        $(this).popover("toggle");
+    });
+
+    // Cierra el popover cuando se hace clic fuera de él
+    $(document).on("click", function (event) {
+        var target = $(event.target);
+        if (!target.is("#open-modal-help") && !target.closest(".popover").length) {
+            // Cierra el popover si se hace clic fuera del icono o del popover
+            $("#open-modal-help").popover("hide");
+        }
+    });
+  });

@@ -90,8 +90,8 @@ class TradeForm(forms.ModelForm):
 
 
    
-    activo = forms.ChoiceField(choices=ACTIVO_CHOICES, widget=Select())
-    orden = forms.ChoiceField(choices=ORDEN_CHOICES, widget=Select(), required=False)   
+    activo = forms.ChoiceField(choices=ACTIVO_CHOICES, widget=Select(), required=True)
+    orden = forms.ChoiceField(choices=ORDEN_CHOICES, widget=Select(), required=True)   
     imagenes = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}), required=False)
     fecha = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), input_formats=['%d-%m-%Y'])# Este formato se muestra al usuario
     fecha_updated = forms.DateTimeField(required=False, widget=forms.HiddenInput())

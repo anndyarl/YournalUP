@@ -1,7 +1,7 @@
 {% if lista_trades_de_cuentas %}
 <form id="commission-form" class="commission-form" enctype="multipart/form-data" method="post">
 	{% csrf_token %}  
-    {% if id_tipo_cuenta == 1 %}
+    {% if id_tipo_cuenta == 1%}
 	<div class="mb-1">
         <label for="resultado_cuenta">Estado</label>
 		<select id="resultado_cuenta" class="form-control" name="resultado_cuenta">
@@ -15,7 +15,8 @@
         </select>
         <button class="button-discounts float-button" id="resultado_cuenta-float-button" style="display: none;">Guardar</button>
 	</div>
-	{% endif %}
+    {% endif %}
+
     <div class="mb-1">
         <label for="comision">Comisión</label>
         <input type="text" class="form-control" id="comision" name="comision" placeholder="0.0" value="{{ formulario.comision.value | default:''}}">

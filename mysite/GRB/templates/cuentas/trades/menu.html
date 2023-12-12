@@ -1,0 +1,47 @@
+{% block contenido %} 
+
+<div id="menu-mobile" class="menu-container-mobile">
+    <button id="toggle-button" class="toggle-button">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>    
+    </button>
+   
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="{% url 'crear' id_cuenta %}" role="button">
+            <i class="fas fa-plus"></i> Agregar trade
+        </a> 
+        <a href="{% url 'lista_trades_de_cuentas' id_cuenta %}" {% if trades_page == 'lista_trades_de_cuentas' %} class="active" {% endif %} role="button">
+            <i class="fas fa-home"></i> Mis Trades
+        </a>           
+        <a href="{% url 'trash' id_cuenta %}" {% if trash_page == 'trash' %} class="active" {% endif %} role="button">
+            <i class="fas fa-trash"></i> Papelera
+        </a>
+    </div>
+</div>
+
+<div id="container-menu" class="menu-container-desktop text-start">
+    <div class="button-new">  
+        <a class="add-order-button-trade" href="{% url 'crear' id_cuenta %}" role="button">
+            <i class="fas fa-plus"></i> Agregar trade
+        </a> 
+    </div>  
+  
+    <div class="button-container">       
+        <a href="{% url 'lista_trades_de_cuentas' id_cuenta %}" {% if trades_page == 'lista_trades_de_cuentas' %} class="active" {% endif %} role="button">
+            <i class="fas fa-home"></i> Mis Trades
+        </a>           
+        <a href="{% url 'trash' id_cuenta %}" {% if trash_page == 'trash' %} class="active" {% endif %} role="button">
+            <i class="fas fa-trash"></i> Papelera
+        </a>
+    </div> 
+
+
+
+ 
+</div>  
+
+{% endblock %} 
+
+
+

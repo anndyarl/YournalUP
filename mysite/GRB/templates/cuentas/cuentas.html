@@ -9,17 +9,18 @@
   {% for mensaje in mensajes %}
     <div class="alert alert-info notifications-alert" role="alert">
         {{ mensaje }}
-        <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
+        <!-- <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button> -->
     </div>
 {% endfor %}
 
   <div class="card-header">  
-    <a name="" id="myBtn" class="add-order-button" href="{% url 'crear_cuentas' request.session.id_tipo_cuenta %}" role="button">
+    <a name="" id="myBtn" class="add-order-button" href="{% url 'crear_cuentas' id_tipo_cuenta %}" role="button">
       <i class="fas fa-plus"></i> Agregar cuenta
     </a>  
   </div>  
-  <div class="card-body">    
-    {% if request.session.id_tipo_cuenta == 1 %}
+  <div class="card-body">   
+    
+    {% if id_tipo_cuenta == 1 %}
       <h4 class="card-title">MIS CUENTAS DE FONDEO</h4>        
     {% else %} 
       <h4 class="card-title">MIS CUENTAS PERSONALES</h4>   
@@ -67,18 +68,18 @@
                 </td>  
                 {% endif %}         
                 <td>$ {{ cuenta.capital_actual }}</td>
-                {% comment %} <td class="edit">
-                  <a class="btn-custom" href="{% url 'editar_cuentas' request.session.id_tipo_cuenta cuenta.id_cuenta %}" role="button">
+                 <!-- <td class="edit">
+                  <a class="btn-custom" href="{% url 'editar_cuentas' id_tipo_cuenta cuenta.id_cuenta %}" role="button">
                     <i class="fas fa-edit"></i>
                   </a>
-                </td> {% endcomment %}
+                </td> -->
                 <td class="edit">
                   <a class="btn-custom" href="{% url 'lista_trades_de_cuentas' cuenta.id_cuenta %}" role="button">
                     <i class="fas fa-eye"></i>
                   </a>
                 </td>
                 <td>
-                  <a id="deleteLink" class="btn-custom" href="{% url 'eliminar_cuenta' request.session.id_tipo_cuenta cuenta.id_cuenta %}" role="button">
+                  <a id="deleteLink" class="btn-custom" href="{% url 'eliminar_cuenta' id_tipo_cuenta cuenta.id_cuenta %}" role="button">
                     <i class="fas fa-trash-alt"></i>
                   </a>
                 </td>               

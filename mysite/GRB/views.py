@@ -24,6 +24,7 @@ from .models import TRADES, CUENTAS, TRADEIMAGE, IMAGE, PARCIALES, TRADEPARCIALE
 from .forms import TradeForm, CuentaForm, ParcialesForm
 from .forms import CustomAuthForm
 
+
 # Importaciones estándar de Python
 import json
 import requests
@@ -109,18 +110,18 @@ def lista_cuentas(request, id_tipo_cuenta):
     """
     if not request.user.is_authenticated:
         return redirect("login")
-    request.session["id_tipo_cuenta"] = id_tipo_cuenta
+      
     cuentas = CUENTAS.objects.filter(
-        user=request.user, id_tipo_cuenta_id=id_tipo_cuenta
-    )
+        user=request.user, id_tipo_cuenta_id=id_tipo_cuenta        
+    )    
     mensajes = messages.get_messages(request)
     return render(request, "cuentas/cuentas.html", {"cuentas": cuentas,"id_tipo_cuenta": id_tipo_cuenta,"mensajes": mensajes })
 
+@csrf_protect
 def lista_trades_de_cuentas(request, id_cuenta):
     if not request.user.is_authenticated:
         return redirect("login")
-    
-    request.session["id_cuenta"] = id_cuenta
+       
     cuenta = CUENTAS.objects.get(id_cuenta=id_cuenta)
     cuentas = CUENTAS.objects.all()
     # trades = TRADES.objects.filter(id_cuenta_id=id_cuenta)
@@ -129,7 +130,8 @@ def lista_trades_de_cuentas(request, id_cuenta):
     user = request.user
 
     mensaje_error = ""
-    id_tipo_cuenta = request.session["id_tipo_cuenta"]
+    id_tipo_cuenta = cuenta.id_tipo_cuenta_id
+    id_cuenta = cuenta.id_cuenta   
     formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta, instance=cuenta)
 
     if formulario.is_valid():
@@ -216,7 +218,8 @@ def lista_trades_de_cuentas(request, id_cuenta):
         "formulario": formulario, 
         "id_tipo_cuenta": id_tipo_cuenta, 
         "o_restantes": o_restantes,
-        "trades_page": trades_page
+        "trades_page": trades_page,
+        "id_cuenta":id_cuenta    
     }
     
     cuenta.save() 
@@ -226,23 +229,23 @@ def lista_trades_de_cuentas(request, id_cuenta):
 def crear_cuentas(request, id_tipo_cuenta):
     if not request.user.is_authenticated:
         return redirect("login")
-    
+
     error_message = ""
     info_message = ""
     cuentas = CUENTAS.objects.all()
-    user = request.user   
-    request.session["id_tipo_cuenta"] = id_tipo_cuenta 
+    user = request.user
+
     try:
         formulario = CuentaForm(request.POST or None, id_tipo_cuenta=id_tipo_cuenta, initial={'user': user, 'resultado_cuenta': 'En proceso'})
-      
+
         if request.method == "POST" and formulario.is_valid():
-            
             cuenta = formulario.save(commit=False)
             cuenta.id_tipo_cuenta_id = id_tipo_cuenta
             cuenta.riesgo_operacion = float(formulario.cleaned_data.get("riesgo_operacion"))
             cuenta.n_operaciones = formulario.cleaned_data.get("n_operaciones")
             cuenta.resultado_cuenta = "Ongoing"
-            try:                
+        
+            try:               
                 if id_tipo_cuenta == 1:
                     cuenta.cuenta_seleccionada = formulario.cleaned_data.get("cuenta")
                     cuenta.capital_actual = cuenta.cuenta_seleccionada
@@ -278,27 +281,24 @@ def crear_cuentas(request, id_tipo_cuenta):
                 return redirect(url)
 
             except Exception as e:
-                error_message = "Ocurrió un error al procesar los datos del formulario: {}".format(str(e))
-      
-        context = {
-            "cuentas": cuentas,
-            "formulario": formulario,
-            "id_tipo_cuenta": id_tipo_cuenta,
-            "error_message": error_message,
-            "user_value": str(user), 
-               
-        }
-        return render(request, "cuentas/crear_cuentas.html", context)
+                error_message = f"Ocurrió un error al procesar los datos del formulario: {str(e)}"
+
     except Exception as e:
-        error_message = "Se produjo un error al crear la cuenta: {}".format(str(e))
-        context = {
-            "cuentas": cuentas,
-            "formulario": None,
-            "id_tipo_cuenta": id_tipo_cuenta,
-            "error_message": error_message,
-            "user_value": str(user),           
-        }
-        return render(request, "cuentas/crear_cuentas.html", context)
+        error_message = f"Se produjo un error al crear la cuenta: {str(e)}"
+
+    context = {
+        "cuentas": cuentas,
+        "formulario": formulario,
+        "id_tipo_cuenta": id_tipo_cuenta,
+        "error_message": error_message,
+        "info_message": info_message,
+        "user_value": str(user),
+        
+    }
+
+    return render(request, "cuentas/crear_cuentas.html", context)
+      
+  
     
 
 
@@ -307,7 +307,7 @@ def eliminar_cuenta(request, id_cuenta, id_tipo_cuenta):
     """
     Vista para la página "eliminar_cuenta".
     """
-    request.session["id_tipo_cuenta"] = id_tipo_cuenta
+    
     cuentas = CUENTAS.objects.get(id_cuenta=id_cuenta)
     cuentas.delete()
     delete_message = "Se ha eliminado una cuenta."             
@@ -317,54 +317,52 @@ def eliminar_cuenta(request, id_cuenta, id_tipo_cuenta):
     )  # obtén la URL de la vista lista_de_trades
     return redirect(url)
 
+# def handle_error(request, template_name, error_message):
+#     cuentas = CUENTAS.objects.all()
+#     context = {
+#         "cuentas": cuentas,
+#         "error_message": error_message,
+#     }
+#     return render(request, template_name, context)
 
-@csrf_protect
-def crear(request):
-    """
-    Vista para la página "crear".
-    """
+def crear(request, id_cuenta):
     if not request.user.is_authenticated:
         return redirect("login")
 
-    cuentas = CUENTAS.objects.all()      
-    # Obtener la cuenta del nuevo trade
-    id_cuenta = request.session.get('id_cuenta')  
-    formulario = TradeForm(request.POST or None, request.FILES or None)
-    
-    if formulario.is_valid():
-        trade = formulario.save(commit=False)
-        
-        # Verificar si la cuenta existe
-        cuenta_exists = CUENTAS.objects.filter(id_cuenta=id_cuenta).exists()
-        if not cuenta_exists:
-            error_message = "La cuenta no existe"
-            print(f"Error message: {error_message}")
-            context = {
-                "cuentas": cuentas,
-                "formulario": formulario,
-                "error_message": error_message,
-            }
-            return render(request, "cuentas/trades/crear.html", context) 
+    error_message = ""
+    cuentas = CUENTAS.objects.all()
 
-        trade.fecha_updated = timezone.now()  
-        trade.id_cuenta_id = id_cuenta  # Asignar el id_cuenta_id al objeto trade     
+    try:
+        cuenta = CUENTAS.objects.get(id_cuenta=id_cuenta)
+        id_cuenta = cuenta.id_cuenta
+        id_tipo_cuenta = cuenta.id_tipo_cuenta_id
+        formulario = TradeForm(request.POST or None, request.FILES or None)
 
-        try:
-            trade.save()  # Guardar el trade en la base de datos
-            info_message = "Se ha agregado un nuevo trade"
-            messages.info(request, info_message)
-            return redirect("editar", trade.id)      
-        except Exception as e:
-            # Manejar el error al guardar el trade
-            error_message = f"Error al guardar el trade: {str(e)}"
-            context = {
-                "cuentas": cuentas,
-                "formulario": formulario,
-                "error_message": error_message,
-            }
-            return render(request, "cuentas/trades/crear.html", context)
+        if formulario.is_valid():
+            trade = formulario.save(commit=False)
+            trade.fecha_updated = timezone.now()
+            trade.id_cuenta_id = id_cuenta
+            trade.save()
 
-    context = {"cuentas": cuentas, "formulario": formulario, "id_cuenta": id_cuenta}
+            messages.info(request, "Se ha agregado un nuevo trade")
+            return redirect("editar", trade.id)
+
+    except ObjectDoesNotExist:
+        error_message = "La cuenta no existe"
+    except Exception as e:
+        # Obtener los campos obligatorios del formulario
+        campos_obligatorios = [field.label for field in formulario if field.required]
+        campos_obligatorios_str = ", ".join(campos_obligatorios)
+        error_message = f"Ocurrió un error al procesar los datos del formulario. Campos obligatorios: {campos_obligatorios_str}"
+
+    context = {
+        "cuentas": cuentas,
+        "formulario": formulario,
+        "id_cuenta": id_cuenta,
+        "id_tipo_cuenta": id_tipo_cuenta,
+        "error_message": error_message,
+    }
+
     return render(request, "cuentas/trades/crear.html", context)
 
 
@@ -377,15 +375,16 @@ def editar(request, id):
         if not request.user.is_authenticated:
             return redirect("login")
 
-        trade_id = id
-        id_cuenta = request.session.get('id_cuenta')
+        trade_id = id       
         trade = TRADES.objects.get(id=id)    
         # El formato desde forms se presenta al usuario dd-mm-YYYY pero por la vista se envia en formato YYYY-mm-dd
         trade_fecha_str = trade.fecha.strftime("%Y-%m-%d")
         trade.fecha = datetime.strptime(trade_fecha_str, "%Y-%m-%d").date() 
         estado  = trade.estado         
-        cuentas = CUENTAS.objects.all()
+        cuentas = CUENTAS.objects.all()       
+        id_cuenta = trade.id_cuenta_id   
         cuenta = CUENTAS.objects.get(id_cuenta=id_cuenta)
+        id_tipo_cuenta = cuenta.id_tipo_cuenta_id
         filtra_trade_image = TRADEIMAGE.objects.filter(trade_id=id)
         recorre_clase_image = [(trade_image.image, trade_image) for trade_image in filtra_trade_image]
 
@@ -440,6 +439,8 @@ def editar(request, id):
                     trade_image.image.descripcion = descripcion
                     trade_image.image.save()   
 
+                    
+
                 # if cuenta.resultado_cuenta == 'Stop Loss':
                 #     n_operaciones = cuenta.n_operaciones.strip()
                 #     o_restantes = int(n_operaciones) - 1
@@ -459,6 +460,7 @@ def editar(request, id):
         else:
             formulario = TradeForm(instance=trade)
 
+        trade_image_count = len(recorre_clase_image)# Cuenta la cantidad de imagenes ingresadas
         mensajes = messages.get_messages(request)
         error_message = ""
         context = {
@@ -469,7 +471,10 @@ def editar(request, id):
             "mensajes": mensajes,
             "trade_id": trade_id,
             "trade_fecha_str": trade_fecha_str,
-            "estado": estado
+            "estado": estado,
+            "id_cuenta": id_cuenta,
+            "id_tipo_cuenta": id_tipo_cuenta,
+            "trade_image_count": trade_image_count   
         }
 
         return render(request, "cuentas/trades/editar.html", context)
@@ -557,7 +562,7 @@ def reciclar(request, id):
     trade.estado = 'eliminado'
     trade.save()
 
-    reciclar_message = "Trade enviado a la papelera de reciclaje."
+    reciclar_message = "Trade enviado a la papelera."
     messages.info(request, reciclar_message)
 
     return redirect("lista_trades_de_cuentas", id_cuenta=id_cuenta)
@@ -575,26 +580,25 @@ def restaurar(request, id):
 
     return redirect("trash", id_cuenta=id_cuenta)
 
-def trash(request, id_cuenta):
-    if not request.user.is_authenticated:
-        return redirect("login")
 
-    request.session["id_cuenta"] = id_cuenta
+
+def trash(request, id_cuenta):       
+    if not request.user.is_authenticated:
+        return redirect("login")   
+    
     cuenta = CUENTAS.objects.get(id_cuenta=id_cuenta)
     cuentas = CUENTAS.objects.all()
-    trades_eliminados = TRADES.objects.filter(id_cuenta=id_cuenta, estado='eliminado')
-    user = request.user
-   
-
-    mensaje_error = ""
-    id_tipo_cuenta = request.session["id_tipo_cuenta"]
+    id_tipo_cuenta = cuenta.id_tipo_cuenta_id    
+    lista_trades_eliminados = TRADES.objects.filter(id_cuenta=id_cuenta, estado='eliminado')   
+    mensaje_error = ""    
     trash_page = resolve(request.path_info).url_name
     context = {          
         "mensaje_error": mensaje_error,
         "cuentas": cuentas,
-        "lista_trades_eliminados": trades_eliminados,
+        "lista_trades_eliminados": lista_trades_eliminados,
         "id_tipo_cuenta": id_tipo_cuenta,
-        "trash_page": trash_page
+        "trash_page": trash_page,
+        "id_cuenta": id_cuenta 
     }
 
     return render(request, "cuentas/trades/trash.html", context)

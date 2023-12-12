@@ -6,25 +6,28 @@
   {% include 'cuentas/trades/nav_list.html' %}
 </div> 
   <div class="card-body container-master">  
-     {% include 'cuentas/trades/menu_button.html' %}  
+     {% include 'cuentas/trades/menu.html' %}  
+ 
     <div class="container-right">
       {% if mensaje_error %}
-      <div class="alert alert-warning" role="alert">
+      <div id="alertContainer" class="alert alert-warning" role="alert">
         {{ mensaje_error }}
         <button class="close-btn" onclick="cerrarMensajeError(this)"><span class="close-icon"></span></button>
       </div>
-      {% endif %} {% for mensaje in messages %}
+      {% endif %}
+       {% for mensaje in messages %}
       <div class="alert alert-info notifications-alert" role="alert">
         {{ mensaje }}
-        <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
+        <!-- <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>        -->
       </div>
       {% endfor %}      
      
+      {%  if exist_row %}
       <h5 class="card-title titulo_bp_desktop">Beneficios/Perdidas</h5>  
-      {% include 'cuentas/trades/form_descuentos.html' %}
-
+      {% endif %}
+      {% include 'cuentas/trades/form_descuentos.html' %}    
       <h4 class="card-title">Mis trades</h4>
-      <div class="tabla-scroll container hide-scrollbar mt-1">    
+      <div class="tabla-scroll hide-scrollbar mt-1">    
         <table class="table table-trades table-hover">
           <thead>
             <tr>
@@ -44,6 +47,7 @@
             </tr>
           </thead>
           <tbody>
+        
             {% for trades in lista_trades_de_cuentas %}
             <tr
             {% if trades.resultado == 'Take Profit' %}class="bg-result-tp"{% endif %}
@@ -103,8 +107,10 @@
               {% endif %}
             </tr>
             {% endfor %}
+         
           </tbody>
         </table>
+     
       </div>
     </div>
   </div>
@@ -122,7 +128,7 @@
       </div>
       <div class="modal-body">	        
         <form id="commission-form" enctype="multipart/form-data" method="post">  
-          <h5 class="card-title">Beneficios/Perdidas</h5>  
+          <h5 class="card-title">Beneficios/Perdidas</h5> 
           {% csrf_token %}    
               <label for="comision" class="label-commission">Comisión</label>           
               <input type="text" class="form-control" id="comision"  name="comision" placeholder="0.0" value="{{ formulario.comision.value | default:''}}">             
@@ -135,8 +141,8 @@
                 <label for="porcentaje_beneficio_total" class="label-commission porcentaje_beneficio_total">Utilidad</label>            
                 <input type="text" readonly  id="porcentaje_beneficio_total" name="porcentaje_beneficio_total"  placeholder="0.0" {% if beneficio_total %} value="{{ porcentaje_beneficio_total | default:'' }} %" {% endif %}>           
               </div>
-
-              {% if id_tipo_cuenta == 1 %}
+             
+              {% if id_tipo_cuenta == 1%}
               <div class="mb-3">
                 <h5 class="card-title">Resultado de la cuenta</h5> 
                 <select id="resultado_cuenta" class="form-control" name="resultado_cuenta">
@@ -148,7 +154,7 @@
                     {% endif %}
                   {% endfor %}
                 </select>
-              </div>   
+              </div>              
               {% endif %}   
             <div class="mb-1">
                <button type="submit" class="add-order-button-commission disabled-button"></i>Guardar</button>

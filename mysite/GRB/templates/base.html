@@ -37,6 +37,16 @@
   <script src="https://apis.google.com/js/api.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="script.js"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+  <!-- jQuery UI -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <!-- Bootstrap JS (asegúrate de tener Bootstrap incluido en tu proyecto) -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
   
   </head>
    <body>
@@ -99,15 +109,15 @@
      
       <main>     
         {% if user.is_authenticated %}      
-        <div class="menu">
+        <div id="menu-container" class="menu">
             <div>
-              <a class="nav-item nav-link {% if request.resolver_match.url_name == 'lista_cuentas' and request.resolver_match.kwargs.id == 1 %}active{% endif %}" href="{% url 'lista_cuentas' 1 %}">
+              <a class="nav-item nav-link {% if id_tipo_cuenta == 1 %}active{% endif %}" href="{% url 'lista_cuentas' 1 %}">
                 <i class="fas fa-stopwatch"></i>
                 <span class="menu-name">Cuenta de Fondeo</span>
               </a>
             </div>
             <div>
-              <a class="nav-item nav-link {% if request.resolver_match.url_name == 'lista_cuentas' and request.resolver_match.kwargs.id == 2 %}active{% endif %}" href="{% url 'lista_cuentas' 2 %}">
+              <a class="nav-item nav-link {% if id_tipo_cuenta == 2 %}active{% endif %}" href="{% url 'lista_cuentas' 2 %}">
               <i class="fas fa-wallet"></i>
               <span class="menu-name"> Cuenta Personal</span>
               </a>
@@ -256,6 +266,46 @@
             slidePrev();
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function () {
+  let prevScrollPos = window.pageYOffset;
+
+  window.onscroll = function () {
+      let currentScrollPos = window.pageYOffset;
+
+      if (prevScrollPos > currentScrollPos) {
+          // Si se hace scroll hacia arriba, muestra el menú solo cuando se llega al top
+          if (currentScrollPos === 0) {
+              document.getElementById("menu-container").style.top = "6%";
+              document.getElementById("menu-container").style.top = "43px";
+          }
+      } else {
+          // Si se hace scroll hacia abajo, oculta el menú
+          document.getElementById("menu-container").style.top = "-60px";
+      }
+
+      prevScrollPos = currentScrollPos;
+  };
+});
+
+  //Alert Notifications
+  function cerrarMensaje(btn) {
+    var alertDiv = btn.parentNode;
+    alertDiv.style.display = 'none';
+  }  
+  var alertDiv = document.querySelector('.alert.alert-info');
+  if (alertDiv) {
+    alertDiv.style.transition = 'opacity 10s'; // Duración de la transición: 5 segundos
+    alertDiv.style.opacity = '1'; // Establecer la opacidad inicial en 1 para mostrar el mensaje
+    setTimeout(function() {
+      alertDiv.style.opacity = '0';
+      setTimeout(function() {
+        alertDiv.style.display = 'none';
+      }, 10000); // 10000 milisegundos = 10 segundos (tiempo de espera después de la transición)
+    }, 5000); // 5000 milisegundos = 5 segundos (tiempo de espera antes de iniciar la transición)
+  }
+
+
           
         </script>
    </body>

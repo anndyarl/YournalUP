@@ -113,20 +113,25 @@ document.addEventListener('DOMContentLoaded', function() {
   var selectBroker = document.getElementById('broker');
   var otroBrokerField = document.getElementById('otroBrokerField');
 
+  // Restaurar el estado del campo "otro_broker" desde localStorage
+  var otroBrokerSelected = localStorage.getItem('otroBrokerSelected') === 'true';
+  if (otroBrokerSelected) {
+    selectBroker.value = 'Otro';
+    otroBrokerField.style.display = 'block';
+  }
+
   selectBroker.addEventListener('change', function() {
     if (selectBroker.value === 'Otro') {
       otroBrokerField.style.display = 'block';
+      // Guardar el estado del campo "otro_broker" en localStorage
+      localStorage.setItem('otroBrokerSelected', 'true');
     } else {
       otroBrokerField.style.display = 'none';
+      // Eliminar el estado del campo "otro_broker" en localStorage
+      localStorage.removeItem('otroBrokerSelected');
     }
   });
-
-  // Mostrar u ocultar el campo "otro_broker" al cargar la página
-  if (selectBroker.value === 'otro') {
-    otroBrokerField.style.display = 'block';
-  } else {
-    otroBrokerField.style.display = 'none';
-  }
 });
+
 
 

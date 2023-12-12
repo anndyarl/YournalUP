@@ -25,7 +25,7 @@ urlpatterns = [
 
     #TRADES
     path('cuentas/<int:id_cuenta>/trades/', views.lista_trades_de_cuentas, name='lista_trades_de_cuentas'), 
-    path('cuentas/trades/crear/', views.crear, name='crear'),
+    path('cuentas/trades/<int:id_cuenta>/crear/', views.crear, name='crear'),
     path('cuentas/trades/eliminar/<int:id>',views.eliminar, name='eliminar'), 
     path('cuentas/trades/reciclar/<int:id>',views.reciclar, name='reciclar'), 
     path('cuentas/trades/restaurar/<int:id>',views.restaurar, name='restaurar'), 

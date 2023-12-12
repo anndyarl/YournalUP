@@ -38,7 +38,7 @@ class TIPOCUENTA(models.Model):
     clase Modelo "TIPOCUENTA".
     """
 
-    id_tipo_cuenta = models.IntegerField(primary_key=True)
+    id_tipo_cuenta = models.IntegerField(primary_key=True, verbose_name="")
     descripcion = models.CharField(
         max_length=100, verbose_name="Descripción", null=True
     )
@@ -46,13 +46,7 @@ class TIPOCUENTA(models.Model):
     objects = models.Manager()
 
     def __str__(self):
-        fila = (
-            "Id Tipo Cuenta: "
-            + str(self.id_tipo_cuenta)
-            + "descripcion: "
-            + self.descripcion
-        )
-        return fila
+        return str(self.id_tipo_cuenta)
 
 
 class CUENTAS(models.Model):

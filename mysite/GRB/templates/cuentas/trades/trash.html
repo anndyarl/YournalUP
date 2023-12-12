@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block titulo %} Mis trades {% endblock %}
+{% extends "base.html" %} {% block titulo %} Papelrea de reciclaje{% endblock %}
 {% block contenido %}
 {% load static %}
 {% csrf_token %}
@@ -7,7 +7,8 @@
 </div> 
  
 <div class=" card-body container-master"> 
-     {% include 'cuentas/trades/menu_button.html' %}  
+     {% include 'cuentas/trades/menu.html' %}  
+
   <!-- Listado de trades -->
   <div class="container-right">
     {% if mensaje_error %}
@@ -19,10 +20,12 @@
     <div class="alert alert-info notifications-alert" role="alert">
       {{ mensaje }}
       <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
+    
     </div>
     {% endfor %} {% include 'cuentas/trades/form_descuentos.html' %}
-    <h4 class="card-title">Papelera de reciclaje</h4>
-    <div class="tabla-scroll container hide-scrollbar mt-1">      
+
+    <h4 class="card-title">Papelera</h4>
+    <div class="tabla-scroll hide-scrollbar mt-1">      
       <table class="table table-trades table-hover">
         <thead>
           <tr>

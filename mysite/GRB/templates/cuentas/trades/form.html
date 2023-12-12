@@ -1,18 +1,20 @@
 {% load static %}
-<form enctype="multipart/form-data" method="post" id="myModalForm">
-	{% csrf_token %} {% for mensaje in mensajes %}
+<form enctype="multipart/form-data" method="post" id="myModalForm">	
+	{% csrf_token %} 
+	{% for mensaje in messages %}
 	<div class="alert alert-info notifications-alert" role="alert">
-		{{ mensaje }}
-		<button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>
+	  {{ mensaje }}
+	  <!-- <button class="close-btn" onclick="cerrarMensaje(this)"><span class="close-icon"></span></button>        -->
 	</div>
-	{% endfor %}
+	{% endfor %}      
+   
 	{% if error_message %}
 	<div class="alert alert-danger" role="alert">
 		{{ error_message }}
 	</div>
 	{% endif %}
 	<div class="container-master">	
-		{% include 'cuentas/trades/menu_button.html' %}  
+		{% include 'cuentas/trades/menu.html' %}  
 	  
 		<div class="container-right">
 			<div class="grid-container-master">
@@ -21,21 +23,29 @@
 						<h4 class="tittle-trade">Proyecciones</h4>
 					</div>
 					<div class="grid-container-display">
-						<div class="mb-1">
+						<div class="display-field">
 							<label for="lotaje" class="form-label">Lotaje</label>
-							<input type="text" id="lotaje" class="form-control" name="lotaje" value="{{ formulario.lotaje.value | default:'' }}">
+							<div class="input-group">							
+								<input type="text" id="lotaje"  name="lotaje" value="{{ formulario.lotaje.value | default:'' }}">								
+								<div class="input-group-append">
+									<button id="open-modal-help" type="button" class="input-group-text" data-toggle="modal" data-target="#helpModal">
+										<i class="fas fa-info-circle"></i>
+									</button>
+								
+								</div>
+							</div>
 						</div>
-						<div class="mb-1">
+						<div class="display-field">
 							<label for="ratio" class="form-label">Ratio</label>
-							<input type="text" readonly id="ratio" class="display" name="ratio" value="{{ formulario.ratio.value | default:'' }}">
+							<input type="text" readonly id="ratio" name="ratio" value="{{ formulario.ratio.value | default:'' }}">
 						</div>
-						<div class="mb-1">
+						<div class="display-field">
 							<label for="beneficio_esperado" class="form-label">Beneficio Esperado</label>
-							<input type="text" readonly id="beneficio_esperado" class="display" name="beneficio_esperado" value="{{ formulario.beneficio_esperado.value | default:'' }}">
+							<input type="text" readonly id="beneficio_esperado" name="beneficio_esperado" value="{{ formulario.beneficio_esperado.value | default:'' }}">
 						</div>
-						<div class="mb-2">
+						<div class="display-field">
 							<label for="utilidad_proyectada" class="form-label">Utilidad Proyectada</label>
-							<input type="text" readonly id="utilidad_proyectada" class="display" name="utilidad_proyectada" value="{{ formulario.utilidad_proyectada.value | default:'' }} ">
+							<input type="text" readonly id="utilidad_proyectada" name="utilidad_proyectada" value="{{ formulario.utilidad_proyectada.value | default:'' }} ">
 						</div>
 					</div>
 					<div class="mb-1">
@@ -44,7 +54,7 @@
 					<div class="grid-container-form">
 						<div class="mb-1">
 							<label for="activo" class="form-label">Activo</label>
-							<select id="activo" class="form-control" name="activo">
+							<select id="activo" class="form-control {% if formulario.activo.errors %}is-invalid{% elif formulario.activo.value %}is-valid{% endif %}" name="activo">
 								{% for choice in formulario.activo.field.choices %}
 									{% if choice.0 == formulario.activo.value %}
 										<option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
@@ -57,7 +67,7 @@
 						</div>
 						<div class="mb-1">
 							<label for="orden" class="form-label">Orden</label>
-							<select id="orden" class="form-control" name="orden">
+							<select id="orden" class="form-control {% if formulario.orden.errors %}is-invalid{% elif formulario.orden.value %}is-valid{% endif %}" name="orden">
 								{% for choice in formulario.orden.field.choices %}
 									{% if choice.0 == formulario.orden.value %}
 										<option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
@@ -69,13 +79,13 @@
 						</div>
 						<div class="mb-1">
 							<label for="fecha" class="form-label">Fecha</label>
-							<input type="text" id="fecha" name="fecha" value="{{ formulario.fecha.value|default:''|date:'d-m-Y' }}"> {% if formulario.fecha_updated.value != "" %}
+							<input type="text" id="fecha"  class="form-control {% if formulario.fecha.errors %}is-invalid{% elif formulario.fecha.value %}is-valid{% endif %}" name="fecha" value="{{ formulario.fecha.value|default:''|date:'d-m-Y' }}"> {% if formulario.fecha_updated.value != "" %}
 							<p>Última actualización: {{ formulario.fecha_updated.value|default:''|date:'d-m-Y' }}</p>
 							{% endif %}
 						</div>
 						<div class="mb-1">
 							<label for="resultado" class="form-label">Resultado:</label>
-							<select id="resultado" class="form-control" name="resultado">
+							<select id="resultado" class="form-control {% if formulario.resultado.errors %}is-invalid{% elif formulario.resultado.value %}is-valid{% endif %}" name="resultado">
 								{% for choice in formulario.resultado.field.choices %}
 									{% if choice.0 == formulario.resultado.value %}
 										<option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
@@ -88,7 +98,7 @@
 						<div class="mb-1">
 							<label for="stoploss" class="form-label">Stop Loss</label>
 							<div class="input-group">
-								<input type="text" id="stoploss" placeholder="0" class="form-control" name="stoploss" value="{{ formulario.stoploss.value | default:'' }}">
+								<input type="text" id="stoploss" placeholder="0" class="form-control {% if formulario.stoploss.errors %}is-invalid{% elif formulario.stoploss.value %}is-valid{% endif %}" name="stoploss" value="{{ formulario.stoploss.value | default:'' }}">
 								<div class="input-group-append">
 									<span id="stoploss" class="input-group-text">
 									<i aria-hidden="true"></i> pip
@@ -99,9 +109,9 @@
 						<div class="mb-4">
 							<label for="takeprofit" class="form-label">Take Profit</label>
 							<div class="input-group">
-								<input type="text" id="takeprofit" placeholder="0" class="form-control" name="takeprofit" value="{{ formulario.takeprofit.value | default:'' }}">
+								<input type="text" id="takeprofit" placeholder="0" class="form-control {% if formulario.takeprofit.errors %}is-invalid{% elif formulario.takeprofit.value %}is-valid{% endif %}" name="takeprofit" value="{{ formulario.takeprofit.value | default:'' }}">
 								<div class="input-group-append">
-									<span id="takeprofit" class="input-group-text text-center">
+									<span id="takeprofit" class="input-group-text">
 									<i aria-hidden="true"></i> pip
 									</span>
 								</div>
@@ -121,7 +131,7 @@
 						</div>
 						<div class="mb-4">
 							<label for="porcentaje_beneficio_real" class="form-label">Utilidad</label>
-							<input type="text" readonly id="porcentaje_beneficio_real" name="porcentaje_beneficio_real" value="{{ formulario.porcentaje_beneficio_real.value | default:'' }}">
+							<input type="text" readonly id="porcentaje_beneficio_real" class="form-control" name="porcentaje_beneficio_real" value="{{ formulario.porcentaje_beneficio_real.value | default:'' }}">
 						</div>
 						{% comment %}
 						<div class="mb-3">
@@ -133,7 +143,7 @@
 						<!-- Contenedor de botones -->
 						<div class="center-button mb-4">
 							<button class="add-order-button" type="submit"><i class="fas fa-check"></i> Aceptar</button>
-							<a class="cancel-order-button" href="{% url 'lista_trades_de_cuentas' request.session.id_cuenta %}" role="button"><i class="fas fa-times"></i> Cancelar</a>
+							<a class="cancel-order-button" href="{% url 'lista_trades_de_cuentas' id_cuenta %}" role="button"><i class="fas fa-times"></i> Cancelar</a>
 							 {% if request.resolver_match.view_name == 'editar' %} 
 								{% if estado == "eliminado" %}
 									<a class="add-order-button" href="{% url 'restaurar' trade_id %}" role="button">
@@ -160,9 +170,14 @@
 							</a>
 							<a type="button" class="btn btn-sm btn-outline-secondary ml-auto" id="expand-modal-button">
 								<i class="fas fa-expand"></i>
+							</a>							
+							{% if trade_image_count > 1 %}
+							<a type="button" class="btn btn-sm btn-outline-secondary ml-auto" id="cuadricula-modal-button">
+								<i class="fas fa-th"></i>
 							</a>
+							{% endif %}
 						</div>
-						<div class="modal-body">
+						<div class="modal-body grid-image-container">
 							{% for image, trade_image in recorre_clase_image %}
 							<div class="image-container">
 								<div class="dropdown-delete">
@@ -296,6 +311,8 @@
 			</div>
 		</div>
 	</div>
+
+	
 	{% endif %}
 	<script src="{% static 'js/scriptTrades.js' %}"></script>
 </form>

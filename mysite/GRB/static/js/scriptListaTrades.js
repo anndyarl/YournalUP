@@ -42,50 +42,43 @@ porcentaje_beneficio_total.disabled = true;
   
     swapInput.value = value;
   });
-}
+
   document.addEventListener('DOMContentLoaded', function() {
     var toggleButton = document.getElementById('open-modal-button-commission');
     var modalContainerCommission = document.querySelector('.modal-container-commission');
-    var isExpanded = localStorage.getItem('isCommissionExpanded') === 'true';
+    var isExpanded = false; // Cambiado a un valor predeterminado
   
-    // Aplica el estado recuperado
-    if (isExpanded) {
-      toggleButton.classList.add('expand');
-      toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-right"></i>';
-      modalContainerCommission.classList.add('show');
-    }
-  
-    console.log('El valor actual de isCommissionExpanded es:', isExpanded);
-  
-    toggleButton.addEventListener('click', function() {
-      // Cambia el estado después de obtener el valor actual
-      isExpanded = !isExpanded;
-  
-      console.log('El valor actual de isCommissionExpanded es:', isExpanded);
-  
-      if (isExpanded) {
-        toggleButton.classList.add('expand');
-        toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-right"></i>';
-        modalContainerCommission.classList.add('show');
-      } else {
-        toggleButton.classList.remove('expand');
+    toggleButton.addEventListener('click', function() {          
         toggleButton.innerHTML = '<i class="fas fa-fw fa-angle-double-left"></i>';
-        modalContainerCommission.classList.remove('show');
-        // Elimina la variable de la memoria local cuando se contrae
-        localStorage.removeItem('isCommissionExpanded');
-      }
-  
-      // Guarda el estado actualizado en la memoria local
-      localStorage.setItem('isCommissionExpanded', isExpanded.toString());
+        modalContainerCommission.classList.toggle('show');    
     });
-  
-    // Guarda el estado inicial al cargar la página si no existe en la memoria local
-    if (!localStorage.getItem('isCommissionExpanded')) {
-      localStorage.setItem('isCommissionExpanded', isExpanded.toString());
-    }
+});
+
+
+  document.addEventListener('DOMContentLoaded', function() {  
+    var modalContainer = document.querySelector('.modal-container-commission');
+    var closeButton = modalContainer.querySelector('.close');
+    
+    closeButton.addEventListener('click', function() {
+      modalContainer.classList.remove('show');
+    });
   });
   
-   
+  // Agrega la clase 'edited' al elemento padre del input, imagen o textarea que se haya editado
+  $('input, select').on('input', function() {
+    const Container = $(this).closest('.modal-container-commission, .container-commission-desktop');
+    Container.addClass('edited');
+    Container.find('.add-order-button-commission').removeClass('disabled-button').show();
+  });
+  
+  // Mostrar solo el botón de actualización correspondiente al hacer clic en el elemento correspondiente
+  $('.add-order-button-commission').click(function() {
+    const Container = $(this).closest('.modal-container-commission, .container-commission-desktop');
+    Container.removeClass('edited');
+    $(this).addClass('disabled-button');
+  });
+  
+}
   
   
   const checkboxes = document.getElementsByClassName('fila-checkbox');
@@ -147,28 +140,7 @@ porcentaje_beneficio_total.disabled = true;
   }
   
  
-  document.addEventListener('DOMContentLoaded', function() {  
-  var modalContainer = document.querySelector('.modal-container-commission');
-  var closeButton = modalContainer.querySelector('.close');
-  
-  closeButton.addEventListener('click', function() {
-    modalContainer.classList.remove('show');
-  });
-});
 
-// Agrega la clase 'edited' al elemento padre del input, imagen o textarea que se haya editado
-$('input, select').on('input', function() {
-  const Container = $(this).closest('.modal-container-commission, .container-commission-desktop');
-  Container.addClass('edited');
-  Container.find('.add-order-button-commission').removeClass('disabled-button').show();
-});
-
-// Mostrar solo el botón de actualización correspondiente al hacer clic en el elemento correspondiente
-$('.add-order-button-commission').click(function() {
-  const Container = $(this).closest('.modal-container-commission, .container-commission-desktop');
-  Container.removeClass('edited');
-  $(this).addClass('disabled-button');
-});
 
 // document.addEventListener('DOMContentLoaded', function() {
 //   var toggleButton = document.getElementById('open-modal-button');
@@ -195,24 +167,32 @@ tablaScroll.addEventListener('mouseleave', function() {
   tablaScroll.classList.add('hide-scrollbar');
 });
  });
+ 
 
-  
-  //Alert Notifications
-  function cerrarMensaje(btn) {
-    var alertDiv = btn.parentNode;
-    alertDiv.style.display = 'none';
-  }  
-  var alertDiv = document.querySelector('.alert.alert-info');
-  if (alertDiv) {
-    alertDiv.style.transition = 'opacity 10s'; // Duración de la transición: 5 segundos
-    alertDiv.style.opacity = '1'; // Establecer la opacidad inicial en 1 para mostrar el mensaje
-    setTimeout(function() {
-      alertDiv.style.opacity = '0';
-      setTimeout(function() {
-        alertDiv.style.display = 'none';
-      }, 10000); // 5000 milisegundos = 5 segundos (tiempo de espera después de la transición)
-    }, 3000); // 3000 milisegundos = 3 segundos (tiempo de espera antes de iniciar la transición)
+// JavaScript en tu archivo .js
+document.addEventListener('DOMContentLoaded', function () {
+  // Verificar si se ha hecho clic anteriormente
+  var haHechoClic = localStorage.getItem('alertaCerrada');
+
+  if (!haHechoClic) {
+    // Si no se ha hecho clic, mostrar la alerta
+    mostrarAlerta();
   }
+});
+
+function mostrarAlerta() {
+  var alertContainer = document.getElementById('alertContainer');
+  alertContainer.style.display = 'block';
+}
+
+function cerrarMensajeError(button) {
+  var alertContainer = button.closest('.alert');
+  alertContainer.style.display = 'none';
+
+  // Almacenar en localStorage que se ha hecho clic
+  localStorage.setItem('alertaCerrada', 'true');
+}
+
 
   $(document).ready(function () {
     // Mostrar el botón flotante cuando se modifica el input
@@ -233,3 +213,13 @@ document.getElementById('toggle-button').addEventListener('click', function(e) {
   var menu = document.getElementById('mobile-menu');
   menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
 });
+
+
+
+  // const botonMenu = document.getElementById("boton-menu-mobile");
+  // const mobileMenu = document.getElementById("mobile-menu");
+
+  // botonMenu.addEventListener("click", function () {
+  //     mobileMenu.classList.toggle("show");     
+  // });
+ 

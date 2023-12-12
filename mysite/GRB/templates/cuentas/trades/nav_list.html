@@ -1,7 +1,6 @@
 {% block contenido %} 
  {% for cuenta in cuentas %}
-    {% if cuenta.id_cuenta == request.session.id_cuenta %}
-   
+    {% if cuenta.id_cuenta == id_cuenta %}   
     <nav>
       <div>
         <div class="arrow arrow-left">
